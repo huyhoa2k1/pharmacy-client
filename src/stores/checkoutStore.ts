@@ -11,7 +11,6 @@ export interface CustomerInfo {
 
 export interface AddressInfo {
   province: string
-  district: string
   ward: string
   address: string
 }
@@ -34,7 +33,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
 
   const addressInfo = ref<AddressInfo>({
     province: '',
-    district: '',
     ward: '',
     address: '',
   })
@@ -75,7 +73,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
     }
     addressInfo.value = {
       province: '',
-      district: '',
       ward: '',
       address: '',
     }
@@ -85,7 +82,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
   // Validate all required fields
   const isCheckoutValid = (): boolean => {
     const { fullName, phone, email } = customerInfo.value
-    const { province, district, ward, address } = addressInfo.value
+    const { province, ward, address } = addressInfo.value
 
     const isValidEmail = (email: string): boolean => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -102,7 +99,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
       isValidPhone(phone) &&
       isValidEmail(email) &&
       province !== '' &&
-      district !== '' &&
       ward !== '' &&
       address?.trim().length >= 5
     )
