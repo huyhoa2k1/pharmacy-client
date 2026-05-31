@@ -14,7 +14,7 @@ const router = createRouter({
       component: HomeView,
       meta: {
         layout: AppLayout,
-        title: 'Home - Pharmacy Management System',
+        title: 'Pharmacy Management System',
       },
     },
     {
@@ -23,16 +23,16 @@ const router = createRouter({
       component: () => import('../views/Products/ProductsView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Products - Pharmacy Management System',
+        title: 'Danh sách sản phẩm - Pharmacy Management System',
       },
     },
     {
-      path: '/products/:id',
+      path: '/:categoryId/products/:id',
       name: 'product-detail',
       component: () => import('@/views/Products/_id/ProductView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Product Detail - Pharmacy Management System',
+        title: 'Chi tiết',
       },
     },
     {
@@ -41,7 +41,7 @@ const router = createRouter({
       component: () => import('@/views/Cart/CartView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Cart - Pharmacy Management System',
+        title: 'Giỏ hàng',
       },
     },
     {
@@ -50,7 +50,7 @@ const router = createRouter({
       component: () => import('@/views/Checkout/CheckoutView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Checkout - Pharmacy Management System',
+        title: 'Thanh toán',
       },
     },
     {
@@ -64,7 +64,7 @@ const router = createRouter({
           component: () => import('@/views/Personal/Information/index.vue'),
           meta: {
             layout: DetailLayout,
-            title: 'Personal Information - Pharmacy Management System',
+            title: 'Thông tin cá nhân',
           },
         },
         {
@@ -73,7 +73,7 @@ const router = createRouter({
           component: () => import('@/views/Personal/MyOrder/index.vue'),
           meta: {
             layout: DetailLayout,
-            title: 'Personal Orders - Pharmacy Management System',
+            title: 'Đơn hàng của tôi',
           },
         },
       ],

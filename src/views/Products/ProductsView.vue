@@ -78,7 +78,6 @@ onMounted(() => {
     display: grid;
     grid-template-columns: 250px 1fr;
     gap: 24px;
-    padding: 16px;
 }
 
 .filter {
