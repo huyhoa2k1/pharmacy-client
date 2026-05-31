@@ -3,7 +3,8 @@
         <div style="background-color: #edf0f3;">
             <Header />
             <Navbar :categories="categories" />
-            <div class="py-3 w-7xl mr-auto ml-auto">
+            <Breadcrumb />
+            <div class=" w-7xl mr-auto ml-auto">
                 <router-view></router-view>
             </div>
             <<Footer />
@@ -17,6 +18,7 @@ import { CategoryService } from '@/api/services/category';
 import Footer from '@/components/Footer/Footer.vue';
 import Header from '@/components/Header/Header.vue';
 import Navbar from '@/components/Navbar/Navbar.vue';
+import Breadcrumb from '@/components/common/breadcrumb/index.vue';
 import { onMounted, ref } from 'vue';
 
 const categories = ref<IGetCategoryResponse[]>([]);

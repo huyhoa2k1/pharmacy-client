@@ -1,5 +1,5 @@
 <template>
-    <div @click="() => router.push({ name: 'product-detail', params: { id: data.id } })"
+    <div @click="goToProductDetail"
         class="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden border border-gray-200 flex flex-col h-full cursor-pointer">
 
         <!-- Image Container -->
@@ -76,6 +76,16 @@ const props = defineProps<{
 
 function formatPrice(price: number): string {
     return new Intl.NumberFormat('vi-VN').format(price);
+}
+
+const goToProductDetail = () => {
+    router.push({
+        name: 'product-detail',
+        params: {
+            categoryId: props.data.brand.categoryId,
+            id: props.data.id,
+        },
+    })
 }
 
 const addToCart = () => {
