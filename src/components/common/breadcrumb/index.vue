@@ -1,5 +1,5 @@
 <template>
-    <div class="breadcrumb-container w-7xl mr-auto ml-auto">
+    <div class="breadcrumb-container mr-auto ml-auto">
         <a-breadcrumb separator=">" class="breadcrumb-inner">
             <a-breadcrumb-item v-for="(item, index) in breadcrumbs" :key="index" class="breadcrumb-item">
                 <router-link v-if="item.link" :to="item.link" class="breadcrumb-link">

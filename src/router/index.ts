@@ -4,6 +4,7 @@ import DetailLayout from '@/layouts/DetailLayout.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { loadLayoutMiddleware } from './middleware'
 import NoneLayout from '@/layouts/NoneLayout.vue'
+import AdminLayout from '@/layouts/AdminLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -77,6 +78,26 @@ const router = createRouter({
           },
         },
       ],
+    },
+
+    // Admin routes
+    {
+      path: '/admin/products-management',
+      name: 'admin-products-management',
+      component: () => import('@/views/Admin/ProductManagement/index.vue'),
+      meta: {
+        layout: AdminLayout,
+        title: 'Quản lý sản phẩm',
+      },
+    },
+    {
+      path: '/admin/orders-management',
+      name: 'admin-orders-management',
+      component: () => import('@/views/Admin/OrderManagement/index.vue'),
+      meta: {
+        layout: AdminLayout,
+        title: 'Quản lý đơn hàng',
+      },
     },
     {
       path: '/error',

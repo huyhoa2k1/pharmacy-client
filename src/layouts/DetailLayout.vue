@@ -3,7 +3,9 @@
         <div style="background-color: #edf0f3;">
             <Header />
             <Navbar :categories="categories" />
-            <Breadcrumb />
+            <div class=" w-7xl mr-auto ml-auto">
+                <Breadcrumb />
+            </div>
             <div class=" w-7xl mr-auto ml-auto">
                 <router-view></router-view>
             </div>
