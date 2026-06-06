@@ -16,6 +16,17 @@ export interface IGetProductResponse {
   updatedAt: string
 }
 
+export interface ICreateProductRequest {
+  slug: string
+  name: string
+  description: string
+  imageUrl: string[]
+  price: number
+  discount: number
+  amount: number
+  brandId: number
+}
+
 export interface IPageable {
   pageNumber: number
   pageSize: number

@@ -1,5 +1,5 @@
 import axiosInstance from '@/helpers/https'
-import type { IGetProductResponse, IPageResponse } from '../models/product'
+import type { IGetProductResponse, IPageResponse, ICreateProductRequest } from '../models/product'
 
 export class ProductService {
   public static readonly getAllProducts: () => Promise<IGetProductResponse[]> = async () =>
@@ -7,7 +7,7 @@ export class ProductService {
 
   public static readonly getProductsByCategory: (
     categoryId: number,
-    params?: Record<string, any>,
+    params?: Record<string, unknown>,
   ) => Promise<IPageResponse<IGetProductResponse>> = async (categoryId, params) =>
     axiosInstance
       .get<IPageResponse<IGetProductResponse>>(`/products/by-category/${categoryId}`, {
@@ -24,4 +24,18 @@ export class ProductService {
       axiosInstance
         .get<IGetProductResponse[]>(`/products/search?keyword=${keyword}`)
         .then((res) => res.data)
+
+  public static readonly uploadProductImages: (formData: FormData) => Promise<string[]> = async (
+    formData,
+  ) =>
+    axiosInstance
+      .post<string[]>('/products/upload-images', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((res) => res.data)
+
+  public static readonly createProduct: (
+    payload: ICreateProductRequest,
+  ) => Promise<IGetProductResponse> = async (payload) =>
+    axiosInstance.post<IGetProductResponse>('/products', payload).then((res) => res.data)
 }

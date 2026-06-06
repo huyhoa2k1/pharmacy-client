@@ -19,6 +19,8 @@
     "@primeuix/themes": "^1.1.2",
     "@tailwindcss/vite": "^4.1.10",
     "ant-design-vue": "^4.2.6",
+    "@ckeditor/ckeditor5-build-classic": "^40.0.0",
+    "@ckeditor/ckeditor5-vue": "^5.0.2",
     "axios": "^1.12.2",
     "lodash": "^4.18.1",
     "pinia": "^3.0.1",

@@ -6,6 +6,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import Antd from 'ant-design-vue'
 import PrimeVue from 'primevue/config'
+import CKEditor from '@ckeditor/ckeditor5-vue'
 
 import App from './App.vue'
 import router from './router'
@@ -17,6 +18,7 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
 app.use(Antd)
+app.use(CKEditor)
 app.use(PrimeVue)
 
 app.mount('#app')
