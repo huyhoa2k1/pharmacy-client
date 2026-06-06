@@ -91,6 +91,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/admin/products-management/create',
+      name: 'admin-product-create',
+      component: () => import('@/views/Admin/ProductManagement/create/product/index.vue'),
+      meta: {
+        layout: AdminLayout,
+        title: 'Thêm sản phẩm',
+      },
+    },
+    {
       path: '/admin/orders-management',
       name: 'admin-orders-management',
       component: () => import('@/views/Admin/OrderManagement/index.vue'),

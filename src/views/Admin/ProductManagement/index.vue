@@ -2,7 +2,9 @@
     <div>
         <div class="mb-4 flex gap-2">
             <a-button :hidden="selectedRowKeys.length === 0" type="primary" danger>Xóa sản phẩm</a-button>
-            <a-button type="primary">Thêm sản phẩm</a-button>
+            <router-link :to="{ name: 'admin-product-create' }">
+                <a-button type="primary">Thêm sản phẩm</a-button>
+            </router-link>
             <a-button :hidden="selectedRowKeys.length === 0" type="primary">Sales sản phẩm</a-button>
             <a-button type="primary">Xuất Excel</a-button>
         </div>
