@@ -1,5 +1,10 @@
 import axiosInstance from '@/helpers/https'
-import type { IGetProductResponse, IPageResponse, ICreateProductRequest } from '../models/product'
+import type {
+  IGetProductResponse,
+  IPageResponse,
+  ICreateProductRequest,
+  ISetProductSaleRequest,
+} from '../models/product'
 
 export class ProductService {
   public static readonly getAllProducts: () => Promise<IGetProductResponse[]> = async () =>
@@ -38,4 +43,7 @@ export class ProductService {
     payload: ICreateProductRequest,
   ) => Promise<IGetProductResponse> = async (payload) =>
     axiosInstance.post<IGetProductResponse>('/products', payload).then((res) => res.data)
+
+  public static readonly setSaleProducts: (payload: ISetProductSaleRequest) => Promise<boolean> =
+    async (payload) => axiosInstance.put<boolean>('/products/sale', payload).then((res) => res.data)
 }
