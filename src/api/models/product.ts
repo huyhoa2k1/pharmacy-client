@@ -10,7 +10,8 @@ export interface IGetProductResponse {
   discount: number
   amount: number
   sold: number
-  sale: boolean
+  isSale: boolean
+  sale?: boolean
   brand: IGetBrandResponse
   createdAt: string
   updatedAt: string
@@ -25,6 +26,13 @@ export interface ICreateProductRequest {
   discount: number
   amount: number
   brandId: number
+}
+
+export interface ISetProductSaleRequest {
+  productIds: number[]
+  isSale: boolean
+  discount: number
+  saleEndTime: string
 }
 
 export interface IPageable {
