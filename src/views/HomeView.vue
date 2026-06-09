@@ -7,14 +7,14 @@ import { globalLoading } from '@/stores/loading'
 
 const data = ref<IGetProductResponse[]>([]);
 
-const getAllProducts = async () => {
+const getProductsOnSale = async () => {
   globalLoading.value = true;
-  const res = await ProductService.getAllProducts();
+  const res = await ProductService.getProductsOnSale();
   data.value = res;
   globalLoading.value = false;
 }
 onMounted(() => {
-  getAllProducts();
+  getProductsOnSale();
 });
 </script>
 

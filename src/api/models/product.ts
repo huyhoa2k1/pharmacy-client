@@ -11,6 +11,7 @@ export interface IGetProductResponse {
   amount: number
   sold: number
   isSale: boolean
+  saleEndTime: string
   sale?: boolean
   brand: IGetBrandResponse
   createdAt: string

@@ -10,6 +10,9 @@ export class ProductService {
   public static readonly getAllProducts: () => Promise<IGetProductResponse[]> = async () =>
     axiosInstance.get<IGetProductResponse[]>('/products').then((res) => res.data)
 
+  public static readonly getProductsOnSale: () => Promise<IGetProductResponse[]> = async () =>
+    axiosInstance.get<IGetProductResponse[]>('/products/sale').then((res) => res.data)
+
   public static readonly getProductsByCategory: (
     categoryId: number,
     params?: Record<string, unknown>,
