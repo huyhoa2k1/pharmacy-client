@@ -5,6 +5,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import { loadLayoutMiddleware } from './middleware'
 import NoneLayout from '@/layouts/NoneLayout.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
+import { handlePermissions } from '@/middlewares/permission'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -88,6 +89,7 @@ const router = createRouter({
       meta: {
         layout: AdminLayout,
         title: 'Quản lý sản phẩm',
+        roles: ['ADMIN'],
       },
     },
     {
@@ -97,6 +99,7 @@ const router = createRouter({
       meta: {
         layout: AdminLayout,
         title: 'Thêm sản phẩm',
+        roles: ['ADMIN'],
       },
     },
     {
@@ -106,6 +109,7 @@ const router = createRouter({
       meta: {
         layout: AdminLayout,
         title: 'Quản lý đơn hàng',
+        roles: ['ADMIN'],
       },
     },
     {
@@ -124,9 +128,10 @@ const router = createRouter({
   ],
 })
 
+router.beforeEach(handlePermissions)
 router.beforeEach(loadLayoutMiddleware)
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || 'Default Title'
+  ;(<any>document).title = to.meta.title || 'Default Title'
   next()
 })
 
