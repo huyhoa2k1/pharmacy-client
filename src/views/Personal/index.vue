@@ -8,8 +8,8 @@
                             <UserOutlined />
                         </template>
                     </a-avatar>
-                    <div>anh Howie</div>
-                    <div>0123456789</div>
+                    <div>{{ user?.userName }}</div>
+                    <div>{{ user?.phone }}</div>
                 </div>
             </a-card>
             <a-menu id="dddddd" v-model:openKeys="openKeys" v-model:selectedKeys="selectedKeys"
@@ -29,6 +29,9 @@ import router from '@/router';
 
 const selectedKeys = ref<string[]>(['1']);
 const openKeys = ref<string[]>(['sub1']);
+
+const userInfo = localStorage.getItem('pharmacy_user');
+const user = userInfo ? JSON.parse(userInfo) : null;
 
 function getItem(
     label: VueElement | string,
