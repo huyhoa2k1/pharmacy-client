@@ -13,7 +13,6 @@
 
         <div class="order-body">
             <div class="product" v-for="(it, i) in order.items" :key="i">
-                <img class="thumb" :src="it.img" alt="thumb" />
                 <div class="info">
                     <div class="title">{{ it.title }}</div>
                     <div class="meta">{{ formatCurrency(it.price) }} <span class="qty">x{{ it.qty }}</span></div>

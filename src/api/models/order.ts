@@ -35,7 +35,7 @@ export interface IOrderResponse {
   totalPrice: number
   isPaid: boolean
   orderCode: string
-  useId: number
+  userId: number
   shippingAddress: {
     province: string
     district: string

@@ -13,4 +13,7 @@ export class OrderService {
     status: EOrderStatus,
   ) => Promise<IOrderResponse> = async (orderId, status) =>
     axiosInstance.patch(`/orders/status`, { orderId, status }).then((res) => res.data)
+  public static readonly getOrderByUserId: (userId: number) => Promise<IOrderResponse[]> = async (
+    userId,
+  ) => axiosInstance.get(`/orders/user/${userId}`).then((res) => res.data)
 }

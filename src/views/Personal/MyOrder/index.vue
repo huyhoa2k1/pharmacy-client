@@ -5,48 +5,74 @@
     </a-tabs>
 
     <div class="orders-list">
-        <MyOrderItem v-for="(o, i) in orders" :key="i" :order="o" />
+        <MyOrderItem v-for="(o, i) in displayOrders" :key="i" :order="o" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import MyOrderItem from '../../../components/Personal/MyOrderItem.vue';
+import { onMounted, ref, computed } from 'vue'
+import MyOrderItem from '../../../components/Personal/MyOrderItem.vue'
+import { OrderService } from '@/api/services/order'
+import { EOrderStatus, type IOrderResponse } from '@/api/models/order'
+import { formatStatusOrder } from '@/utils/format'
 
-const activeKey = ref('CONFIRMED');
+const ordersData = ref<IOrderResponse[]>([])
 
-const tabs = [
-    { key: 'CONFIRMED', label: 'Đã giao' },
-    { key: 'PENDING', label: 'Chờ giao' },
-    { key: 'CANCELLED', label: 'Đã hủy' },
-];
+const userInfo = localStorage.getItem('pharmacy_user')
+const userId = userInfo ? JSON.parse(userInfo).userId : undefined
 
-const orders = ref([
-    {
-        date: '19/12/2025',
-        delivery: 'Giao hàng tận nơi',
-        number: '6882850',
-        status: 'delivered',
-        statusText: 'Đã giao',
-        items: [],
-        total: 76870,
-    },
-    {
-        date: '02/12/2025',
-        delivery: 'Nhận tại cửa hàng',
-        number: '7870353',
-        status: 'delivered',
-        statusText: 'Đã giao',
-        items: [
-            { img: '/P08458_1.avif', title: 'Nhỏ mắt V.Rohto Dryeye 13ml hỗ trợ bôi trơn mắt', price: 57600, qty: 1 },
-        ],
-        total: 80100,
-    },
-]);
+const getOrdersByUser = async () => {
+    if (!userId) return
+    const res = await OrderService.getOrderByUserId(userId)
+    ordersData.value = res || []
+}
 
-const handleChange = (status: string) => {
-    activeKey.value = status;
-};
+onMounted(() => {
+    getOrdersByUser()
+})
+
+const tabs = Object.values(EOrderStatus).map((s) => ({
+    key: s,
+    label: formatStatusOrder(s as EOrderStatus).text,
+}))
+
+const activeKey = ref<string>(tabs.length ? (tabs[0].key as string) : (EOrderStatus.PENDING as string))
+
+const filteredOrders = computed(() =>
+    ordersData.value.filter((o) => o.status === (activeKey.value as EOrderStatus)),
+)
+
+const formatDate = (iso?: string) => {
+    if (!iso) return ''
+    const d = new Date(iso)
+    return d.toLocaleDateString('vi-VN')
+}
+
+const displayOrders = computed(() =>
+    filteredOrders.value.map((o) => ({
+        date: formatDate((o as any).createdAt || (o as any).updatedAt),
+        delivery: o.shippingAddress
+            ? `${o.shippingAddress.address}, ${o.shippingAddress.ward}, ${o.shippingAddress.district}`
+            : '',
+        number: o.orderCode,
+        status: String(o.status).toLowerCase(),
+        statusText: formatStatusOrder(o.status).text,
+        items: o.orderItems.map((it) => ({
+            img: '/P08458_1.avif',
+            title: it.productName,
+            price: it.price,
+            qty: it.amount,
+        })),
+        total: o.totalPrice,
+        raw: o,
+    })),
+)
+
+const handleChange = (tab: any) => {
+    // Antd may pass either the key or a tab object; normalize to key string
+    const key = typeof tab === 'string' ? tab : tab?.key ?? tab
+    activeKey.value = key
+}
 </script>
 
 <style scoped>

@@ -8,10 +8,13 @@
             </a-avatar>
             <div>
                 <div>
-                    <strong>Họ và tên:</strong> Nguyễn Văn A
+                    <strong>Họ và tên:</strong> {{ user?.username }}
                 </div>
                 <div>
-                    <strong>Email:</strong> nguyenvana@example.com
+                    <strong>Email:</strong> {{ user?.email }}
+                </div>
+                <div>
+                    <strong>Điện thoại:</strong> {{ user?.phone }}
                 </div>
             </div>
         </div>
@@ -20,6 +23,9 @@
 
 <script setup lang="ts">
 import { UserOutlined } from '@ant-design/icons-vue';
+
+const userInfo = localStorage.getItem('pharmacy_user');
+const user = userInfo ? JSON.parse(userInfo) : null;
 </script>
 
 <style scoped></style>
