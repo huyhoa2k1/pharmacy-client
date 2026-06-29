@@ -89,7 +89,7 @@ const router = createRouter({
       meta: {
         layout: AdminLayout,
         title: 'Quản lý sản phẩm',
-        roles: ['ADMIN'],
+        roles: [],
       },
     },
     {
@@ -99,7 +99,27 @@ const router = createRouter({
       meta: {
         layout: AdminLayout,
         title: 'Thêm sản phẩm',
-        roles: ['ADMIN'],
+        roles: [],
+      },
+    },
+    {
+      path: '/admin/categories-management',
+      name: 'admin-categories-management',
+      component: () => import('@/views/Admin/CategoryManagement/index.vue'),
+      meta: {
+        layout: AdminLayout,
+        title: 'Quản lý category',
+        roles: [],
+      },
+    },
+    {
+      path: '/admin/brands-management',
+      name: 'admin-brands-management',
+      component: () => import('@/views/Admin/BrandManagement/index.vue'),
+      meta: {
+        layout: AdminLayout,
+        title: 'Quản lý brand',
+        roles: [],
       },
     },
     {
@@ -109,7 +129,7 @@ const router = createRouter({
       meta: {
         layout: AdminLayout,
         title: 'Quản lý đơn hàng',
-        roles: ['ADMIN'],
+        roles: [],
       },
     },
     {
