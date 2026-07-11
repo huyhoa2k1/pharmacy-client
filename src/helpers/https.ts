@@ -9,7 +9,7 @@ export const BASE_URL = `http://${IP}:${PORT}/api`
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  timeout: 5000,
+  timeout: 30000,
 })
 
 let isRefreshing = false

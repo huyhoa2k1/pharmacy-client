@@ -4,14 +4,8 @@
       <!-- Main Carousel -->
       <div class="carousel-main">
         <a-carousel arrows class="main-carousel" autoplay :autoplay-speed="3000">
-          <div class="carousel-slide">
-            <img loading="lazy" src="../../assets/t1.png" alt="Banner 1" />
-          </div>
-          <div class="carousel-slide">
-            <img loading="lazy" src="../../assets/t2.png" alt="Banner 2" />
-          </div>
-          <div class="carousel-slide">
-            <img loading="lazy" src="../../assets/banner-1.jpg" alt="Banner 3" />
+          <div class="carousel-slide" v-for="(image, index) in mainBanners" :key="index">
+            <img loading="lazy" :src="image" :alt="`Banner ${index + 1}`" />
           </div>
         </a-carousel>
 
@@ -27,13 +21,9 @@
 
       <!-- Side Banners -->
       <div class="side-banners">
-        <div class="side-banner banner-1">
-          <img loading="lazy" src="../../assets/banner-2.jpg" alt="Khuyến mãi 1" />
-          <div class="banner-label">Khuyến mãi</div>
-        </div>
-        <div class="side-banner banner-2">
-          <img loading="lazy" src="../../assets/t3.png" alt="Khuyến mãi 2" />
-          <div class="banner-label">Ưu đãi</div>
+        <div class="side-banner banner-1" v-for="(image, index) in sideBanners" :key="index">
+          <img loading="lazy" :src="image" :alt="`Khuyến mãi ${index + 1}`" />
+          <div class="banner-label">{{ index === 0 ? 'Khuyến mãi' : 'Ưu đãi' }}</div>
         </div>
       </div>
     </div>
@@ -41,7 +31,27 @@
 </template>
 
 <script setup lang="ts">
-import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue';
+import { computed } from 'vue'
+import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue'
+import { getCloudinaryImageUrl } from '@/utils/cloudinary'
+import { BANNER_PUBLIC_IDS } from '@/config/assetConfig'
+
+const bannerPublicIds = BANNER_PUBLIC_IDS
+
+const mainBanners = computed(() => {
+  const cloudinaryBanners = bannerPublicIds.slice(0, 3).map((publicId) =>
+    getCloudinaryImageUrl(publicId),
+  )
+  return [...cloudinaryBanners].slice(0, 3)
+})
+
+const sideBanners = computed(() => {
+  const cloudinarySide = bannerPublicIds.slice(3, 5).map((publicId) =>
+    getCloudinaryImageUrl(publicId),
+  )
+  return [...cloudinarySide].slice(0, 2)
+})
+
 </script>
 
 <style scoped>

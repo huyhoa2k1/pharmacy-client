@@ -133,6 +133,16 @@ const router = createRouter({
       },
     },
     {
+      path: '/admin/general-settings',
+      name: 'admin-general-settings',
+      component: () => import('@/views/Admin/Setting/index.vue'),
+      meta: {
+        layout: AdminLayout,
+        title: 'Cài đặt chung',
+        roles: [],
+      },
+    },
+    {
       path: '/error',
       name: 'Error',
       component: () => import('@/views/Error/ErrorView.vue'),
