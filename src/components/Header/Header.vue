@@ -5,7 +5,7 @@
       <!-- Logo -->
       <div class="flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition"
         @click="$router.push('/')">
-        <img class="w-10 h-10" src="../../assets/pharmacy-app.png" alt="Logo">
+        <img class="w-10 h-10" :src="logoSrc" alt="Logo">
         <span class="text-2xl md:text-3xl font-bold text-violet-500 drop-shadow-lg">Pharmacy</span>
       </div>
 
@@ -82,17 +82,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import AuthDialog from '@/components/Auth/AuthDialog.vue';
 import { useUserStore } from '@/stores/user';
 import { useCartStore } from '@/stores/cart';
 import { ProductService } from '@/api/services/product';
+import { getCloudinaryImageUrl } from '@/utils/cloudinary';
+import { LOGO_PUBLIC_ID } from '@/config/assetConfig';
 import { debounce } from 'lodash';
 
 const router = useRouter();
 const userStore = useUserStore();
 const cartStore = useCartStore();
+
+const logoSrc = computed(() =>
+  getCloudinaryImageUrl(LOGO_PUBLIC_ID),
+);
+
 
 const authDialogRef = ref<InstanceType<typeof AuthDialog>>();
 const searchValue = ref('');
