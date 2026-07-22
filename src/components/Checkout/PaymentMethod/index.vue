@@ -3,81 +3,61 @@
         <h3 class="form-title">Phương thức thanh toán</h3>
 
         <div class="payment-options">
-            <!-- COD - Thanh toán khi nhận hàng -->
-            <div class="payment-option" :class="{ active: checkoutStore.paymentMethod === EPaymentMethod.CASH }"
-                @click="checkoutStore.setPaymentMethod(EPaymentMethod.CASH)">
-                <div class="option-header">
+            <div v-for="option in paymentOptions" :key="option.id" class="payment-option"
+                :class="{ active: selectedOption === option.id }" @click="selectPayment(option)">
+                <label :for="option.id" class="option-header">
                     <div class="radio-wrapper">
-                        <input type="radio" id="payment-cod" :value="EPaymentMethod.CASH"
-                            :checked="checkoutStore.paymentMethod === EPaymentMethod.CASH" class="radio-input" />
-                        <label for="payment-cod" class="radio-label"></label>
+                        <input type="radio" :id="option.id" name="payment-method" :value="option.id"
+                            v-model="selectedOption" class="radio-input" />
+                        <span class="radio-label"></span>
                     </div>
                     <div class="option-info">
-                        <i class="pi pi-inbox text-2xl text-orange-500"></i>
-                        <div class="ml-3">
-                            <h4 class="option-title">Thanh toán khi nhận hàng</h4>
-                            <p class="option-desc">Thanh toán tiền mặt khi nhận hàng (COD)</p>
+                        <div>
+                            <h4 class="option-title">{{ option.title }}</h4>
+                            <p class="option-desc">{{ option.desc }}</p>
                         </div>
                     </div>
-                </div>
-                <div v-if="checkoutStore.paymentMethod === EPaymentMethod.CASH" class="option-content">
-                    <p class="text-sm text-gray-600">
-                        ✓ Thanh toán trực tiếp cho shipper khi nhận hàng
-                    </p>
-                    <p class="text-sm text-gray-600">
-                        ✓ Kiểm tra hàng trước khi thanh toán
-                    </p>
-                    <p class="text-sm text-gray-600">
-                        ✓ Không phí thanh toán thêm
-                    </p>
-                </div>
-            </div>
-
-            <!-- Bank Transfer - Thanh toán qua ngân hàng -->
-            <div class="payment-option" :class="{ active: checkoutStore.paymentMethod === EPaymentMethod.CARD }"
-                @click="checkoutStore.setPaymentMethod(EPaymentMethod.CARD)">
-                <div class="option-header">
-                    <div class="radio-wrapper">
-                        <input type="radio" id="payment-bank" :value="EPaymentMethod.CARD"
-                            :checked="checkoutStore.paymentMethod === EPaymentMethod.CARD" class="radio-input" />
-                        <label for="payment-bank" class="radio-label"></label>
-                    </div>
-                    <div class="option-info">
-                        <i class="pi pi-credit-card text-2xl text-purple-500"></i>
-                        <div class="ml-3">
-                            <h4 class="option-title">Thanh toán qua ngân hàng</h4>
-                            <p class="option-desc">Chuyển khoản ngân hàng (ATM, Ví điện tử)</p>
-                        </div>
-                    </div>
-                </div>
-                <div v-if="checkoutStore.paymentMethod === EPaymentMethod.CARD" class="option-content">
-                    <p class="text-sm text-gray-600">
-                        ✓ Hỗ trợ tất cả ngân hàng tại Việt Nam
-                    </p>
-                    <p class="text-sm text-gray-600">
-                        ✓ Hỗ trợ ví điện tử (Momo, Zalopay, VNPay)
-                    </p>
-                    <p class="text-sm text-gray-600">
-                        ✓ Thanh toán nhanh chóng và an toàn
-                    </p>
-                    <div class="bank-logos mt-3">
-                        <span class="bank-logo">Ngân hàng</span>
-                        <span class="bank-logo">Momo</span>
-                        <span class="bank-logo">Zalopay</span>
-                        <span class="bank-logo">VNPay</span>
-                    </div>
-                </div>
+                </label>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { EPaymentMethod } from '@/api/models/order';
 import { useCheckoutStore } from '@/stores/checkoutStore';
 
-const checkoutStore = useCheckoutStore();
+interface PaymentOption {
+    id: string;
+    value: EPaymentMethod;
+    title: string;
+    desc: string;
+}
 
+const checkoutStore = useCheckoutStore();
+const selectedOption = ref('payment-cod');
+const paymentOptions: PaymentOption[] = [
+    {
+        id: 'payment-cod',
+        value: EPaymentMethod.CASH,
+        title: 'Thanh toán tiền mặt khi nhận hàng',
+        desc: 'Thanh toán tiền mặt khi nhận hàng',
+    },
+    {
+        id: 'payment-qr',
+        value: EPaymentMethod.CARD,
+        title: 'Thanh toán bằng chuyển khoản (QR Code)',
+        desc: 'Chuyển khoản nhanh qua QR Code',
+    },
+];
+
+const selectPayment = (option: PaymentOption) => {
+    selectedOption.value = option.id;
+    checkoutStore.setPaymentMethod(option.value);
+};
+
+selectPayment(paymentOptions[0]);
 </script>
 
 <style scoped>
@@ -161,9 +141,6 @@ const checkoutStore = useCheckoutStore();
 }
 
 .option-info {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
     flex: 1;
 }
 
@@ -180,37 +157,82 @@ const checkoutStore = useCheckoutStore();
     margin: 4px 0 0 0;
 }
 
-.option-content {
-    padding-left: 32px;
-    animation: slideDown 0.3s ease;
+.radio-wrapper {
+    flex-shrink: 0;
+    position: relative;
+    width: 22px;
+    height: 22px;
 }
 
-.option-content p {
-    margin: 8px 0;
-    line-height: 1.5;
+.radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+    z-index: 2;
 }
 
-.bank-logos {
+.radio-label {
+    position: absolute;
+    inset: 0;
+    display: block;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.radio-input:checked+.radio-label {
+    background: #8b5cf6;
+    border-color: #8b5cf6;
+}
+
+.radio-input:checked+.radio-label::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.option-header {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    cursor: pointer;
 }
 
-.bank-logo {
-    display: inline-block;
-    padding: 6px 12px;
-    background: #f3f4f6;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #374151;
+.payment-option:hover {
+    border-color: #d1d5db;
 }
 
-.form-actions {
-    display: flex;
-    gap: 12px;
-    padding-top: 16px;
-    border-top: 1px solid #f3e8ff;
+.payment-option.active {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+@media (max-width: 768px) {
+    .payment-method {
+        padding: 16px;
+    }
+
+    .form-title {
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+
+    .payment-options {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
 }
 
 .form-actions :deep(.ant-btn) {

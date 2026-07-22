@@ -19,6 +19,8 @@
     "@ant-design/icons-vue": "^7.0.1",
     "@ckeditor/ckeditor5-build-classic": "^40.0.0",
     "@ckeditor/ckeditor5-vue": "^5.0.2",
+    "@payos/node": "^2.0.5",
+    "@payos/payos-checkout": "^1.0.8",
     "@primeuix/themes": "^1.1.2",
     "@tailwindcss/vite": "^4.1.10",
     "ant-design-vue": "^4.2.6",
