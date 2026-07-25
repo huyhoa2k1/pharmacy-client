@@ -16,4 +16,14 @@ export class OrderService {
   public static readonly getOrderByUserId: (userId: number) => Promise<IOrderResponse[]> = async (
     userId,
   ) => axiosInstance.get(`/orders/user/${userId}`).then((res) => res.data)
+  public static readonly exportOrders: () => Promise<Blob> = async () =>
+    axiosInstance
+      .post(
+        '/export/orders',
+        {},
+        {
+          responseType: 'blob',
+        },
+      )
+      .then((res) => res.data)
 }

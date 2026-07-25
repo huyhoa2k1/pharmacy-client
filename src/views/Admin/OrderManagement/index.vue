@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="mb-4 gap-2">
-            <a-button type="primary">Xuất Excel</a-button>
+            <a-button type="primary" @click="exportOrders">Xuất Excel</a-button>
         </div>
         <a-table :columns="tableColumns" :data-source="orders" rowKey="id">
             <template #bodyCell="{ column, record }">
@@ -176,6 +176,22 @@ const handleStatusChange = async (orderId: number, newStatus: EOrderStatus) => {
             },
         });
     });
+};
+
+const exportOrders = async () => {
+    try {
+        const blob = await OrderService.exportOrders();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'orders-list.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        message.error('Xuất Excel thất bại');
+    }
 };
 
 </script>
