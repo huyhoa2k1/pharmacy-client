@@ -30,6 +30,9 @@
                     <a-menu-item key="/admin/general-settings">
                         <router-link to="/admin/general-settings">Cài đặt chung</router-link>
                     </a-menu-item>
+                    <a-menu-item key="/admin/province-ward-management">
+                        <router-link to="/admin/province-ward-management">Province & Ward</router-link>
+                    </a-menu-item>
                 </a-sub-menu>
             </a-menu>
         </a-layout-sider>

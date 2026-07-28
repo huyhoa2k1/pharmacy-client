@@ -10,4 +10,12 @@ export class ProvinceService {
       axiosInstance
         .get<IGetWardResponse[]>(`/wards?provinceCode=${provinceCode}`)
         .then((res) => res.data)
+
+  public static readonly importWardsByProvince: (
+    provinceCode: string,
+    payload: any[],
+  ) => Promise<boolean> = async (provinceCode, payload) =>
+    axiosInstance
+      .post<boolean>(`/provinces/${provinceCode}/wards/import`, payload)
+      .then((res) => res.data)
 }

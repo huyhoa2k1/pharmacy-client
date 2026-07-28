@@ -135,10 +135,20 @@ const router = createRouter({
     {
       path: '/admin/general-settings',
       name: 'admin-general-settings',
-      component: () => import('@/views/Admin/Setting/index.vue'),
+      component: () => import('@/views/Admin/Setting/General/index.vue'),
       meta: {
         layout: AdminLayout,
         title: 'Cài đặt chung',
+        roles: [],
+      },
+    },
+    {
+      path: '/admin/province-ward-management',
+      name: 'admin-province-ward-management',
+      component: () => import('@/views/Admin/Setting/Province/index.vue'),
+      meta: {
+        layout: AdminLayout,
+        title: 'Quản lý province và ward',
         roles: [],
       },
     },
