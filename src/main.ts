@@ -10,12 +10,17 @@ import CKEditor from '@ckeditor/ckeditor5-vue'
 
 import App from './App.vue'
 import router from './router'
+import { useUserStore } from './stores/user'
 
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
+
+const userStore = useUserStore()
+userStore.restoreSession()
+
 app.use(router)
 app.use(Antd)
 app.use(CKEditor)

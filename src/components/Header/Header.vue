@@ -147,7 +147,6 @@ const openAuthDialog = () => {
 
 const handleLogout = () => {
   userStore.logout();
-  localStorage.removeItem('token');
 };
 
 onMounted(() => {
