@@ -22,10 +22,20 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { UserOutlined } from '@ant-design/icons-vue';
+import { useUserStore } from '@/stores/user';
 
-const userInfo = localStorage.getItem('pharmacy_user');
-const user = userInfo ? JSON.parse(userInfo) : null;
+const userStore = useUserStore();
+const user = computed(() =>
+    userStore.isLogin
+        ? {
+            username: userStore.username,
+            email: userStore.email,
+            phone: userStore.phone,
+        }
+        : null,
+);
 </script>
 
 <style scoped></style>

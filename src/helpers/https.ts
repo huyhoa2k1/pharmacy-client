@@ -1,6 +1,8 @@
 import axios from 'axios'
 import router from '@/router'
 import { message } from 'ant-design-vue'
+import { getActivePinia } from 'pinia'
+import { useUserStore } from '@/stores/user'
 
 const IP = 'localhost'
 const PORT = '8000'
@@ -11,6 +13,14 @@ const axiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 30000,
 })
+
+const getCurrentUserStore = () => {
+  const activePinia = getActivePinia()
+  if (!activePinia) {
+    return null
+  }
+  return useUserStore()
+}
 
 let isRefreshing = false
 let failedQueue: Array<{
@@ -68,7 +78,9 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true
       isRefreshing = true
       const refreshToken = localStorage.getItem('refreshToken')
+      const userStore = getCurrentUserStore()
       if (!refreshToken) {
+        userStore?.logout()
         router.push({ name: 'Login' })
         return Promise.reject(error)
       }
@@ -86,8 +98,7 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest)
       } catch (err) {
         processQueue(err, null)
-        localStorage.removeItem('token')
-        localStorage.removeItem('refreshToken')
+        getCurrentUserStore()?.logout()
         message.error('Session expired. Please log in again.')
         router.push({ name: 'Login' })
         return Promise.reject(err)

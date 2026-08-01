@@ -15,15 +15,15 @@ import MyOrderItem from '../../../components/Personal/MyOrderItem.vue'
 import { OrderService } from '@/api/services/order'
 import { EOrderStatus, type IOrderResponse } from '@/api/models/order'
 import { formatStatusOrder } from '@/utils/format'
+import { useUserStore } from '@/stores/user'
 
 const ordersData = ref<IOrderResponse[]>([])
-
-const userInfo = localStorage.getItem('pharmacy_user')
-const userId = userInfo ? JSON.parse(userInfo).userId : undefined
+const userStore = useUserStore()
+const userId = computed(() => (userStore.isLogin ? userStore.userId : undefined))
 
 const getOrdersByUser = async () => {
-    if (!userId) return
-    const res = await OrderService.getOrderByUserId(userId)
+    if (!userId.value) return
+    const res = await OrderService.getOrderByUserId(userId.value)
     ordersData.value = res || []
 }
 

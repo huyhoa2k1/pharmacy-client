@@ -22,16 +22,24 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, watch, VueElement, h } from 'vue';
+import { computed, reactive, ref, watch, VueElement, h } from 'vue';
 import { UserOutlined, ShoppingOutlined } from '@ant-design/icons-vue';
 import type { MenuProps, ItemType } from 'ant-design-vue';
 import router from '@/router';
+import { useUserStore } from '@/stores/user';
 
 const selectedKeys = ref<string[]>(['1']);
 const openKeys = ref<string[]>(['sub1']);
 
-const userInfo = localStorage.getItem('pharmacy_user');
-const user = userInfo ? JSON.parse(userInfo) : null;
+const userStore = useUserStore();
+const user = computed(() =>
+    userStore.isLogin
+        ? {
+            userName: userStore.username,
+            phone: userStore.phone,
+        }
+        : null,
+);
 
 function getItem(
     label: VueElement | string,
