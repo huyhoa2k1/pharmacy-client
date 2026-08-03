@@ -249,7 +249,6 @@ const handleLogin = async () => {
 
         loginForm.value = { phone: '', password: '' };
     } catch (error) {
-        console.error('Login error:', error);
         message.error('Đăng nhập thất bại. Vui lòng thử lại.');
     } finally {
         isLoginSubmitting.value = false;
@@ -265,36 +264,19 @@ const handleRegister = async () => {
     isRegisterSubmitting.value = true;
 
     try {
-        // TODO: Replace with actual API endpoint
-        // const response = await fetch('/api/auth/register', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(registerForm.value)
-        // });
-
-        // if (!response.ok) {
-        //     throw new Error('Registration failed');
-        // }
-
-        // const data = await response.json();
-        // localStorage.setItem('token', data.token);
-        // localStorage.setItem('user', JSON.stringify(data.user));
-
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const data = await AuthService.register({
+            email: registerForm.value.email,
+            phone: registerForm.value.phone,
+            password: registerForm.value.password
+        });
 
         message.success('Đăng ký thành công!');
-        console.log('Register with:', registerForm.value);
 
-        // Close modal
-        closeModal();
+        isLogin.value = true;
 
         // Reset form
         registerForm.value = { email: '', phone: '', password: '' };
     } catch (error) {
-        console.error('Register error:', error);
         message.error('Đăng ký thất bại. Vui lòng thử lại.');
     } finally {
         isRegisterSubmitting.value = false;

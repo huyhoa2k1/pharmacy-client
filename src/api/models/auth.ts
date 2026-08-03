@@ -14,3 +14,10 @@ export interface ILoginResponse {
     role: string
   }
 }
+
+export interface IRegisterRequest {
+  username?: string
+  email: string
+  phone: string
+  password: string
+}
