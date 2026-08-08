@@ -8,6 +8,7 @@ const IP = 'localhost'
 const PORT = '8000'
 
 export const BASE_URL = `http://${IP}:${PORT}/api`
+export const SOCKET_URL = `http://${IP}:${PORT}/ws`
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
