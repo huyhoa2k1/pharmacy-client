@@ -43,52 +43,7 @@
                         @click="() => (collapsed = !collapsed)" />
                     <i v-else class="trigger pi pi-arrow-left ml-4" @click="() => (collapsed = !collapsed)" />
                     <div class="float-right mr-13 flex items-center gap-8 justify-around" style="width: 200px;">
-                        <a-popover trigger="click">
-                            <a-badge :count="5">
-                                <div
-                                    style="padding: 8px; border-radius: 50%; background: #f0f0f0; cursor: pointer; transition: background 0.3s">
-                                    <BellFilled style=" font-size: 20px; color: dodgerblue" />
-                                </div>
-                            </a-badge>
-
-                            <template #content>
-                                <div class="notification-list">
-                                    <div class="d-flex justify-content-between pb-2"
-                                        style="border-bottom: 1px solid #ccc">
-                                        <div>Thông báo</div>
-                                        <div class="notification-list__action">
-                                            <span>Đánh dấu tất cả là đã đọc</span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <a-list item-layout="horizontal" :data-source="paginatedList">
-                                            <template #renderItem="{ item }">
-                                                <a-list-item>
-                                                    <a-list-item-meta>
-                                                        <template #description>
-                                                            <span :class="item.read ? '' : 'unread-notification'">
-                                                                {{ item.message }}
-                                                            </span>
-                                                            <div style="font-size: 12px"
-                                                                class="d-flex gap-1 align-items-center mt-1 text-primary">
-                                                                <ClockCircleOutlined />
-                                                                <!-- <span>{{ timeAgo(item.created_at) }}</span> -->
-                                                            </div>
-                                                        </template>
-                                                    </a-list-item-meta>
-                                                </a-list-item>
-                                            </template>
-                                        </a-list>
-
-                                        <a-pagination class="mt-3" :current="currentPage" :page-size="pageSize"
-                                            :total="listNoti.length" show-size-changer @change="handlePageChange"
-                                            @showSizeChange="handlePageSizeChange" />
-                                    </div>
-                                    <!-- <a-empty v-if="listNoti.length == 0" :image="simpleImage" /> -->
-                                </div>
-                            </template>
-                        </a-popover>
+                        <NotificationPopover />
                         <a-dropdown>
                             <a-avatar shape="square" size="32">
                                 <template #icon>
@@ -118,6 +73,7 @@
 
 <script setup lang="ts">
 import Breadcrumb from '@/components/common/breadcrumb/index.vue'
+import NotificationPopover from '@/components/Notification/NotificationPopover.vue'
 import { computed, ref } from 'vue'
 import {
     AppstoreOutlined,
@@ -143,6 +99,7 @@ const paginatedList = computed(() => {
 const handlePageChange = (page: any) => {
     currentPage.value = page;
 };
+
 
 // Xử lý thay đổi kích thước trang
 const handlePageSizeChange = (current: any, size: any) => {
