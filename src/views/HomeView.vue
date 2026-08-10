@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { IGetProductResponse } from '@/api/models/product';
 import { ProductService } from '@/api/services/product';
-import ProductCategory from '@/components/ProductCategory/index.vue';
+import SaleProducts from '@/components/Sales/index.vue';
+import BestSellers from '@/components/BestSellers/index.vue';
 import { onMounted, ref } from 'vue';
 import { globalLoading } from '@/stores/loading'
 
@@ -20,6 +21,7 @@ onMounted(() => {
 
 <template>
   <main>
-    <ProductCategory :data="data" />
+    <SaleProducts :data="data" />
+    <BestSellers />
   </main>
 </template>

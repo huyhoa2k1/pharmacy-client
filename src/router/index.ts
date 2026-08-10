@@ -56,6 +56,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/best-sellers',
+      name: 'best-sellers',
+      component: () => import('@/views/BestSellersView.vue'),
+      meta: {
+        layout: DetailLayout,
+        title: 'Sản phẩm bán chạy nhất',
+      },
+    },
+    {
       path: '/ca-nhan',
       name: 'personal-info',
       component: () => import('@/views/Personal/index.vue'),
