@@ -33,6 +33,15 @@ export class ProductService {
         .get<IGetProductResponse[]>(`/products/search?keyword=${keyword}`)
         .then((res) => res.data)
 
+  public static readonly getBestSellingProducts: (
+    minSold?: number,
+  ) => Promise<IGetProductResponse[]> = async (minSold = 5) =>
+    axiosInstance
+      .get<IGetProductResponse[]>(`/products/best-sellers`, {
+        params: { minSold },
+      })
+      .then((res) => res.data)
+
   public static readonly uploadProductImages: (formData: FormData) => Promise<string[]> = async (
     formData,
   ) =>
