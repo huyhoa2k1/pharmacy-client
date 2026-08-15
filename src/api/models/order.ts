@@ -51,5 +51,6 @@ export interface IOrderResponse {
     price: number
     productName: string
   }[]
+  createdAt: string
   updatedAt: string
 }
