@@ -1,17 +1,15 @@
 <template>
-    <a-config-provider :theme="{ token: { colorPrimary: '#8b5cf6' } }">
-        <div style="background-color: #edf0f3;">
-            <Header />
-            <Navbar :categories="categories" />
-            <div class=" w-7xl mr-auto ml-auto">
-                <Breadcrumb />
-            </div>
-            <div class=" w-7xl mr-auto ml-auto">
-                <router-view></router-view>
-            </div>
-            <<Footer />
+    <div class="app-shell">
+        <Header />
+        <Navbar :categories="categories" />
+        <div class=" w-7xl mr-auto ml-auto">
+            <Breadcrumb />
         </div>
-    </a-config-provider>
+        <div class=" w-7xl mr-auto ml-auto">
+            <router-view></router-view>
+        </div>
+        <Footer />
+    </div>
 </template>
 
 <script setup lang="ts">

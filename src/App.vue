@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { pharmacyTheme } from '@/config/designSystem'
 
 const route = useRoute()
 </script>
 
 <template>
-  <component :is="route.meta?.layout">
-    <slot></slot>
-  </component>
+  <a-config-provider :theme="pharmacyTheme">
+    <component :is="route.meta?.layout">
+      <slot></slot>
+    </component>
+  </a-config-provider>
 </template>
-
-<style>
-* {
-  box-sizing: border-box;
-  font-family: "Quicksand";
-}
-</style>
