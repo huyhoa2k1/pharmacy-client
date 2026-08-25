@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { IGetProductResponse } from '@/api/models/product'
 import { ProductService } from '@/api/services/product'
 import type { IGetCategoryResponse } from '@/api/models/category'
 import { CategoryService } from '@/api/services/category'
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
+import Carousel from 'primevue/carousel'
 import { debounce } from 'lodash'
 
 const router = useRouter()
@@ -19,10 +20,32 @@ const isLoadingProducts = ref(true)
 const isLoadingCategories = ref(true)
 const productsError = ref('')
 const categoriesError = ref('')
+const saleNow = ref(Date.now())
+let saleTimerId: ReturnType<typeof setInterval> | undefined
 
 const categoryIcons = ['pi-heart', 'pi-sparkles', 'pi-sun', 'pi-users', 'pi-plus-circle', 'pi-home']
+const carouselResponsiveOptions = [
+  { breakpoint: '1200px', numVisible: 3, numScroll: 1 },
+  { breakpoint: '768px', numVisible: 2, numScroll: 1 },
+  { breakpoint: '576px', numVisible: 1, numScroll: 1 },
+]
 
 const visibleCategories = computed(() => categories.value.slice(0, 6))
+const saleEndAt = computed(() => {
+  const saleEndTimes = saleProducts.value
+    .map((product) => Date.parse(product.saleEndTime))
+    .filter((time) => !Number.isNaN(time) && time > saleNow.value)
+
+  return saleEndTimes.length ? Math.min(...saleEndTimes) : 0
+})
+const saleCountdown = computed(() => {
+  const remainingSeconds = Math.max(0, Math.floor((saleEndAt.value - saleNow.value) / 1000))
+  const hours = Math.floor(remainingSeconds / 3600)
+  const minutes = Math.floor((remainingSeconds % 3600) / 60)
+  const seconds = remainingSeconds % 60
+
+  return [hours, minutes, seconds].map((value) => String(value).padStart(2, '0'))
+})
 
 const getProducts = async () => {
   isLoadingProducts.value = true
@@ -96,6 +119,13 @@ const submitSearch = () => {
 onMounted(() => {
   getProducts()
   getCategories()
+  saleTimerId = setInterval(() => {
+    saleNow.value = Date.now()
+  }, 1000)
+})
+
+onUnmounted(() => {
+  if (saleTimerId) clearInterval(saleTimerId)
 })
 </script>
 
@@ -196,29 +226,71 @@ onMounted(() => {
     </section>
 
     <section id="recommendations" class="homepage__section" aria-labelledby="sale-heading">
-      <div class="section-heading">
-        <div>
-          <p class="section-heading__eyebrow">Ưu đãi hôm nay</p>
-          <h2 id="sale-heading">Sản phẩm đang giảm giá</h2>
-        </div>
-      </div>
-
-      <div v-if="isLoadingProducts" class="product-grid product-grid--loading" aria-busy="true">
-        <div v-for="item in 4" :key="item" class="product-skeleton" aria-hidden="true"></div>
-      </div>
-      <div v-else-if="productsError" class="state-card state-card--error" role="alert">
-        <p>{{ productsError }}</p>
-        <button class="btn-secondary" type="button" @click="getProducts">Thử lại</button>
-      </div>
-      <p v-else-if="saleProducts.length === 0" class="state-card">
-        Hiện chưa có sản phẩm giảm giá.
-      </p>
-      <div v-else class="product-grid">
-        <ProductCard
-          v-for="product in saleProducts.slice(0, 4)"
-          :key="product.id"
-          :data="product"
+      <div class="flash-sale">
+        <img
+          class="flash-sale__banner"
+          src="https://prod-cdn.pharmacity.io/e-com/images/flashsale/20260805020324-0-Home_Flashsale_web.png?versionId=qcHQ6.0JKKgkZNotOyzH659ni7BfmvOf"
+          alt="Ưu đãi Flash Sale"
         />
+
+        <div class="flash-sale__content">
+          <div class="flash-sale__heading">
+            <div>
+              <p class="flash-sale__eyebrow">Ưu đãi trong ngày</p>
+              <h2 id="sale-heading">Flash Sale</h2>
+            </div>
+            <div class="flash-sale__timer" aria-live="polite" aria-label="Thời gian còn lại">
+              <span class="flash-sale__timer-label">Kết thúc sau</span>
+              <span
+                v-for="(unit, index) in saleCountdown"
+                :key="['giờ', 'phút', 'giây'][index]"
+                class="flash-sale__time-unit"
+              >
+                <strong>{{ unit }}</strong>
+                <small>{{ ['Giờ', 'Phút', 'Giây'][index] }}</small>
+              </span>
+            </div>
+            <a class="flash-sale__all-link" href="#best-sellers-heading">
+              Xem tất cả <i class="pi pi-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+
+          <div class="flash-sale__categories" aria-label="Nhóm ưu đãi">
+            <span>Chăm sóc tiêu hóa</span>
+            <span>Sức khỏe đôi mắt</span>
+            <span>Tăng cường đề kháng</span>
+          </div>
+
+          <div
+            v-if="isLoadingProducts"
+            class="flash-sale__products product-grid--loading"
+            aria-busy="true"
+          >
+            <div v-for="item in 4" :key="item" class="product-skeleton" aria-hidden="true"></div>
+          </div>
+          <div v-else-if="productsError" class="state-card state-card--error" role="alert">
+            <p>{{ productsError }}</p>
+            <button class="btn-secondary" type="button" @click="getProducts">Thử lại</button>
+          </div>
+          <p v-else-if="saleProducts.length === 0" class="state-card">
+            Hiện chưa có sản phẩm giảm giá.
+          </p>
+          <Carousel
+            v-else
+            class="product-carousel product-carousel--flash-sale"
+            :value="saleProducts"
+            :num-visible="4"
+            :num-scroll="1"
+            :responsive-options="carouselResponsiveOptions"
+            :show-indicators="false"
+          >
+            <template #item="slotProps">
+              <div class="product-carousel__item">
+                <ProductCard :data="slotProps.data" />
+              </div>
+            </template>
+          </Carousel>
+        </div>
       </div>
     </section>
 
@@ -243,9 +315,21 @@ onMounted(() => {
       <p v-else-if="bestSellers.length === 0" class="state-card">
         Chưa có sản phẩm bán chạy phù hợp.
       </p>
-      <div v-else class="product-grid">
-        <ProductCard v-for="product in bestSellers.slice(0, 4)" :key="product.id" :data="product" />
-      </div>
+      <Carousel
+        v-else
+        class="product-carousel"
+        :value="bestSellers"
+        :num-visible="4"
+        :num-scroll="1"
+        :responsive-options="carouselResponsiveOptions"
+        :show-indicators="false"
+      >
+        <template #item="slotProps">
+          <div class="product-carousel__item">
+            <ProductCard :data="slotProps.data" />
+          </div>
+        </template>
+      </Carousel>
     </section>
 
     <section class="trust-signals" aria-label="Lý do chọn Pharmacy">
@@ -565,6 +649,202 @@ onMounted(() => {
   gap: var(--space-lg);
 }
 
+.flash-sale {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-muted);
+  box-shadow: var(--shadow-md);
+}
+
+.flash-sale__banner {
+  display: block;
+  width: 100%;
+  min-height: 150px;
+  max-height: 260px;
+  object-fit: cover;
+}
+
+.flash-sale__content {
+  padding: clamp(var(--space-md), 3vw, var(--space-xl));
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--color-secondary) 30%, transparent),
+      transparent 25rem
+    ),
+    var(--color-background);
+}
+
+.flash-sale__heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.flash-sale__eyebrow {
+  margin: 0 0 var(--space-xs);
+  color: #0e7490;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.flash-sale__heading h2 {
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  text-transform: uppercase;
+}
+
+.flash-sale__timer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-left: auto;
+}
+
+.flash-sale__timer-label {
+  color: var(--color-muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.flash-sale__time-unit {
+  display: grid;
+  min-width: 46px;
+  place-items: center;
+  gap: 2px;
+}
+
+.flash-sale__time-unit strong {
+  min-width: 42px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.flash-sale__time-unit small {
+  color: var(--color-muted-foreground);
+  font-size: 0.6875rem;
+}
+
+.flash-sale__all-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: var(--space-sm);
+  color: #0e7490;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.flash-sale__all-link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.flash-sale__categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.flash-sale__categories span {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.flash-sale__products {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.product-carousel {
+  position: relative;
+}
+
+.product-carousel__item {
+  height: 100%;
+  padding: var(--space-xs);
+}
+
+.product-carousel :deep(.p-carousel-content) {
+  align-items: stretch;
+  gap: var(--space-sm);
+}
+
+.product-carousel :deep(.p-carousel-container) {
+  min-width: 0;
+}
+
+.product-carousel :deep(.p-carousel-viewport) {
+  padding: var(--space-xs) 0;
+}
+
+.product-carousel :deep(.p-carousel-item) {
+  display: flex;
+  align-items: stretch;
+}
+
+.product-carousel :deep(.p-carousel-prev-button),
+.product-carousel :deep(.p-carousel-next-button) {
+  display: inline-flex !important;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  background: var(--color-card);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.product-carousel :deep(.p-carousel-prev-button .p-button-icon),
+.product-carousel :deep(.p-carousel-next-button .p-button-icon) {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+}
+
+.product-carousel :deep(.p-carousel-prev-button:disabled),
+.product-carousel :deep(.p-carousel-next-button:disabled) {
+  display: none !important;
+}
+
+.product-carousel :deep(.p-carousel-prev-button:hover),
+.product-carousel :deep(.p-carousel-next-button:hover) {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.product-carousel :deep(.p-carousel-prev-button:focus-visible),
+.product-carousel :deep(.p-carousel-next-button:focus-visible) {
+  outline: 3px solid color-mix(in srgb, var(--color-ring) 35%, transparent);
+  outline-offset: 2px;
+}
+
 .product-skeleton,
 .state-card {
   border: 1px solid var(--color-border);
@@ -711,6 +991,25 @@ onMounted(() => {
   .section-heading--with-action {
     align-items: start;
     flex-direction: column;
+  }
+
+  .flash-sale__banner {
+    min-height: 110px;
+  }
+
+  .flash-sale__heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .flash-sale__timer {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .flash-sale__all-link {
+    margin-left: auto;
   }
 
   .category-grid,
