@@ -52,15 +52,15 @@ const isActive = (path: string): boolean => {
 }
 
 .nav-link:hover {
-    color: #a855f7;
-    border-bottom-color: #a855f7;
-    background-color: rgba(168, 85, 247, 0.1);
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .nav-link-active {
-    color: #a855f7;
-    border-bottom-color: #a855f7;
-    background-color: rgba(168, 85, 247, 0.15);
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
 
 @media (max-width: 768px) {

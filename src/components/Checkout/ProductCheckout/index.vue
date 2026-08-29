@@ -43,16 +43,21 @@ const props = defineProps<{
     min-width: 0;
     font-weight: 600;
     font-size: 14px;
-    color: #111827;
+    color: var(--color-foreground);
     text-decoration: none;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: color 0.2s ease;
+    transition: color var(--transition-base);
 }
 
 .product-name:hover {
-    color: #8b5cf6;
+    color: var(--color-primary);
+}
+
+.product-name:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--color-ring) 35%, transparent);
+    outline-offset: 2px;
 }
 
 /* Quantity badge */
@@ -60,11 +65,11 @@ const props = defineProps<{
     flex-shrink: 0;
     font-size: 13px;
     font-weight: 500;
-    color: #6b7280;
+    color: var(--color-muted-foreground);
     white-space: nowrap;
     padding: 2px 8px;
-    background: #f3f4f6;
-    border-radius: 4px;
+    background: var(--color-muted);
+    border-radius: var(--radius-sm);
 }
 
 /* Total price */
@@ -72,10 +77,16 @@ const props = defineProps<{
     flex-shrink: 0;
     font-size: 13px;
     font-weight: 700;
-    color: #ef4444;
+    color: var(--color-destructive);
     white-space: nowrap;
     text-align: right;
     min-width: 80px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .product-name {
+        transition: none;
+    }
 }
 
 /* Tooltip styling */

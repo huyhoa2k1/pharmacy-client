@@ -6,7 +6,7 @@
                     <h3 v-if="cartItems.length > 0" class="text-2xl font-bold">Giỏ hàng ({{ cartItems.length }})</h3>
                     <a-popconfirm title="Bạn có chắc muốn xóa toàn bộ sản phẩm?" ok-text="Xóa" cancel-text="Hủy"
                         @confirm="confirm" @cancel="cancel">
-                        <button class="text-purple-600 cursor-pointer" v-if="cartItems.length > 0">Xóa tất cả</button>
+                        <button class="cart-clear-button" v-if="cartItems.length > 0">Xóa tất cả</button>
                     </a-popconfirm>
                 </div>
                 <div class="grid gap-2 md:gap-6">
@@ -138,11 +138,11 @@ onMounted(() => {
 <style scoped>
 .cart-view {
     display: grid;
-    gap: 24px;
-    padding: 24px;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
     max-width: 1280px;
     margin: 0 auto;
-    background: #fbf7ff;
+    background: var(--color-background);
     min-height: calc(100vh - 200px);
 }
 
@@ -152,11 +152,11 @@ onMounted(() => {
 
 /* Left panel */
 .cart-left {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.06);
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
-    border: 1px solid #f3e8ff;
+    border: 1px solid var(--color-border);
 }
 
 .cart-left-empty {
@@ -166,88 +166,97 @@ onMounted(() => {
 }
 
 .cart-left>div {
-    padding: 24px;
+    padding: var(--space-lg);
 }
 
-/* Free shipping box */
 .free-shipping {
-    background: linear-gradient(135deg, #f5f3ff 0%, #f3e8ff 100%);
-    border: 1px solid #e9d5ff;
-    color: #5b21b6;
+    background: color-mix(in srgb, var(--color-secondary) 18%, var(--color-card));
+    border: 1px solid var(--color-border);
+    color: var(--color-foreground);
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 
-/* Divider line between header and items */
 .divider-line {
     height: 1px;
-    background: #efe6ff;
+    background: var(--color-border);
     margin: 8px 0 0 0;
 }
 
-/* Headings and small text */
 .cart-left h3 {
-    color: #4c1d95;
+    color: var(--color-foreground);
+    font-family: Figtree, Arial, sans-serif;
 }
 
 .cart-left p,
 .cart-left .text-sm {
-    color: #4c1d95;
+    color: var(--color-foreground);
 }
 
-/* Buttons and links */
-.cart-left button {
-    color: #7c3aed;
+.cart-clear-button {
+    color: var(--color-primary);
     font-weight: 600;
-    transition: all 0.2s ease;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-base), background-color var(--transition-base);
 }
 
-.cart-left button:hover {
-    color: #6d28d9;
-    text-decoration: underline;
+.cart-clear-button:hover {
+    color: var(--color-foreground);
+    background-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    text-decoration: none;
 }
 
-/* Checkbox styling for Antd */
+.cart-clear-button:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--color-ring) 35%, transparent);
+    outline-offset: 2px;
+}
+
 .cart-left :deep(.ant-checkbox) {
-    --ant-primary-color: #8b5cf6;
+    --ant-primary-color: var(--color-primary);
 }
 
 .cart-left :deep(.ant-checkbox-inner) {
+    border-color: var(--color-muted-foreground);
     border-radius: 4px;
 }
 
 .cart-left :deep(.ant-checkbox-checked .ant-checkbox-inner) {
-    background-color: #8b5cf6;
-    border-color: #8b5cf6;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
-/* Product totals text */
 .cart-left :deep(.text-neutral-900) {
-    color: #2d0b45;
+    color: var(--color-foreground);
 }
 
-/* Empty cart styling */
 .pi-shopping-cart {
-    opacity: 0.5;
+    color: var(--color-primary);
+    opacity: 0.65;
 }
 
-/* Responsive adjustments */
+@media (prefers-reduced-motion: reduce) {
+    .cart-clear-button {
+        transition: none;
+    }
+}
+
 @media (max-width: 1024px) {
     .cart-view {
         grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 16px;
+        gap: var(--space-md);
+        padding: var(--space-md);
     }
 }
 
 @media (max-width: 768px) {
     .cart-view {
         padding: 12px;
-        gap: 16px;
+        gap: var(--space-md);
     }
 
     .cart-left>div {
-        padding: 16px;
+        padding: var(--space-md);
     }
 }
 </style>

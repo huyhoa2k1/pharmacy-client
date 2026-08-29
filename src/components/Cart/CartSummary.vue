@@ -1,21 +1,21 @@
 <template>
     <div class="cart-right flex flex-col space-y-4">
         <div>
-            <div class="bg-white p-4 rounded-sm">
+            <div class="cart-summary-card promotion-card">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-2">
-                        <i class="pi pi-receipt text-violet-500"></i>
+                        <i class="pi pi-receipt cart-summary-icon"></i>
                         <span>Khuyến mãi</span>
                     </div>
                     <div>
-                        <button @click="$emit('showDrawer')" class="text-violet-500 cursor-pointer">Chọn mã</button>
+                        <button @click="$emit('showDrawer')" class="promotion-button">Chọn mã</button>
                     </div>
                 </div>
             </div>
         </div>
         <div>
             <div
-                class="grid grid-flow-col items-center gap-2 rounded-sm bg-white md:grid-flow-row md:items-start md:gap-4 md:p-4">
+                class="cart-summary-card grid grid-flow-col items-center gap-2 md:grid-flow-row md:items-start md:gap-4">
                 <div class="grid gap-4">
                     <div class="hidden grid-flow-col items-center justify-between gap-2 md:grid">
                         <p class="text-sm text-neutral-900">Tạm tính</p>
@@ -29,11 +29,11 @@
                         <p class="text-sm text-neutral-900">Giảm giá sản phẩm</p>
                         <p class="text-sm font-semibold text-neutral-900">-</p>
                     </div>
-                    <div class="bg-[hsl(0,0%,82%)] h-[1px] hidden w-full md:block"></div>
+                    <div class="summary-divider hidden w-full md:block"></div>
                     <div
                         class="grid items-center justify-items-end gap-0.5 md:grid-flow-col md:justify-between md:gap-2">
                         <p class="text-sm text-neutral-900 md:text-base md:font-semibold">Tổng tiền</p>
-                        <p class="text-xl font-bold leading-8 text-red-500 no-underline md:text-2xl">{{
+                        <p class="total-price text-xl font-bold leading-8 no-underline md:text-2xl">{{
                             formattedSubTotal }}</p>
                     </div>
                 </div>
@@ -103,6 +103,61 @@ const totalQuantity = computed(() => {
     position: sticky;
     top: 20px;
     max-width: 100%;
+}
+
+.cart-summary-card {
+    padding: var(--space-md);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-foreground);
+}
+
+.promotion-card {
+    background: color-mix(in srgb, var(--color-secondary) 12%, var(--color-card));
+}
+
+.cart-summary-icon,
+.promotion-button {
+    color: var(--color-primary);
+}
+
+.promotion-button {
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: color var(--transition-base), background-color var(--transition-base);
+}
+
+.promotion-button:hover {
+    color: var(--color-foreground);
+    background-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.promotion-button:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--color-ring) 35%, transparent);
+    outline-offset: 2px;
+}
+
+.summary-divider {
+    height: 1px;
+    background: var(--color-border);
+}
+
+.total-price {
+    color: var(--color-destructive);
+}
+
+.cart-summary-card :deep(.text-neutral-900) {
+    color: var(--color-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .promotion-button {
+        transition: none;
+    }
 }
 
 @media (max-width: 1024px) {

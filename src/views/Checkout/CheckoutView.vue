@@ -237,11 +237,11 @@ const handleSubmitOrder = async () => {
 
 .cart-view {
     display: grid;
-    gap: 24px;
-    padding: 16px;
+    gap: var(--space-lg);
+    padding: var(--space-md);
     max-width: 1280px;
     margin: 0 auto;
-    background: #fbf7ff;
+    background: var(--color-background);
     min-height: calc(100vh - 200px);
     position: relative;
     z-index: 1;
@@ -254,7 +254,7 @@ const handleSubmitOrder = async () => {
 .cart-left {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-md);
     min-width: 0;
 }
 
@@ -265,30 +265,32 @@ const handleSubmitOrder = async () => {
 }
 
 .list-product {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    padding: 16px;
-    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.06);
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    padding: var(--space-md);
+    box-shadow: var(--shadow-md);
     min-width: 0;
     overflow: hidden;
 }
 
 .list-product h3 {
-    color: #4c1d95;
+    color: var(--color-foreground);
+    font-family: Figtree, Arial, sans-serif;
     margin: 0;
 }
 
 /* Empty cart styling */
 .pi-shopping-cart {
-    opacity: 0.5;
+    color: var(--color-primary);
+    opacity: 0.65;
 }
 
 /* Responsive: dưới 768px chuyển sang 1 cột */
 @media (max-width: 1024px) {
     .cart-view {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: var(--space-md);
     }
 }
 
@@ -296,11 +298,11 @@ const handleSubmitOrder = async () => {
     .cart-view {
         grid-template-columns: 1fr;
         padding: 12px;
-        gap: 16px;
+        gap: var(--space-md);
     }
 
     .list-product {
-        padding: 12px;
+        padding: var(--space-md);
     }
 }
 </style>

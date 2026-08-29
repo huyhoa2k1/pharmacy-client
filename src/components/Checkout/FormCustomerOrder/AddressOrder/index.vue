@@ -105,20 +105,20 @@ const validateForm = (): boolean => {
 
 <style scoped>
 .address-form {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
+    box-shadow: var(--shadow-sm);
 }
 
 .form-title {
     font-size: 18px;
     font-weight: 700;
-    color: #4c1d95;
+    color: var(--color-foreground);
     margin: 0 0 20px 0;
     padding-bottom: 12px;
-    border-bottom: 2px solid #f3e8ff;
+    border-bottom: 2px solid var(--color-border);
 }
 
 .form-group {
@@ -129,18 +129,18 @@ const validateForm = (): boolean => {
     display: block;
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var(--color-foreground);
     margin-bottom: 8px;
 }
 
 .required {
-    color: #ef4444;
+    color: var(--color-destructive);
 }
 
 .error-message {
     display: block;
     font-size: 12px;
-    color: #ef4444;
+    color: var(--color-destructive);
     margin-top: 6px;
 }
 
@@ -149,7 +149,7 @@ const validateForm = (): boolean => {
     gap: 12px;
     margin-top: 24px;
     padding-top: 16px;
-    border-top: 1px solid #f3e8ff;
+    border-top: 1px solid var(--color-border);
 }
 
 .form-actions :deep(.ant-btn) {
@@ -160,45 +160,45 @@ const validateForm = (): boolean => {
 }
 
 .form-actions :deep(.ant-btn-primary) {
-    background: #8b5cf6;
-    border-color: #8b5cf6;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
 }
 
 .form-actions :deep(.ant-btn-primary:hover) {
-    background: #7c3aed;
-    border-color: #7c3aed;
+    background: color-mix(in srgb, var(--color-accent) 90%, #000000);
+    border-color: color-mix(in srgb, var(--color-accent) 90%, #000000);
 }
 
 /* Select styling */
 :deep(.ant-select-selector) {
     border-radius: 6px !important;
-    border-color: #d1d5db !important;
-    transition: all 0.2s ease;
+    border-color: var(--color-border) !important;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 :deep(.ant-select-selector:hover) {
-    border-color: #8b5cf6 !important;
+    border-color: var(--color-primary) !important;
 }
 
 :deep(.ant-select-focused .ant-select-selector) {
-    border-color: #8b5cf6 !important;
-    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 20%, transparent) !important;
 }
 
 /* Input styling */
 :deep(.ant-input) {
     border-radius: 6px;
-    border-color: #d1d5db;
-    transition: all 0.2s ease;
+    border-color: var(--color-border);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 :deep(.ant-input:hover) {
-    border-color: #8b5cf6;
+    border-color: var(--color-primary);
 }
 
 :deep(.ant-input:focus) {
-    border-color: #8b5cf6;
-    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 20%, transparent);
 }
 
 /* Responsive */

@@ -8,68 +8,68 @@
     </div>
     <div class="product-right">
       <!-- Quantity Section -->
-      <div class="border-b border-gray-200 pb-6">
-        <p class="text-gray-700 font-semibold text-sm mb-3">Số lượng</p>
-        <div class="flex items-center gap-3 bg-gray-50 w-fit p-2 rounded-lg">
+      <div class="border-b border-[var(--color-border)] pb-6">
+        <p class="text-[var(--color-foreground)] font-semibold text-sm mb-3">Số lượng</p>
+        <div class="flex items-center gap-3 bg-[var(--color-muted)] w-fit p-2 rounded-lg">
           <button @click="decreaseQuantity"
-            class="rounded-full bg-gray-300 hover:bg-gray-400 w-8 h-8 flex items-center justify-center cursor-pointer transition">
-            <MinusOutlined class="text-sm text-gray-700" />
+            class="quantity-control rounded-full w-8 h-8 flex items-center justify-center cursor-pointer transition">
+            <MinusOutlined class="text-sm" />
           </button>
-          <input type="text" class="w-12 text-center font-bold text-gray-900 bg-transparent border-0 outline-none"
+          <input type="text" class="w-12 text-center font-bold text-[var(--color-foreground)] bg-transparent border-0 outline-none"
             v-model.number="quantity" readonly>
           <button @click="increaseQuantity"
-            class="rounded-full bg-gray-300 hover:bg-gray-400 w-8 h-8 flex items-center justify-center cursor-pointer transition">
-            <PlusOutlined class="text-sm text-gray-700" />
+            class="quantity-control rounded-full w-8 h-8 flex items-center justify-center cursor-pointer transition">
+            <PlusOutlined class="text-sm" />
           </button>
         </div>
-        <p class="text-xs text-gray-500 mt-2">Còn {{ data.amount }} sản phẩm</p>
+        <p class="text-xs text-[var(--color-muted-foreground)] mt-2">Còn {{ data.amount }} sản phẩm</p>
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex flex-col gap-3 py-6 border-b border-gray-200">
+      <div class="flex flex-col gap-3 py-6 border-b border-[var(--color-border)]">
         <a-button type="primary" size="large" @click="buyNow"
-          class="w-full font-semibold text-base h-12 rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 border-0">
+          class="product-buy-button w-full font-semibold text-base h-12 rounded-lg border-0">
           <i class="pi pi-bolt mr-2"></i>
           Mua ngay
         </a-button>
         <a-button size="large" @click="addToCart"
-          class="w-full font-semibold text-base h-12 rounded-lg border-2 border-purple-600 text-purple-600 hover:bg-purple-50">
+          class="product-cart-button w-full font-semibold text-base h-12 rounded-lg border-2">
           <i class="pi pi-shopping-cart mr-2"></i>
           Thêm vào giỏ hàng
         </a-button>
       </div>
 
       <!-- Benefits -->
-      <div class="grid grid-cols-2 gap-4 py-6 border-b border-gray-200">
+      <div class="grid grid-cols-2 gap-4 py-6 border-b border-[var(--color-border)]">
         <div class="text-center">
           <div class="flex justify-center mb-2">
-            <i class="pi pi-clock text-green-500 text-2xl"></i>
+            <i class="pi pi-clock text-[var(--color-accent)] text-2xl"></i>
           </div>
-          <p class="text-xs font-semibold text-gray-800">Giao hàng siêu tốc</p>
-          <p class="text-xs text-gray-500 mt-1">Trong 24h</p>
+          <p class="text-xs font-semibold text-[var(--color-foreground)]">Giao hàng siêu tốc</p>
+          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">Trong 24h</p>
         </div>
         <div class="text-center">
           <div class="flex justify-center mb-2">
-            <i class="pi pi-truck text-green-500 text-2xl"></i>
+            <i class="pi pi-truck text-[var(--color-accent)] text-2xl"></i>
           </div>
-          <p class="text-xs font-semibold text-gray-800">Miễn phí vận chuyển</p>
-          <p class="text-xs text-gray-500 mt-1">Từ 50.000đ</p>
+          <p class="text-xs font-semibold text-[var(--color-foreground)]">Miễn phí vận chuyển</p>
+          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">Từ 50.000đ</p>
         </div>
       </div>
 
       <!-- Additional Info -->
       <div class="pt-4 space-y-3">
         <div class="flex items-center gap-2">
-          <i class="pi pi-shield text-green-600"></i>
-          <span class="text-sm text-gray-700">Bảo hành chính hãng</span>
+          <i class="pi pi-shield text-[var(--color-accent)]"></i>
+          <span class="text-sm text-[var(--color-foreground)]">Bảo hành chính hãng</span>
         </div>
         <div class="flex items-center gap-2">
-          <i class="pi pi-check-circle text-green-600"></i>
-          <span class="text-sm text-gray-700">Hàng chính hãng 100%</span>
+          <i class="pi pi-check-circle text-[var(--color-accent)]"></i>
+          <span class="text-sm text-[var(--color-foreground)]">Hàng chính hãng 100%</span>
         </div>
         <div class="flex items-center gap-2">
-          <i class="pi pi-times-circle text-red-600"></i>
-          <span class="text-sm text-gray-700">Không chấp nhận đổi trả</span>
+          <i class="pi pi-times-circle text-[var(--color-destructive)]"></i>
+          <span class="text-sm text-[var(--color-foreground)]">Không chấp nhận đổi trả</span>
         </div>
       </div>
     </div>
@@ -166,7 +166,7 @@ watch(() => route.params.id, () => {
 
 <style scoped>
 .product-view {
-  background-color: #fff;
+  background-color: var(--color-card);
   display: grid;
   grid-template-columns: min(74%, calc(888rem/16)) 1fr;
   gap: 32px;
@@ -184,10 +184,37 @@ watch(() => route.params.id, () => {
 .product-right {
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: var(--color-card);
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
   padding: 24px;
+}
+
+.quantity-control {
+  background: var(--color-border);
+  color: var(--color-foreground);
+}
+
+.quantity-control:hover {
+  background: var(--color-secondary);
+}
+
+.product-buy-button {
+  background: var(--color-accent) !important;
+  color: var(--color-on-accent) !important;
+}
+
+.product-buy-button:hover {
+  background: color-mix(in srgb, var(--color-accent) 90%, #000000) !important;
+}
+
+.product-cart-button {
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+.product-cart-button:hover {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent) !important;
 }
 
 @media (max-width: 1024px) {
