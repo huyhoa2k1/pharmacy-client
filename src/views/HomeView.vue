@@ -21,12 +21,49 @@ const isLoadingCategories = ref(true)
 const productsError = ref('')
 const categoriesError = ref('')
 const saleNow = ref(Date.now())
+const searchPlaceholderSuggestions = [
+  'Tìm thuốc, vitamin, sản phẩm chăm sóc sức khỏe...',
+  'Tìm thuốc cảm, đau đầu...',
+  'Tìm vitamin và thực phẩm bổ sung...',
+  'Tìm sản phẩm chăm sóc da...',
+]
+const animatedSearchPlaceholder = ref('')
 let saleTimerId: ReturnType<typeof setInterval> | undefined
+let placeholderAnimationTimerId: ReturnType<typeof setTimeout> | undefined
+let placeholderSuggestionIndex = 0
+let placeholderCharacterIndex = 0
+let isDeletingPlaceholder = false
 
 const categoryIcons = ['pi-heart', 'pi-sparkles', 'pi-sun', 'pi-users', 'pi-plus-circle', 'pi-home']
 const carouselResponsiveOptions = [
   { breakpoint: '1200px', numVisible: 3, numScroll: 1 },
   { breakpoint: '768px', numVisible: 2, numScroll: 1 },
+  { breakpoint: '576px', numVisible: 1, numScroll: 1 },
+]
+const heroPromotions = [
+  {
+    image:
+      'https://production-cdn.pharmacity.io/digital/1590x0/plain/e-com/images/banners/20260131173232-0-hen.png?versionId=NH2BO4kn.nEaKeq4MxOqa2xoqdyuubR7',
+    alt: 'Ưu đãi chăm sóc sức khỏe',
+  },
+  {
+    image:
+      'https://production-cdn.pharmacity.io/digital/1590x0/plain/e-com/images/banners/20260723075253-0-592_254-hero.jpg?versionId=esUJ2VFBPscRAM5QUe4ggCPiFuklQmEX',
+    alt: 'Khuyến mãi sản phẩm chăm sóc sức khỏe',
+  },
+  {
+    image:
+      'https://production-cdn.pharmacity.io/digital/1590x0/plain/e-com/images/banners/20260813093633-0-1184x508.png?versionId=wo2fTjTd7696vv8jyJyXbAjILbyc8wIQ',
+    alt: 'Ưu đãi sản phẩm cho gia đình',
+  },
+  {
+    image:
+      'https://production-cdn.pharmacity.io/digital/1590x0/plain/e-com/images/banners/20260818085806-0-Bw.png?versionId=FbNAOyazW.1EQtZij7SBLz6wEApRj_hZ',
+    alt: 'Chương trình ưu đãi Pharmacy',
+  },
+]
+const heroPromotionResponsiveOptions = [
+  { breakpoint: '768px', numVisible: 1, numScroll: 1 },
   { breakpoint: '576px', numVisible: 1, numScroll: 1 },
 ]
 
@@ -116,9 +153,41 @@ const submitSearch = () => {
   }
 }
 
+const animateSearchPlaceholder = () => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    animatedSearchPlaceholder.value = searchPlaceholderSuggestions[0]
+    return
+  }
+
+  const suggestion = searchPlaceholderSuggestions[placeholderSuggestionIndex]
+  let delay = isDeletingPlaceholder ? 35 : 65
+
+  if (isDeletingPlaceholder) {
+    placeholderCharacterIndex -= 1
+    animatedSearchPlaceholder.value = suggestion.slice(0, placeholderCharacterIndex)
+
+    if (placeholderCharacterIndex === 0) {
+      isDeletingPlaceholder = false
+      placeholderSuggestionIndex = (placeholderSuggestionIndex + 1) % searchPlaceholderSuggestions.length
+      delay = 450
+    }
+  } else {
+    placeholderCharacterIndex += 1
+    animatedSearchPlaceholder.value = suggestion.slice(0, placeholderCharacterIndex)
+
+    if (placeholderCharacterIndex === suggestion.length) {
+      isDeletingPlaceholder = true
+      delay = 1600
+    }
+  }
+
+  placeholderAnimationTimerId = setTimeout(animateSearchPlaceholder, delay)
+}
+
 onMounted(() => {
   getProducts()
   getCategories()
+  animateSearchPlaceholder()
   saleTimerId = setInterval(() => {
     saleNow.value = Date.now()
   }, 1000)
@@ -126,45 +195,27 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (saleTimerId) clearInterval(saleTimerId)
+  if (placeholderAnimationTimerId) clearTimeout(placeholderAnimationTimerId)
 })
 </script>
 
 <template>
   <main class="homepage">
-    <section class="hero" aria-labelledby="hero-heading">
-      <div class="hero__content">
-        <p class="hero__eyebrow">Chăm sóc sức khỏe mỗi ngày</p>
-        <h1 id="hero-heading">Tìm đúng sản phẩm cho sức khỏe của bạn</h1>
-        <p class="hero__description">
-          Khám phá thuốc, vitamin và sản phẩm chăm sóc sức khỏe từ các thương hiệu đáng tin cậy.
-        </p>
+    <section class="hero" aria-label="Khuyến mãi và tìm kiếm sản phẩm">
+      <div class="hero__masthead"></div>
 
+      <div class="hero__search-panel">
         <form class="hero__search" role="search" @submit.prevent="submitSearch">
-          <label class="sr-only" for="medicine-search"
-            >Tìm thuốc, vitamin hoặc sản phẩm chăm sóc sức khỏe</label
-          >
+          <label class="sr-only" for="medicine-search">Tìm thuốc, vitamin hoặc sản phẩm chăm sóc sức khỏe</label>
           <i class="pi pi-search hero__search-icon" aria-hidden="true"></i>
-          <input
-            id="medicine-search"
-            v-model="searchTerm"
-            class="hero__search-input"
-            type="search"
-            autocomplete="off"
-            placeholder="Tìm thuốc, vitamin, sản phẩm chăm sóc sức khỏe..."
-            :aria-expanded="searchResults.length > 0"
-            aria-controls="medicine-search-results"
-            @input="handleSearchInput"
-          />
+          <input id="medicine-search" v-model="searchTerm" class="hero__search-input" type="search" autocomplete="off"
+            :placeholder="animatedSearchPlaceholder" :aria-expanded="searchResults.length > 0"
+            aria-controls="medicine-search-results" @input="handleSearchInput" />
           <span v-if="isSearching" class="hero__search-status" role="status">Đang tìm</span>
           <button class="btn-primary hero__search-button" type="submit">Tìm sản phẩm</button>
 
-          <ul
-            v-if="searchResults.length"
-            id="medicine-search-results"
-            class="hero__search-results"
-            role="listbox"
-            aria-label="Kết quả tìm kiếm"
-          >
+          <ul v-if="searchResults.length" id="medicine-search-results" class="hero__search-results" role="listbox"
+            aria-label="Kết quả tìm kiếm">
             <li v-for="product in searchResults" :key="product.id" role="option">
               <button type="button" @click="openProduct(product)">
                 <img v-if="product.imageUrl[0]" :src="product.imageUrl[0]" :alt="''" />
@@ -178,19 +229,36 @@ onUnmounted(() => {
           </ul>
         </form>
 
-        <div class="hero__actions">
-          <a class="btn-primary" href="#recommendations">Khám phá sản phẩm</a>
-          <a class="btn-secondary" href="#categories">Xem danh mục</a>
+        <div class="hero__popular-searches" aria-label="Tìm kiếm phổ biến">
+          <span>Gợi ý:</span>
+          <a href="#recommendations">Vitamin</a>
+          <a href="#recommendations">Khẩu trang</a>
+          <a href="#recommendations">Chăm sóc da</a>
+          <a href="#recommendations">Sữa dinh dưỡng</a>
         </div>
       </div>
 
-      <aside class="hero__trust-card" aria-label="Cam kết của Pharmacy">
-        <i class="pi pi-verified hero__trust-icon" aria-hidden="true"></i>
-        <div>
-          <strong>Sản phẩm được chọn lọc</strong>
-          <p>Thông tin rõ ràng để bạn an tâm lựa chọn.</p>
-        </div>
-      </aside>
+      <div class="hero__services" aria-label="Dịch vụ Pharmacy">
+        <a href="#recommendations">
+          <i class="pi pi-comments" aria-hidden="true"></i>
+          <span><strong>Tư vấn cùng dược sĩ</strong><small>Hỗ trợ tận tâm mỗi ngày</small></span>
+          <i class="pi pi-angle-right" aria-hidden="true"></i>
+        </a>
+        <a href="#categories">
+          <i class="pi pi-map-marker" aria-hidden="true"></i>
+          <span><strong>Tìm nhà thuốc gần bạn</strong><small>Thuận tiện mua sắm và nhận hàng</small></span>
+          <i class="pi pi-angle-right" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <Carousel class="hero__promotions" :value="heroPromotions" :num-visible="2" :num-scroll="1"
+        :responsive-options="heroPromotionResponsiveOptions" :show-indicators="false">
+        <template #item="slotProps">
+          <a class="hero__promotion-card" href="#recommendations">
+            <img :src="slotProps.data.image" :alt="slotProps.data.alt" />
+          </a>
+        </template>
+      </Carousel>
     </section>
 
     <section id="categories" class="homepage__section" aria-labelledby="categories-heading">
@@ -210,12 +278,8 @@ onUnmounted(() => {
         Chưa có danh mục để hiển thị.
       </p>
       <div v-else class="category-grid">
-        <router-link
-          v-for="(category, index) in visibleCategories"
-          :key="category.id"
-          :to="{ name: 'products', params: { categoryId: category.id } }"
-          class="category-card"
-        >
+        <router-link v-for="(category, index) in visibleCategories" :key="category.id"
+          :to="{ name: 'products', params: { categoryId: category.id } }" class="category-card">
           <span class="category-card__icon" aria-hidden="true">
             <i :class="['pi', categoryIcons[index % categoryIcons.length]]"></i>
           </span>
@@ -227,11 +291,9 @@ onUnmounted(() => {
 
     <section id="recommendations" class="homepage__section" aria-labelledby="sale-heading">
       <div class="flash-sale">
-        <img
-          class="flash-sale__banner"
+        <img class="flash-sale__banner"
           src="https://prod-cdn.pharmacity.io/e-com/images/flashsale/20260805020324-0-Home_Flashsale_web.png?versionId=qcHQ6.0JKKgkZNotOyzH659ni7BfmvOf"
-          alt="Ưu đãi Flash Sale"
-        />
+          alt="Ưu đãi Flash Sale" />
 
         <div class="flash-sale__content">
           <div class="flash-sale__heading">
@@ -241,11 +303,8 @@ onUnmounted(() => {
             </div>
             <div class="flash-sale__timer" aria-live="polite" aria-label="Thời gian còn lại">
               <span class="flash-sale__timer-label">Kết thúc sau</span>
-              <span
-                v-for="(unit, index) in saleCountdown"
-                :key="['giờ', 'phút', 'giây'][index]"
-                class="flash-sale__time-unit"
-              >
+              <span v-for="(unit, index) in saleCountdown" :key="['giờ', 'phút', 'giây'][index]"
+                class="flash-sale__time-unit">
                 <strong>{{ unit }}</strong>
                 <small>{{ ['Giờ', 'Phút', 'Giây'][index] }}</small>
               </span>
@@ -261,11 +320,7 @@ onUnmounted(() => {
             <span>Tăng cường đề kháng</span>
           </div>
 
-          <div
-            v-if="isLoadingProducts"
-            class="flash-sale__products product-grid--loading"
-            aria-busy="true"
-          >
+          <div v-if="isLoadingProducts" class="flash-sale__products product-grid--loading" aria-busy="true">
             <div v-for="item in 4" :key="item" class="product-skeleton" aria-hidden="true"></div>
           </div>
           <div v-else-if="productsError" class="state-card state-card--error" role="alert">
@@ -275,15 +330,8 @@ onUnmounted(() => {
           <p v-else-if="saleProducts.length === 0" class="state-card">
             Hiện chưa có sản phẩm giảm giá.
           </p>
-          <Carousel
-            v-else
-            class="product-carousel product-carousel--flash-sale"
-            :value="saleProducts"
-            :num-visible="4"
-            :num-scroll="1"
-            :responsive-options="carouselResponsiveOptions"
-            :show-indicators="false"
-          >
+          <Carousel v-else class="product-carousel product-carousel--flash-sale" :value="saleProducts" :num-visible="4"
+            :num-scroll="1" :responsive-options="carouselResponsiveOptions" :show-indicators="false">
             <template #item="slotProps">
               <div class="product-carousel__item">
                 <ProductCard :data="slotProps.data" />
@@ -315,39 +363,14 @@ onUnmounted(() => {
       <p v-else-if="bestSellers.length === 0" class="state-card">
         Chưa có sản phẩm bán chạy phù hợp.
       </p>
-      <Carousel
-        v-else
-        class="product-carousel"
-        :value="bestSellers"
-        :num-visible="4"
-        :num-scroll="1"
-        :responsive-options="carouselResponsiveOptions"
-        :show-indicators="false"
-      >
+      <Carousel v-else class="product-carousel" :value="bestSellers" :num-visible="4" :num-scroll="1"
+        :responsive-options="carouselResponsiveOptions" :show-indicators="false">
         <template #item="slotProps">
           <div class="product-carousel__item">
             <ProductCard :data="slotProps.data" />
           </div>
         </template>
       </Carousel>
-    </section>
-
-    <section class="trust-signals" aria-label="Lý do chọn Pharmacy">
-      <article>
-        <i class="pi pi-shield trust-signals__icon" aria-hidden="true"></i>
-        <h2>Chất lượng rõ ràng</h2>
-        <p>Thông tin sản phẩm minh bạch để bạn dễ đối chiếu và lựa chọn.</p>
-      </article>
-      <article>
-        <i class="pi pi-truck trust-signals__icon" aria-hidden="true"></i>
-        <h2>Giao hàng thuận tiện</h2>
-        <p>Theo dõi đơn hàng của bạn từ lúc xác nhận đến khi nhận hàng.</p>
-      </article>
-      <article>
-        <i class="pi pi-comments trust-signals__icon" aria-hidden="true"></i>
-        <h2>Hỗ trợ tận tâm</h2>
-        <p>Đội ngũ luôn sẵn sàng hỗ trợ khi bạn cần thêm thông tin.</p>
-      </article>
     </section>
   </main>
 </template>
@@ -362,39 +385,21 @@ onUnmounted(() => {
 
 .hero {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.38fr);
-  gap: var(--space-xl);
   min-width: 0;
   overflow: hidden;
-  padding: clamp(var(--space-xl), 5vw, var(--space-3xl));
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background:
-    radial-gradient(circle at 88% 16%, rgba(34, 211, 238, 0.35), transparent 25rem),
-    var(--color-card);
+  background: var(--color-background);
   box-shadow: var(--shadow-md);
 }
 
-.hero::after {
+.hero__masthead {
   position: absolute;
-  right: -4rem;
-  bottom: -6rem;
-  width: 16rem;
-  height: 16rem;
-  border-radius: 50%;
-  background: var(--color-muted);
-  content: '';
+  inset: 0 0 auto;
+  min-height: clamp(260px, 28vw, 365px);
+  background: url('https://prod-cdn.pharmacity.io/e-com/images/banners/20260731041315-0-imaget8.png?versionId=uX2n4Zbnx9m_oAMvbi3qjabhH8op4PJX') center / cover no-repeat;
 }
 
-.hero__content,
-.hero__trust-card {
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-}
-
-.hero__eyebrow,
 .section-heading__eyebrow {
   margin: 0 0 var(--space-sm);
   color: #0e7490;
@@ -404,26 +409,21 @@ onUnmounted(() => {
   text-transform: uppercase;
 }
 
-.hero h1 {
-  max-width: 12ch;
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  line-height: 1.06;
-}
-
-.hero__description {
-  max-width: 58ch;
-  margin: var(--space-md) 0 var(--space-xl);
-  color: var(--color-muted-foreground);
-  font-size: 1.0625rem;
-  line-height: 1.65;
-  overflow-wrap: break-word;
+.hero__search-panel {
+  position: relative;
+  z-index: 2;
+  width: min(100% - clamp(var(--space-md), 7vw, 8rem), 52rem);
+  margin: clamp(190px, 22vw, 290px) auto 0;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  box-shadow: var(--shadow-lg);
 }
 
 .hero__search {
   position: relative;
   display: flex;
-  max-width: 46rem;
   min-height: 56px;
   align-items: center;
   border: 1px solid var(--color-border);
@@ -517,49 +517,154 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
-.hero__actions {
+.hero__popular-searches {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-  min-width: 0;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  color: var(--color-muted-foreground);
+  font-size: 0.8125rem;
 }
 
-.hero__actions a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.hero__popular-searches a {
+  color: var(--color-foreground);
+  font-weight: 600;
   text-decoration: none;
 }
 
-.hero__trust-card {
-  align-self: end;
-  display: flex;
+.hero__popular-searches a:hover,
+.hero__popular-searches a:focus-visible {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.hero__services {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-md);
-  padding: var(--space-lg);
-  border: 1px solid var(--color-border);
+  width: min(100% - clamp(var(--space-md), 7vw, 8rem), 52rem);
+  margin: var(--space-md) auto var(--space-xl);
+}
+
+.hero__services a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  min-height: 68px;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-card) 80%, transparent);
+  background: var(--color-muted);
+  color: var(--color-foreground);
+  text-decoration: none;
+  transition:
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.hero__services a:hover,
+.hero__services a:focus-visible {
+  background: var(--color-card);
   box-shadow: var(--shadow-sm);
 }
 
-.hero__trust-card strong {
-  display: block;
-  margin-bottom: var(--space-xs);
-  font-family: Figtree, Arial, sans-serif;
-  font-size: 1.125rem;
-}
-
-.hero__trust-card p {
-  margin: 0;
-  color: var(--color-muted-foreground);
-  line-height: 1.55;
-}
-
-.hero__trust-icon,
-.trust-signals__icon {
+.hero__services>a>.pi:first-child {
   color: var(--color-accent);
-  font-size: 1.75rem;
+  font-size: 1.5rem;
+}
+
+.hero__services>a>.pi:last-child {
+  color: var(--color-primary);
+}
+
+.hero__services span {
+  display: grid;
+  gap: 2px;
+}
+
+.hero__services strong {
+  font-family: Figtree, Arial, sans-serif;
+  font-size: 0.9375rem;
+}
+
+.hero__services small {
+  color: var(--color-muted-foreground);
+  font-size: 0.75rem;
+}
+
+.hero__promotions {
+  margin: 0 clamp(var(--space-md), 4vw, var(--space-3xl)) clamp(var(--space-md), 4vw, var(--space-3xl));
+}
+
+.hero__promotion-card {
+  display: block;
+  overflow: hidden;
+  margin: var(--space-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition:
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.hero__promotion-card:hover,
+.hero__promotion-card:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.hero__promotion-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 592 / 254;
+  object-fit: cover;
+}
+
+.hero__promotions :deep(.p-carousel-content) {
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.hero__promotions :deep(.p-carousel-container) {
+  min-width: 0;
+}
+
+.hero__promotions :deep(.p-carousel-prev-button),
+.hero__promotions :deep(.p-carousel-next-button) {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  background: var(--color-card);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.hero__promotions :deep(.p-carousel-prev-button:hover),
+.hero__promotions :deep(.p-carousel-next-button:hover) {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.hero__promotions :deep(.p-carousel-prev-button:focus-visible),
+.hero__promotions :deep(.p-carousel-next-button:focus-visible),
+.hero__promotion-card:focus-visible,
+.hero__services a:focus-visible,
+.hero__popular-searches a:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-ring) 35%, transparent);
+  outline-offset: 2px;
 }
 
 .homepage__section {
@@ -668,11 +773,9 @@ onUnmounted(() => {
 .flash-sale__content {
   padding: clamp(var(--space-md), 3vw, var(--space-xl));
   background:
-    radial-gradient(
-      circle at top right,
+    radial-gradient(circle at top right,
       color-mix(in srgb, var(--color-secondary) 30%, transparent),
-      transparent 25rem
-    ),
+      transparent 25rem),
     var(--color-background);
 }
 
@@ -894,6 +997,11 @@ onUnmounted(() => {
   gap: var(--space-sm);
 }
 
+.trust-signals__icon {
+  color: var(--color-accent);
+  font-size: 1.75rem;
+}
+
 .trust-signals h2 {
   font-size: 1.125rem;
 }
@@ -936,12 +1044,18 @@ onUnmounted(() => {
     gap: var(--space-2xl);
   }
 
-  .hero {
-    grid-template-columns: 1fr;
+  .hero__masthead {
+    min-height: 320px;
+    background-position: 62% center;
   }
 
-  .hero__trust-card {
-    max-width: 32rem;
+  .hero__search-panel {
+    width: calc(100% - var(--space-xl));
+    margin-top: 230px;
+  }
+
+  .hero__services {
+    width: calc(100% - var(--space-xl));
   }
 }
 
@@ -951,7 +1065,18 @@ onUnmounted(() => {
   }
 
   .hero {
-    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+  }
+
+  .hero__masthead {
+    min-height: 300px;
+    background-position: 63% center;
+  }
+
+  .hero__search-panel {
+    width: calc(100% - var(--space-md) - var(--space-md));
+    margin-top: 220px;
+    padding: var(--space-sm);
   }
 
   .hero__search {
@@ -976,16 +1101,37 @@ onUnmounted(() => {
     width: 100%;
   }
 
-  .hero__actions {
-    flex-direction: column;
-  }
-
-  .hero__actions a {
-    width: 100%;
+  .hero__popular-searches {
+    gap: var(--space-xs) var(--space-sm);
   }
 
   .hero__search-results {
     top: calc(100% + var(--space-sm));
+  }
+
+  .hero__services {
+    grid-template-columns: 1fr;
+    width: calc(100% - var(--space-md) - var(--space-md));
+    margin-bottom: var(--space-md);
+  }
+
+  .hero__services a {
+    min-height: 60px;
+  }
+
+  .hero__promotions {
+    margin: 0 var(--space-sm) var(--space-sm);
+  }
+
+  .hero__promotions :deep(.p-carousel-content) {
+    gap: var(--space-xs);
+  }
+
+  .hero__promotions :deep(.p-carousel-prev-button),
+  .hero__promotions :deep(.p-carousel-next-button) {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
   }
 
   .section-heading--with-action {
