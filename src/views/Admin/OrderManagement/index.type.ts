@@ -14,13 +14,6 @@ export const columns = [
     resizable: true,
   },
   {
-    title: 'Số điện thoại',
-    dataIndex: 'phoneNumber',
-    key: 'phoneNumber',
-    width: 150,
-    resizable: true,
-  },
-  {
     title: 'Tổng tiền',
     dataIndex: 'totalPrice',
     key: 'totalPrice',
@@ -28,16 +21,11 @@ export const columns = [
     resizable: true,
   },
   {
-    title: 'Phuong thức thanh toán',
+    title: 'Phương thức thanh toán',
     dataIndex: 'paymentMethod',
     key: 'paymentMethod',
     width: 200,
     resizable: true,
-    filters: [
-      { text: 'Thanh toán khi nhận hàng', value: 'CASH' },
-      { text: 'Thanh toán online', value: 'CARD' },
-    ],
-    onFilter: (value: string, record: any) => record.paymentMethod === value,
   },
   {
     title: 'Trạng thái',
@@ -45,15 +33,6 @@ export const columns = [
     key: 'status',
     width: 150,
     resizable: true,
-    filters: [
-      { text: 'Đang chờ', value: 'PENDING' },
-      { text: 'Đã xác nhận', value: 'CONFIRM' },
-      { text: 'Đang giao hàng', value: 'DELIVERY' },
-      { text: 'Đã hoàn thành', value: 'COMPLETE' },
-      { text: 'Đã hủy', value: 'CANCEL' },
-    ],
-    onFilter: (value: string, record: any) => record.status === value,
-    filterMultiple: true,
   },
   {
     title: 'Cập nhật trạng thái',
