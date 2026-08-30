@@ -13,7 +13,7 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useBreadcrumb } from '@/composable/useBreadcrumb'
 
 const route = useRoute()
@@ -21,6 +21,7 @@ const { getCategoryName } = useBreadcrumb()
 const breadcrumbs = ref([])
 
 const buildBreadcrumbs = async () => {
+    const isAdminRoute = route.path.startsWith('/admin/')
     const base = route.matched
         .filter(r => r.meta?.title && r.meta?.breadcrumb !== false)
         .map((r, index, arr) => {
@@ -30,10 +31,9 @@ const buildBreadcrumbs = async () => {
             }
         })
 
-    base.unshift({
-        label: 'Trang chủ',
-        link: '/'
-    })
+    base.unshift(isAdminRoute
+        ? { label: 'Hệ thống quản trị', link: null }
+        : { label: 'Trang chủ', link: '/' })
 
     if (route.name === 'products') {
         const categoryName = await getCategoryName(Number(route.params.categoryId))
@@ -68,35 +68,46 @@ watch(() => route.fullPath, async () => {
 <style scoped>
 .breadcrumb-container {
     margin: 0 auto;
-    padding: 14px 16px;
+    padding: var(--space-md) var(--space-xl);
+    border: 1px solid var(--color-border);
+    border-bottom: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: var(--color-card);
 }
 
 .breadcrumb-inner {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: #4b5563;
+    color: var(--color-muted-foreground);
     font-size: 0.95rem;
 }
 
 .breadcrumb-item+.breadcrumb-item::before {
-    color: #9ca3af;
+    color: var(--color-border);
     margin-right: 0.6rem;
 }
 
 .breadcrumb-link {
-    color: #4338ca;
+    color: var(--color-primary);
     text-decoration: none;
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .breadcrumb-link:hover {
-    color: #7c3aed;
+    color: var(--color-accent);
     transform: translateX(1px);
 }
 
 .breadcrumb-current {
-    color: #111827;
+    color: var(--color-foreground);
     font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .breadcrumb-container {
+        padding: var(--space-md) var(--space-lg);
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
 }
 </style>

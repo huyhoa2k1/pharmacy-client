@@ -1,9 +1,9 @@
 export const columns = [
   {
-    title: 'Tên',
+    title: 'Sản phẩm',
     dataIndex: 'name',
     key: 'name',
-    width: 400,
+    width: 360,
     resizable: true,
     sorter: (a: any, b: any) => a.name.localeCompare(b.name),
     sortDirections: ['ascend', 'descend'],
@@ -36,10 +36,16 @@ export const columns = [
     sortDirections: ['ascend', 'descend'],
   },
   {
-    title: 'Sale',
+    title: 'Khuyến mãi',
     dataIndex: 'isSale',
     key: 'isSale',
     width: 150,
     resizable: true,
+  },
+  {
+    title: 'Thao tác',
+    key: 'action',
+    width: 96,
+    fixed: 'right',
   },
 ]
