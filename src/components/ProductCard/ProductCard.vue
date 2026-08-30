@@ -7,7 +7,7 @@
     >
       <div class="product-card__image-wrap">
         <img
-          v-if="data.imageUrl[0]"
+          v-if="data.imageUrl?.[0]"
           class="product-card__image"
           :src="data.imageUrl[0]"
           :alt="data.name"
@@ -19,6 +19,7 @@
           class="product-card__availability"
           :class="{ 'product-card__availability--out': data.amount <= 0 }"
         >
+          <i class="pi pi-check-circle" aria-hidden="true"></i>
           {{ availabilityLabel }}
         </span>
       </div>
@@ -27,10 +28,7 @@
         <p v-if="data.brand?.name" class="product-card__brand">{{ data.brand.name }}</p>
         <h3 class="product-card__name">{{ data.name }}</h3>
 
-        <div class="product-card__rating" aria-label="Chưa có đánh giá">
-          <i class="pi pi-star product-card__rating-icon" aria-hidden="true"></i>
-          <span>Chưa có đánh giá</span>
-        </div>
+        <p class="product-card__sold">Đã bán {{ formatSoldCount(data.sold) }}</p>
 
         <div class="product-card__price">
           <span class="product-card__current-price">{{ formatPrice(discountedPrice) }} đ</span>
@@ -46,10 +44,11 @@
         type="button"
         class="product-card__add-to-cart"
         :aria-label="`Thêm ${data.name} vào giỏ hàng`"
+        :disabled="data.amount <= 0"
         @click="addToCart"
       >
         <i class="pi pi-shopping-cart" aria-hidden="true"></i>
-        <span>Thêm vào giỏ</span>
+        <span>{{ data.amount > 0 ? 'Thêm vào giỏ' : 'Tạm hết hàng' }}</span>
       </button>
     </div>
   </article>
@@ -81,18 +80,32 @@ const discountedPrice = computed(
 )
 
 const availabilityLabel = computed(() =>
-  props.data.amount > 0 ? `Còn ${props.data.amount} sản phẩm` : 'Tạm hết hàng',
+  props.data.amount <= 0 ? 'Tạm hết hàng' : props.data.amount <= 10 ? `Chỉ còn ${props.data.amount}` : 'Còn hàng',
 )
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('vi-VN').format(price)
 }
 
+function formatSoldCount(sold: number): string {
+  return new Intl.NumberFormat('vi-VN', { notation: 'compact' }).format(sold || 0)
+}
+
 const addToCart = () => {
+  if (props.data.amount <= 0) {
+    message.warning('Sản phẩm hiện đã hết hàng')
+    return
+  }
+
   const existingItemIndex = cartStore.cart.findIndex((item) => item.id === props.data.id)
 
   if (existingItemIndex !== -1) {
-    cartStore.updateItem(existingItemIndex, cartStore.cart[existingItemIndex].cartQuantity + 1)
+    const nextQuantity = cartStore.cart[existingItemIndex].cartQuantity + 1
+    if (nextQuantity > props.data.amount) {
+      message.warning(`Chỉ có thể thêm tối đa ${props.data.amount} sản phẩm`)
+      return
+    }
+    cartStore.updateItem(existingItemIndex, nextQuantity)
   } else {
     const newItem: CartItem = {
       ...props.data,
@@ -180,6 +193,9 @@ const addToCart = () => {
 }
 
 .product-card__availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   right: var(--space-sm);
   bottom: var(--space-sm);
   max-width: calc(100% - var(--space-md));
@@ -203,7 +219,7 @@ const addToCart = () => {
 }
 
 .product-card__brand,
-.product-card__rating,
+.product-card__sold,
 .product-card__original-price {
   color: var(--color-muted-foreground);
   font-size: 0.75rem;
@@ -211,7 +227,11 @@ const addToCart = () => {
 
 .product-card__brand {
   margin: 0;
-  font-weight: 600;
+  color: #047857;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .product-card__name {
@@ -227,14 +247,8 @@ const addToCart = () => {
   -webkit-line-clamp: 2;
 }
 
-.product-card__rating {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.product-card__rating-icon {
-  color: #D97706;
+.product-card__sold {
+  margin: 0;
 }
 
 .product-card__price {
@@ -282,6 +296,15 @@ const addToCart = () => {
   background: #047857;
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
+}
+
+.product-card__add-to-cart:disabled {
+  border-color: #CBD5E1;
+  background: #E2E8F0;
+  box-shadow: none;
+  color: #64748B;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .product-card__add-to-cart:focus-visible {

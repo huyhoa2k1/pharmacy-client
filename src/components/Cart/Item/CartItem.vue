@@ -54,9 +54,9 @@
         </div>
         <a-popconfirm title="Are you sure delete this product?" ok-text="Yes" cancel-text="No" @confirm="onDelete"
             @cancel="onCancel">
-            <abutton>
-                <i class="pi pi-trash text-violet-500 cursor-pointer"></i>
-            </abutton>
+            <a-button type="text" class="cart-delete-button" aria-label="Xóa sản phẩm">
+                <i class="pi pi-trash"></i>
+            </a-button>
         </a-popconfirm>
     </div>
 </template>
@@ -102,3 +102,28 @@ function onCancel() {
     showConfirm.value = false;
 }
 </script>
+
+<style scoped>
+.cart-delete-button {
+    color: var(--color-destructive);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-base), background-color var(--transition-base);
+}
+
+.cart-delete-button:hover {
+    color: var(--color-destructive) !important;
+    background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent) !important;
+}
+
+.cart-delete-button:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--color-ring) 35%, transparent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cart-delete-button {
+        transition: none;
+    }
+}
+</style>

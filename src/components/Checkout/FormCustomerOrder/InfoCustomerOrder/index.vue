@@ -85,20 +85,20 @@ const validateForm = (): boolean => {
 
 <style scoped>
 .info-customer-order {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
+    box-shadow: var(--shadow-sm);
 }
 
 .form-title {
     font-size: 18px;
     font-weight: 700;
-    color: #4c1d95;
+    color: var(--color-foreground);
     margin: 0 0 20px 0;
     padding-bottom: 12px;
-    border-bottom: 2px solid #f3e8ff;
+    border-bottom: 2px solid var(--color-border);
 }
 
 .form-grid {
@@ -120,16 +120,16 @@ const validateForm = (): boolean => {
     display: block;
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var(--color-foreground);
     margin-bottom: 8px;
 }
 
 .required {
-    color: #ef4444;
+    color: var(--color-destructive);
 }
 
 .optional {
-    color: #9ca3af;
+    color: var(--color-muted-foreground);
     font-weight: 400;
     font-size: 12px;
 }
@@ -137,7 +137,7 @@ const validateForm = (): boolean => {
 .error-message {
     display: block;
     font-size: 12px;
-    color: #ef4444;
+    color: var(--color-destructive);
     margin-top: 6px;
 }
 
@@ -146,7 +146,7 @@ const validateForm = (): boolean => {
     gap: 12px;
     margin-top: 24px;
     padding-top: 16px;
-    border-top: 1px solid #f3e8ff;
+    border-top: 1px solid var(--color-border);
 }
 
 .form-actions :deep(.ant-btn) {
@@ -158,36 +158,36 @@ const validateForm = (): boolean => {
 }
 
 .form-actions :deep(.ant-btn-primary) {
-    background: #8b5cf6;
-    border-color: #8b5cf6;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
 }
 
 .form-actions :deep(.ant-btn-primary:hover) {
-    background: #7c3aed;
-    border-color: #7c3aed;
+    background: color-mix(in srgb, var(--color-accent) 90%, #000000);
+    border-color: color-mix(in srgb, var(--color-accent) 90%, #000000);
 }
 
 /* Input styling */
 :deep(.ant-input),
 :deep(.ant-input-textarea) {
     border-radius: 6px;
-    border-color: #d1d5db !important;
-    transition: all 0.2s ease;
+    border-color: var(--color-border) !important;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 :deep(.ant-input:hover),
 :deep(.ant-input-textarea:hover) {
-    border-color: #8b5cf6 !important;
+    border-color: var(--color-primary) !important;
 }
 
 :deep(.ant-input:focus),
 :deep(.ant-input-textarea:focus) {
-    border-color: #8b5cf6 !important;
-    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 20%, transparent) !important;
 }
 
 :deep(.ant-input-textarea textarea:focus) {
-    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 20%, transparent) !important;
 }
 
 /* Responsive */

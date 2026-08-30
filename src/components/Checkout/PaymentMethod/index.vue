@@ -62,20 +62,20 @@ selectPayment(paymentOptions[0]);
 
 <style scoped>
 .payment-method {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
+    box-shadow: var(--shadow-sm);
 }
 
 .form-title {
     font-size: 18px;
     font-weight: 700;
-    color: #4c1d95;
+    color: var(--color-foreground);
     margin: 0 0 20px 0;
     padding-bottom: 12px;
-    border-bottom: 2px solid #f3e8ff;
+    border-bottom: 2px solid var(--color-border);
 }
 
 .payment-options {
@@ -86,23 +86,24 @@ selectPayment(paymentOptions[0]);
 }
 
 .payment-option {
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
     padding: 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    background: white;
+    transition: border-color var(--transition-base), background-color var(--transition-base),
+        box-shadow var(--transition-base);
+    background: var(--color-card);
 }
 
 .payment-option:hover {
-    border-color: #d1d5db;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .payment-option.active {
-    border-color: #8b5cf6;
-    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-secondary) 16%, var(--color-card));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 20%, transparent);
 }
 
 .option-header {
@@ -121,22 +122,22 @@ selectPayment(paymentOptions[0]);
     width: 20px;
     height: 20px;
     cursor: pointer;
-    accent-color: #8b5cf6;
+    accent-color: var(--color-primary);
 }
 
 .radio-label {
     display: block;
     width: 20px;
     height: 20px;
-    border: 2px solid #d1d5db;
+    border: 2px solid var(--color-muted-foreground);
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .radio-input:checked+.radio-label {
-    background: #8b5cf6;
-    border-color: #8b5cf6;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
     box-shadow: inset 0 0 0 3px white;
 }
 
@@ -147,13 +148,13 @@ selectPayment(paymentOptions[0]);
 .option-title {
     font-size: 16px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--color-foreground);
     margin: 0;
 }
 
 .option-desc {
     font-size: 13px;
-    color: #6b7280;
+    color: var(--color-muted-foreground);
     margin: 4px 0 0 0;
 }
 
@@ -178,15 +179,16 @@ selectPayment(paymentOptions[0]);
     position: absolute;
     inset: 0;
     display: block;
-    border: 2px solid #d1d5db;
+    border: 2px solid var(--color-muted-foreground);
     border-radius: 50%;
-    background: white;
-    transition: all 0.2s ease;
+    background: var(--color-card);
+    transition: border-color var(--transition-base), background-color var(--transition-base),
+        box-shadow var(--transition-base);
 }
 
 .radio-input:checked+.radio-label {
-    background: #8b5cf6;
-    border-color: #8b5cf6;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 .radio-input:checked+.radio-label::after {
@@ -196,7 +198,7 @@ selectPayment(paymentOptions[0]);
     left: 50%;
     width: 8px;
     height: 8px;
-    background: white;
+    background: var(--color-card);
     border-radius: 50%;
     transform: translate(-50%, -50%);
 }
@@ -210,13 +212,13 @@ selectPayment(paymentOptions[0]);
 }
 
 .payment-option:hover {
-    border-color: #d1d5db;
+    border-color: var(--color-primary);
 }
 
 .payment-option.active {
-    border-color: #8b5cf6;
-    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-secondary) 16%, var(--color-card));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 20%, transparent);
 }
 
 @media (max-width: 768px) {
@@ -244,13 +246,13 @@ selectPayment(paymentOptions[0]);
 }
 
 .form-actions :deep(.ant-btn-primary) {
-    background: #8b5cf6;
-    border-color: #8b5cf6;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
 }
 
 .form-actions :deep(.ant-btn-primary:hover) {
-    background: #7c3aed;
-    border-color: #7c3aed;
+    background: color-mix(in srgb, var(--color-accent) 90%, #000000);
+    border-color: color-mix(in srgb, var(--color-accent) 90%, #000000);
 }
 
 @keyframes slideDown {
