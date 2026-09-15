@@ -289,7 +289,8 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <section id="recommendations" class="homepage__section" aria-labelledby="sale-heading">
+    <section v-if="isLoadingProducts || productsError || saleProducts.length > 0" id="recommendations"
+      class="homepage__section" aria-labelledby="sale-heading">
       <div class="flash-sale">
         <img class="flash-sale__banner"
           src="https://prod-cdn.pharmacity.io/e-com/images/flashsale/20260805020324-0-Home_Flashsale_web.png?versionId=qcHQ6.0JKKgkZNotOyzH659ni7BfmvOf"
@@ -327,9 +328,6 @@ onUnmounted(() => {
             <p>{{ productsError }}</p>
             <button class="btn-secondary" type="button" @click="getProducts">Thử lại</button>
           </div>
-          <p v-else-if="saleProducts.length === 0" class="state-card">
-            Hiện chưa có sản phẩm giảm giá.
-          </p>
           <Carousel v-else class="product-carousel product-carousel--flash-sale" :value="saleProducts" :num-visible="4"
             :num-scroll="1" :responsive-options="carouselResponsiveOptions" :show-indicators="false">
             <template #item="slotProps">
