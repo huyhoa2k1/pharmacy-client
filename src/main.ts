@@ -10,7 +10,9 @@ import CKEditor from '@ckeditor/ckeditor5-vue'
 
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n'
 import { useUserStore } from './stores/user'
+import { useLocaleStore } from './stores/locale'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -21,7 +23,12 @@ app.use(pinia)
 const userStore = useUserStore()
 userStore.restoreSession()
 
+// sync the i18n instance with the persisted locale (may differ from browser default)
+const localeStore = useLocaleStore()
+localeStore.applyLocale()
+
 app.use(router)
+app.use(i18n)
 app.use(Antd)
 app.use(CKEditor)
 app.use(PrimeVue)
