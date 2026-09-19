@@ -5,7 +5,7 @@
         <!-- Item 1 -->
         <div class="flex items-center gap-2 text-cyan-950">
           <i class="pi pi-check-circle text-lg"></i>
-          <span class="font-semibold text-xs">Sản phẩm kiểm duyệt chặt chẽ</span>
+          <span class="font-semibold text-xs">{{ t('advertisement.verifiedProducts') }}</span>
         </div>
 
         <!-- Divider -->
@@ -14,7 +14,7 @@
         <!-- Item 2 -->
         <div class="flex items-center gap-2 text-cyan-950">
           <i class="pi pi-truck text-lg"></i>
-          <span class="font-semibold text-xs">Giao nhanh trong 2h</span>
+          <span class="font-semibold text-xs">{{ t('advertisement.fastDelivery') }}</span>
         </div>
       </div>
     </div>
@@ -22,7 +22,9 @@
 </template>
 
 <script setup lang="ts">
-// Using primeicons for icons
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>
 
 <style scoped>

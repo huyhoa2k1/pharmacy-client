@@ -4,8 +4,8 @@
         <div class="auth-dialog">
             <!-- Header -->
             <div class="auth-header">
-                <h1 class="auth-title">Nhà Thuốc Online</h1>
-                <p class="auth-subtitle">Chào mừng bạn đến với hệ thống bán hàng</p>
+                <h1 class="auth-title">{{ t('auth.title') }}</h1>
+                <p class="auth-subtitle">{{ t('auth.subtitle') }}</p>
             </div>
 
             <!-- Tabs Toggle -->
@@ -14,13 +14,13 @@
                     :class="['auth-tab', { 'auth-tab-active': isLogin }]"
                     @click="isLogin = true">
                     <i class="pi pi-sign-in mr-2"></i>
-                    Đăng Nhập
+                    {{ t('auth.loginTab') }}
                 </button>
                 <button
                     :class="['auth-tab', { 'auth-tab-active': !isLogin }]"
                     @click="isLogin = false">
                     <i class="pi pi-user-plus mr-2"></i>
-                    Đăng Ký
+                    {{ t('auth.registerTab') }}
                 </button>
             </div>
 
@@ -28,9 +28,9 @@
             <form v-show="isLogin" @submit.prevent="handleLogin" class="animate-fadeIn">
                 <div class="mb-4">
                     <label class="auth-label">
-                        Số Điện Thoại <span class="auth-required">*</span>
+                        {{ t('auth.phoneLabel') }} <span class="auth-required">*</span>
                     </label>
-                    <a-input v-model:value="loginForm.phone" placeholder="Nhập số điện thoại" size="large" allow-clear
+                    <a-input v-model:value="loginForm.phone" :placeholder="t('auth.phonePlaceholder')" size="large" allow-clear
                         :status="loginErrors.phone ? 'error' : ''" />
                     <span v-if="loginErrors.phone" class="auth-error">{{ loginErrors.phone
                         }}</span>
@@ -38,9 +38,9 @@
 
                 <div class="mb-6">
                     <label class="auth-label">
-                        Mật Khẩu <span class="auth-required">*</span>
+                        {{ t('auth.passwordLabel') }} <span class="auth-required">*</span>
                     </label>
-                    <a-input-password v-model:value="loginForm.password" placeholder="Nhập mật khẩu" size="large"
+                    <a-input-password v-model:value="loginForm.password" :placeholder="t('auth.passwordPlaceholder')" size="large"
                         :status="loginErrors.password ? 'error' : ''" />
                     <span v-if="loginErrors.password" class="auth-error">{{ loginErrors.password
                         }}</span>
@@ -48,12 +48,12 @@
 
                 <a-button type="primary" block size="large" html-type="submit" :loading="isLoginSubmitting"
                     class="auth-submit">
-                    Đăng Nhập
+                    {{ t('auth.loginButton') }}
                 </a-button>
 
                 <div class="text-center">
                     <a-button type="link" class="auth-link">
-                        Quên mật khẩu?
+                        {{ t('auth.forgotPassword') }}
                     </a-button>
                 </div>
             </form>
@@ -62,9 +62,9 @@
             <form v-show="!isLogin" @submit.prevent="handleRegister" class="animate-fadeIn">
                 <div class="mb-4">
                     <label class="auth-label">
-                        Email <span class="auth-required">*</span>
+                        {{ t('auth.emailLabel') }} <span class="auth-required">*</span>
                     </label>
-                    <a-input v-model:value="registerForm.email" type="email" placeholder="Nhập email" size="large"
+                    <a-input v-model:value="registerForm.email" type="email" :placeholder="t('auth.emailPlaceholder')" size="large"
                         allow-clear :status="registerErrors.email ? 'error' : ''" />
                     <span v-if="registerErrors.email" class="auth-error">{{ registerErrors.email
                         }}</span>
@@ -72,9 +72,9 @@
 
                 <div class="mb-4">
                     <label class="auth-label">
-                        Số Điện Thoại <span class="auth-required">*</span>
+                        {{ t('auth.phoneLabel') }} <span class="auth-required">*</span>
                     </label>
-                    <a-input v-model:value="registerForm.phone" placeholder="Nhập số điện thoại" size="large"
+                    <a-input v-model:value="registerForm.phone" :placeholder="t('auth.phonePlaceholder')" size="large"
                         allow-clear :status="registerErrors.phone ? 'error' : ''" />
                     <span v-if="registerErrors.phone" class="auth-error">{{ registerErrors.phone
                         }}</span>
@@ -82,9 +82,9 @@
 
                 <div class="mb-6">
                     <label class="auth-label">
-                        Mật Khẩu <span class="auth-required">*</span>
+                        {{ t('auth.passwordLabel') }} <span class="auth-required">*</span>
                     </label>
-                    <a-input-password v-model:value="registerForm.password" placeholder="Nhập mật khẩu" size="large"
+                    <a-input-password v-model:value="registerForm.password" :placeholder="t('auth.passwordPlaceholder')" size="large"
                         :status="registerErrors.password ? 'error' : ''" />
                     <span v-if="registerErrors.password" class="auth-error">{{
                         registerErrors.password }}</span>
@@ -92,14 +92,14 @@
 
                 <a-button type="primary" block size="large" html-type="submit" :loading="isRegisterSubmitting"
                     class="auth-submit">
-                    Đăng Ký
+                    {{ t('auth.registerButton') }}
                 </a-button>
 
                 <div class="text-center">
                     <span class="auth-terms">
-                        Bằng cách đăng ký, bạn đồng ý với
+                        {{ t('auth.termsPrefix') }}
                         <a-button type="link" class="auth-link">
-                            Điều khoản dịch vụ
+                            {{ t('auth.termsLink') }}
                         </a-button>
                     </span>
                 </div>
@@ -111,9 +111,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { message } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n';
 import { AuthService } from '@/api/services/auth';
 import { useUserStore } from '@/stores/user';
 
+const { t } = useI18n();
 const userStore = useUserStore();
 
 // Modal state
@@ -171,15 +173,15 @@ const validateLogin = (): boolean => {
     };
 
     if (!loginForm.value.phone?.trim()) {
-        loginErrors.value.phone = 'Vui lòng nhập số điện thoại';
+        loginErrors.value.phone = t('auth.phoneRequired');
     } else if (!isValidPhone(loginForm.value.phone)) {
-        loginErrors.value.phone = 'Số điện thoại không hợp lệ (VD: 0912345678)';
+        loginErrors.value.phone = t('auth.phoneInvalid');
     }
 
     if (!loginForm.value.password?.trim()) {
-        loginErrors.value.password = 'Vui lòng nhập mật khẩu';
+        loginErrors.value.password = t('auth.passwordRequired');
     } else if (!isValidPassword(loginForm.value.password)) {
-        loginErrors.value.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+        loginErrors.value.password = t('auth.passwordMinLength');
     }
 
     return Object.values(loginErrors.value).every(err => !err);
@@ -194,21 +196,21 @@ const validateRegister = (): boolean => {
     };
 
     if (!registerForm.value.email?.trim()) {
-        registerErrors.value.email = 'Vui lòng nhập email';
+        registerErrors.value.email = t('auth.emailRequired');
     } else if (!isValidEmail(registerForm.value.email)) {
-        registerErrors.value.email = 'Email không hợp lệ (VD: example@mail.com)';
+        registerErrors.value.email = t('auth.emailInvalid');
     }
 
     if (!registerForm.value.phone?.trim()) {
-        registerErrors.value.phone = 'Vui lòng nhập số điện thoại';
+        registerErrors.value.phone = t('auth.phoneRequired');
     } else if (!isValidPhone(registerForm.value.phone)) {
-        registerErrors.value.phone = 'Số điện thoại không hợp lệ (VD: 0912345678)';
+        registerErrors.value.phone = t('auth.phoneInvalid');
     }
 
     if (!registerForm.value.password?.trim()) {
-        registerErrors.value.password = 'Vui lòng nhập mật khẩu';
+        registerErrors.value.password = t('auth.passwordRequired');
     } else if (!isValidPassword(registerForm.value.password)) {
-        registerErrors.value.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+        registerErrors.value.password = t('auth.passwordMinLength');
     }
 
     return Object.values(registerErrors.value).every(err => !err);
@@ -239,13 +241,13 @@ const handleLogin = async () => {
             phone: data.user.phone,
             role: data.user.role,
         }));
-        message.success('Đăng nhập thành công!');
+        message.success(t('auth.loginSuccess'));
 
         closeModal();
 
         loginForm.value = { phone: '', password: '' };
     } catch {
-        message.error('Đăng nhập thất bại. Vui lòng thử lại.');
+        message.error(t('auth.loginFailed'));
     } finally {
         isLoginSubmitting.value = false;
     }
@@ -266,14 +268,14 @@ const handleRegister = async () => {
             password: registerForm.value.password
         });
 
-        message.success('Đăng ký thành công!');
+        message.success(t('auth.registerSuccess'));
 
         isLogin.value = true;
 
         // Reset form
         registerForm.value = { email: '', phone: '', password: '' };
     } catch {
-        message.error('Đăng ký thất bại. Vui lòng thử lại.');
+        message.error(t('auth.registerFailed'));
     } finally {
         isRegisterSubmitting.value = false;
     }

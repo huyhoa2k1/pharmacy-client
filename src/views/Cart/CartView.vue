@@ -3,15 +3,15 @@
         <div :class="[cartItems.length > 0 ? 'cart-left' : 'cart-left-empty']">
             <div class="p-3">
                 <div class="flex justify-between items-center">
-                    <h3 v-if="cartItems.length > 0" class="text-2xl font-bold">Giỏ hàng ({{ cartItems.length }})</h3>
-                    <a-popconfirm title="Bạn có chắc muốn xóa toàn bộ sản phẩm?" ok-text="Xóa" cancel-text="Hủy"
+                    <h3 v-if="cartItems.length > 0" class="text-2xl font-bold">{{ t('cart.title', { count: cartItems.length }) }}</h3>
+                    <a-popconfirm :title="t('cart.clearConfirmTitle')" :ok-text="t('cart.clearConfirmOk')" :cancel-text="t('cart.clearConfirmCancel')"
                         @confirm="confirm" @cancel="cancel">
-                        <button class="cart-clear-button" v-if="cartItems.length > 0">Xóa tất cả</button>
+                        <button class="cart-clear-button" v-if="cartItems.length > 0">{{ t('cart.clearAll') }}</button>
                     </a-popconfirm>
                 </div>
                 <div class="grid gap-2 md:gap-6">
                     <div v-if="cartItems.length > 0" class="mt-4 p-4 free-shipping rounded">
-                        <p>Miễn phí vận chuyển cho mọi đơn hàng từ 0đ</p>
+                        <p>{{ t('cart.freeShipping') }}</p>
                     </div>
                     <div class="grid gap-4">
                         <div v-if="cartItems.length > 0"
@@ -19,12 +19,12 @@
                             <a-checkbox :checked="checkedAll" @change="toggleCheckAll"></a-checkbox>
                             <div class="flex items-center space-x-4 justify-between">
                                 <div class="grid flex-1 items-start gap-2">
-                                    <p class="text-sm leading-4 text-neutral-900">Sản phẩm</p>
+                                    <p class="text-sm leading-4 text-neutral-900">{{ t('cart.productColumn') }}</p>
                                 </div>
                                 <div class="flex justify-center space-x-4">
-                                    <p class="w-[calc(160rem/16)] text-center text-sm text-neutral-900">Giá</p>
-                                    <p class="w-[calc(117rem/16)] text-center text-sm text-neutral-900">Số lượng</p>
-                                    <p class="w-[calc(120rem/16)] text-end text-sm text-neutral-900">Tổng tiền</p>
+                                    <p class="w-[calc(160rem/16)] text-center text-sm text-neutral-900">{{ t('cart.priceColumn') }}</p>
+                                    <p class="w-[calc(117rem/16)] text-center text-sm text-neutral-900">{{ t('cart.quantityColumn') }}</p>
+                                    <p class="w-[calc(120rem/16)] text-end text-sm text-neutral-900">{{ t('cart.totalColumn') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -53,6 +53,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { message } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n';
 import CartItem from '@/components/Cart/Item/CartItem.vue';
 import Drawer from '@/components/Cart/Drawer/index.vue';
 import CartSummary from '@/components/Cart/CartSummary.vue';
@@ -66,6 +67,7 @@ interface CartViewItem extends IGetProductResponse {
     addedAt: number;
 }
 
+const { t } = useI18n();
 const cartStore = useCartStore();
 const open = ref<boolean>(false);
 
@@ -97,11 +99,11 @@ const showDrawer = () => {
 
 const confirm = () => {
     cartStore.clearCart();
-    message.success('Đã xóa toàn bộ sản phẩm trong giỏ hàng');
+    message.success(t('cart.clearedToast'));
 };
 
 const cancel = () => {
-    message.info('Hủy thao tác');
+    message.info(t('cart.cancelToast'));
 };
 
 function toggleCheckAll() {
@@ -125,7 +127,7 @@ function decreaseItem(idx: number) {
 function deleteItem(idx: number) {
     const itemName = cartItems.value[idx].name;
     cartStore.removeFromCart(idx);
-    message.success(`Đã xóa "${itemName}" khỏi giỏ hàng`);
+    message.success(t('cart.removedToast', { name: itemName }));
 }
 
 onMounted(() => {

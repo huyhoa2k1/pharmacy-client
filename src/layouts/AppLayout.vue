@@ -1,5 +1,5 @@
 <template>
-  <a-spin v-if="globalLoading" size="large" tip="Đang tải..." class="global-loading" />
+  <a-spin v-if="globalLoading" size="large" :tip="t('common.loading')" class="global-loading" />
   <div class="app-shell">
     <Advertisement />
     <Header />
@@ -19,8 +19,10 @@ import Footer from '@/components/Footer/Footer.vue'
 import type { IGetCategoryResponse } from '@/api/models/category'
 import { CategoryService } from '@/api/services/category'
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { globalLoading } from '@/stores/loading'
 
+const { t } = useI18n()
 const categories = ref<IGetCategoryResponse[]>([])
 
 const fetchCategories = async () => {

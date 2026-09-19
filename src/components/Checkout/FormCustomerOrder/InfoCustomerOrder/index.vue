@@ -1,33 +1,33 @@
 <template>
     <div class="info-customer-order">
-        <h3 class="form-title">Thông tin người đặt hàng</h3>
+        <h3 class="form-title">{{ t('checkout.customerInfoTitle') }}</h3>
 
         <div class="form-grid">
             <div class="form-group">
-                <label class="form-label">Họ và tên <span class="required">*</span></label>
-                <a-input v-model:value="checkoutStore.customerInfo.fullName" placeholder="Nhập họ và tên" allow-clear
+                <label class="form-label">{{ t('checkout.fullNameLabel') }} <span class="required">*</span></label>
+                <a-input v-model:value="checkoutStore.customerInfo.fullName" :placeholder="t('checkout.fullNamePlaceholder')" allow-clear
                     @change="validateForm" />
                 <span v-if="errors.fullName" class="error-message">{{ errors.fullName }}</span>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Số điện thoại <span class="required">*</span></label>
-                <a-input v-model:value="checkoutStore.customerInfo.phone" placeholder="Nhập số điện thoại" allow-clear
+                <label class="form-label">{{ t('checkout.phoneLabel') }} <span class="required">*</span></label>
+                <a-input v-model:value="checkoutStore.customerInfo.phone" :placeholder="t('checkout.phonePlaceholder')" allow-clear
                     @change="validateForm" />
                 <span v-if="errors.phone" class="error-message">{{ errors.phone }}</span>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Email <span class="required">*</span></label>
-                <a-input v-model:value="checkoutStore.customerInfo.email" type="email" placeholder="Nhập email"
+                <label class="form-label">{{ t('checkout.emailLabel') }} <span class="required">*</span></label>
+                <a-input v-model:value="checkoutStore.customerInfo.email" type="email" :placeholder="t('checkout.emailPlaceholder')"
                     allow-clear @change="validateForm" />
                 <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="form-label">Ghi chú đơn hàng <span class="optional">(Tùy chọn)</span></label>
-            <a-textarea v-model:value="checkoutStore.customerInfo.note" placeholder="Nhập ghi chú (nếu có)" :rows="4"
+            <label class="form-label">{{ t('checkout.noteLabel') }} <span class="optional">{{ t('checkout.noteOptional') }}</span></label>
+            <a-textarea v-model:value="checkoutStore.customerInfo.note" :placeholder="t('checkout.notePlaceholder')" :rows="4"
                 allow-clear />
         </div>
     </div>
@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useCheckoutStore } from '@/stores/checkoutStore';
 
 interface Errors {
@@ -43,6 +44,7 @@ interface Errors {
     email?: string;
 }
 
+const { t } = useI18n();
 const checkoutStore = useCheckoutStore();
 const errors = ref<Errors>({});
 
@@ -62,21 +64,21 @@ const validateForm = (): boolean => {
     errors.value = {};
 
     if (!checkoutStore.customerInfo.fullName?.trim()) {
-        errors.value.fullName = 'Vui lòng nhập họ và tên';
+        errors.value.fullName = t('checkout.fullNameRequired');
     } else if (checkoutStore.customerInfo.fullName.length < 3) {
-        errors.value.fullName = 'Họ và tên phải có ít nhất 3 ký tự';
+        errors.value.fullName = t('checkout.fullNameMinLength');
     }
 
     if (!checkoutStore.customerInfo.phone?.trim()) {
-        errors.value.phone = 'Vui lòng nhập số điện thoại';
+        errors.value.phone = t('checkout.phoneRequired');
     } else if (!isValidPhone(checkoutStore.customerInfo.phone)) {
-        errors.value.phone = 'Số điện thoại không hợp lệ (VD: 0912345678)';
+        errors.value.phone = t('checkout.phoneInvalid');
     }
 
     if (!checkoutStore.customerInfo.email?.trim()) {
-        errors.value.email = 'Vui lòng nhập email';
+        errors.value.email = t('checkout.emailRequired');
     } else if (!isValidEmail(checkoutStore.customerInfo.email)) {
-        errors.value.email = 'Email không hợp lệ (VD: example@mail.com)';
+        errors.value.email = t('checkout.emailInvalid');
     }
 
     return Object.keys(errors.value).length === 0;

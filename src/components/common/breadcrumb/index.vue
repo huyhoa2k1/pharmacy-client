@@ -14,26 +14,28 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useBreadcrumb } from '@/composable/useBreadcrumb'
 
 const route = useRoute()
+const { t, locale } = useI18n()
 const { getCategoryName } = useBreadcrumb()
 const breadcrumbs = ref([])
 
 const buildBreadcrumbs = async () => {
     const isAdminRoute = route.path.startsWith('/admin/')
     const base = route.matched
-        .filter(r => r.meta?.title && r.meta?.breadcrumb !== false)
+        .filter(r => (r.meta?.title || r.meta?.titleKey) && r.meta?.breadcrumb !== false)
         .map((r, index, arr) => {
             return {
-                label: r.meta.breadcrumb || r.meta.title,
+                label: r.meta.breadcrumb || (r.meta.titleKey ? t(r.meta.titleKey) : r.meta.title),
                 link: index < arr.length - 1 ? r.path : null
             }
         })
 
     base.unshift(isAdminRoute
-        ? { label: 'Hệ thống quản trị', link: null }
-        : { label: 'Trang chủ', link: '/' })
+        ? { label: t('common.admin'), link: null }
+        : { label: t('common.home'), link: '/' })
 
     if (route.name === 'products') {
         const categoryName = await getCategoryName(Number(route.params.categoryId))
@@ -62,6 +64,10 @@ const buildBreadcrumbs = async () => {
 watch(() => route.fullPath, async () => {
     breadcrumbs.value = await buildBreadcrumbs()
 }, { immediate: true })
+
+watch(locale, async () => {
+    breadcrumbs.value = await buildBreadcrumbs()
+})
 
 </script>
 

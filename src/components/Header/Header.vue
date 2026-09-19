@@ -14,13 +14,13 @@
 
       <!-- Search -->
       <div class="w-full md:w-[400px]">
-        <a-spin :spinning="searchLoading" tip="Đang tìm kiếm..." size="large">
+        <a-spin :spinning="searchLoading" :tip="t('common.loading')" size="large">
           <a-auto-complete
             v-model:value="searchValue"
             :options="autocompleteOptions"
             :allow-clear="true"
             :loading="searchLoading"
-            placeholder="Tìm kiếm thuốc..."
+            :placeholder="t('header.searchPlaceholder')"
             class="w-full"
             @select="handleSearchSelect"
             @search="handleSearch"
@@ -54,7 +54,7 @@
             <a-badge :size="'small'" :count="cartStore.cartCount" class="animate-pulse">
               <i class="pi pi-shopping-cart text-lg text-cyan-700 hover:text-cyan-800"></i>
             </a-badge>
-            <span class="text-sm md:text-base font-semibold">Giỏ hàng</span>
+            <span class="text-sm md:text-base font-semibold">{{ t('header.cart') }}</span>
           </div>
         </router-link>
 
@@ -65,7 +65,7 @@
           >
             <i class="pi pi-user text-lg"></i>
             <span class="text-sm md:text-base font-semibold">
-              {{ userStore.isLogin ? userStore.username : 'Đăng nhập' }}
+              {{ userStore.isLogin ? userStore.username : t('header.login') }}
             </span>
           </div>
           <template #overlay v-if="userStore.isLogin">
@@ -73,24 +73,26 @@
               <a-menu-item key="1" @click="() => $router.push('/ca-nhan/thong-tin')">
                 <div>
                   <i class="pi pi-user mr-2"></i>
-                  <span>Thông tin cá nhân</span>
+                  <span>{{ t('header.myInfo') }}</span>
                 </div>
               </a-menu-item>
               <a-menu-item key="2" @click="() => $router.push('/ca-nhan/don-hang')">
                 <div>
                   <i class="pi pi-shopping-cart mr-2"></i>
-                  <span>Đơn hàng của tôi</span>
+                  <span>{{ t('header.myOrders') }}</span>
                 </div>
               </a-menu-item>
               <a-menu-item key="3">
                 <div>
                   <i class="pi pi-sign-out mr-2"></i>
-                  <span @click="handleLogout">Đăng xuất</span>
+                  <span @click="handleLogout">{{ t('header.logout') }}</span>
                 </div>
               </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
+
+        <LanguageSwitcher />
       </div>
     </div>
   </div>
@@ -102,7 +104,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AuthDialog from '@/components/Auth/AuthDialog.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher/index.vue'
 import { useUserStore } from '@/stores/user'
 import { useCartStore } from '@/stores/cart'
 import { ProductService } from '@/api/services/product'
@@ -110,6 +114,7 @@ import { getCloudinaryImageUrl } from '@/utils/cloudinary'
 import { LOGO_PUBLIC_ID } from '@/config/assetConfig'
 import { debounce } from 'lodash'
 
+const { t } = useI18n()
 const router = useRouter()
 const userStore = useUserStore()
 const cartStore = useCartStore()

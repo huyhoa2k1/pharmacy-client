@@ -2,15 +2,15 @@
   <section class="orders-section">
     <header class="orders-header">
       <div>
-        <p class="section-eyebrow">Lịch sử mua hàng</p>
-        <h2 class="section-title">Đơn hàng của tôi</h2>
+        <p class="section-eyebrow">{{ t('personalOrders.eyebrow') }}</p>
+        <h2 class="section-title">{{ t('personalOrders.title') }}</h2>
         <p class="section-description">
-          Theo dõi trạng thái và xem lại chi tiết các đơn thuốc của bạn.
+          {{ t('personalOrders.description') }}
         </p>
       </div>
       <div class="orders-count">
         <strong>{{ ordersData.length }}</strong>
-        <span>đơn hàng</span>
+        <span>{{ t('personalOrders.countSuffix') }}</span>
       </div>
     </header>
 
@@ -35,11 +35,11 @@
             }}</a-tag>
           </template>
           <template v-else-if="column.dataIndex === 'paymentMethod'">
-            {{ record.raw.paymentMethod === 'CASH' ? 'Tiền mặt' : 'Thanh toán online' }}
+            {{ record.raw.paymentMethod === 'CASH' ? t('personalOrders.paymentCash') : t('personalOrders.paymentOnline') }}
           </template>
           <template v-else-if="column.key === 'action'">
             <a-button type="link" class="view-order-button" @click="viewOrder(record.raw)"
-              >Xem chi tiết</a-button
+              >{{ t('personalOrders.viewDetails') }}</a-button
             >
           </template>
         </template>
@@ -48,14 +48,14 @@
 
     <a-modal
       v-model:open="detailVisible"
-      title="Chi tiết đơn hàng"
+      :title="t('personalOrders.orderDetailTitle')"
       :footer="null"
       class="order-detail-modal"
     >
       <div v-if="selectedOrder" class="order-detail">
         <div class="order-detail__summary">
           <div>
-            <span>Mã đơn</span>
+            <span>{{ t('personalOrders.orderCodeLabel') }}</span>
             <strong>{{ selectedOrder.orderCode }}</strong>
           </div>
           <a-tag :color="formatStatusOrder(selectedOrder.status).color">
@@ -65,15 +65,15 @@
 
         <dl class="order-detail__information">
           <div>
-            <dt>Ngày đặt</dt>
+            <dt>{{ t('personalOrders.orderDateLabel') }}</dt>
             <dd>{{ formatDate(selectedOrder.createdAt || selectedOrder.updatedAt) }}</dd>
           </div>
           <div>
-            <dt>Phương thức thanh toán</dt>
-            <dd>{{ selectedOrder.paymentMethod === 'CASH' ? 'Tiền mặt' : 'Thanh toán online' }}</dd>
+            <dt>{{ t('personalOrders.paymentMethodLabel') }}</dt>
+            <dd>{{ selectedOrder.paymentMethod === 'CASH' ? t('personalOrders.paymentCash') : t('personalOrders.paymentOnline') }}</dd>
           </div>
           <div class="order-detail__address">
-            <dt>Địa chỉ giao hàng</dt>
+            <dt>{{ t('personalOrders.shippingAddressLabel') }}</dt>
             <dd>
               {{ selectedOrder.shippingAddress?.fullname }} -
               {{ selectedOrder.shippingAddress?.phone }}<br />
@@ -86,7 +86,7 @@
         </dl>
 
         <div class="order-detail__items">
-          <h3>Sản phẩm</h3>
+          <h3>{{ t('personalOrders.productsLabel') }}</h3>
           <ul>
             <li v-for="item in selectedOrder.orderItems" :key="item.productId">
               <span
@@ -98,7 +98,7 @@
         </div>
 
         <div class="order-detail__total">
-          <span>Tổng thanh toán</span>
+          <span>{{ t('personalOrders.totalPaymentLabel') }}</span>
           <strong>{{ formatPrice(selectedOrder.totalPrice) }}</strong>
         </div>
       </div>
@@ -108,6 +108,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, h } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { OrderService } from '@/api/services/order'
 import { EOrderStatus, type IOrderResponse } from '@/api/models/order'
 import { formatStatusOrder, formatPrice } from '@/utils/format'
@@ -115,6 +116,7 @@ import { useUserStore } from '@/stores/user'
 import { message, Input, Button, Space } from 'ant-design-vue'
 import { SearchOutlined } from '@ant-design/icons-vue'
 
+const { t } = useI18n()
 const ordersData = ref<IOrderResponse[]>([])
 const userStore = useUserStore()
 const userId = computed(() => (userStore.isLogin ? userStore.userId : undefined))
@@ -125,7 +127,7 @@ const getOrdersByUser = async () => {
     const res = await OrderService.getOrderByUserId(userId.value)
     ordersData.value = res || []
   } catch {
-    message.error('Tải đơn hàng thất bại')
+    message.error(t('personalOrders.loadError'))
   }
 }
 
@@ -137,15 +139,15 @@ watch(userId, (val) => {
   if (val) getOrdersByUser()
 })
 
-const tabs = [
-  { key: 'ALL', label: 'Tất cả' },
+const tabs = computed(() => [
+  { key: 'ALL', label: t('personalOrders.tabAll') },
   ...Object.values(EOrderStatus).map((s) => ({
     key: s,
     label: formatStatusOrder(s as EOrderStatus).text,
   })),
-]
+])
 
-const activeKey = ref<string>(tabs.length ? (tabs[0].key as string) : ('ALL' as string))
+const activeKey = ref<string>('ALL')
 
 const filteredOrders = computed(() =>
   activeKey.value === 'ALL'
@@ -180,10 +182,10 @@ const displayOrders = computed(() =>
   })),
 )
 
-const tableColumns: any[] = [
-  { title: 'Mã đơn', dataIndex: 'number', key: 'number' },
+const tableColumns = computed<any[]>(() => [
+  { title: t('personalOrders.columnOrderCode'), dataIndex: 'number', key: 'number' },
   {
-    title: 'Ngày',
+    title: t('personalOrders.columnDate'),
     dataIndex: 'date',
     key: 'date',
     sorter: (a: any, b: any) =>
@@ -192,13 +194,13 @@ const tableColumns: any[] = [
     defaultSortOrder: 'descend',
   },
   {
-    title: 'Người nhận',
+    title: t('personalOrders.columnRecipient'),
     dataIndex: 'fullname',
     key: 'fullname',
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) =>
       h('div', { style: { padding: '8px' } }, [
         h(Input, {
-          placeholder: 'Tìm tên người nhận',
+          placeholder: t('personalOrders.searchRecipientPlaceholder'),
           value: selectedKeys[0],
           onInput: (event: Event) => {
             const value = (event.target as HTMLInputElement).value
@@ -236,13 +238,13 @@ const tableColumns: any[] = [
       record.raw.shippingAddress?.fullname?.toString().toLowerCase().includes(value.toLowerCase()),
   },
   {
-    title: 'SĐT',
+    title: t('personalOrders.columnPhone'),
     dataIndex: 'phone',
     key: 'phone',
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) =>
       h('div', { style: { padding: '8px' } }, [
         h(Input, {
-          placeholder: 'Tìm số điện thoại',
+          placeholder: t('personalOrders.searchPhonePlaceholder'),
           value: selectedKeys[0],
           onInput: (event: Event) => {
             const value = (event.target as HTMLInputElement).value
@@ -279,10 +281,10 @@ const tableColumns: any[] = [
     onFilter: (value: string, record: any) =>
       record.raw.shippingAddress?.phone?.toString().toLowerCase().includes(value.toLowerCase()),
   },
-  { title: 'Trạng thái', dataIndex: 'statusText', key: 'status' },
-  { title: 'Tổng', dataIndex: 'total', key: 'total' },
-  { title: 'Hành động', key: 'action' },
-]
+  { title: t('personalOrders.columnStatus'), dataIndex: 'statusText', key: 'status' },
+  { title: t('personalOrders.columnTotal'), dataIndex: 'total', key: 'total' },
+  { title: t('personalOrders.columnAction'), key: 'action' },
+])
 
 const detailVisible = ref(false)
 const selectedOrder = ref<IOrderResponse | null>(null)

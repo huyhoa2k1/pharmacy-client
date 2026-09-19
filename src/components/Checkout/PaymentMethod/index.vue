@@ -1,6 +1,6 @@
 <template>
     <div class="payment-method">
-        <h3 class="form-title">Phương thức thanh toán</h3>
+        <h3 class="form-title">{{ t('paymentMethod.title') }}</h3>
 
         <div class="payment-options">
             <div v-for="option in paymentOptions" :key="option.id" class="payment-option"
@@ -24,7 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { EPaymentMethod } from '@/api/models/order';
 import { useCheckoutStore } from '@/stores/checkoutStore';
 
@@ -35,29 +36,30 @@ interface PaymentOption {
     desc: string;
 }
 
+const { t } = useI18n();
 const checkoutStore = useCheckoutStore();
 const selectedOption = ref('payment-cod');
-const paymentOptions: PaymentOption[] = [
+const paymentOptions = computed<PaymentOption[]>(() => [
     {
         id: 'payment-cod',
         value: EPaymentMethod.CASH,
-        title: 'Thanh toán tiền mặt khi nhận hàng',
-        desc: 'Thanh toán tiền mặt khi nhận hàng',
+        title: t('paymentMethod.codTitle'),
+        desc: t('paymentMethod.codDesc'),
     },
     {
         id: 'payment-qr',
         value: EPaymentMethod.CARD,
-        title: 'Thanh toán bằng chuyển khoản (QR Code)',
-        desc: 'Chuyển khoản nhanh qua QR Code',
+        title: t('paymentMethod.qrTitle'),
+        desc: t('paymentMethod.qrDesc'),
     },
-];
+]);
 
 const selectPayment = (option: PaymentOption) => {
     selectedOption.value = option.id;
     checkoutStore.setPaymentMethod(option.value);
 };
 
-selectPayment(paymentOptions[0]);
+selectPayment(paymentOptions.value[0]);
 </script>
 
 <style scoped>

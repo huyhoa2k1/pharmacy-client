@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import type { IGetProductResponse } from '@/api/models/product'
 import { ProductService } from '@/api/services/product'
 import type { IGetCategoryResponse } from '@/api/models/category'
@@ -10,6 +11,7 @@ import Carousel from 'primevue/carousel'
 import { debounce } from 'lodash'
 
 const router = useRouter()
+const { t } = useI18n()
 const saleProducts = ref<IGetProductResponse[]>([])
 const bestSellers = ref<IGetProductResponse[]>([])
 const categories = ref<IGetCategoryResponse[]>([])
@@ -21,12 +23,12 @@ const isLoadingCategories = ref(true)
 const productsError = ref('')
 const categoriesError = ref('')
 const saleNow = ref(Date.now())
-const searchPlaceholderSuggestions = [
-  'Tìm thuốc, vitamin, sản phẩm chăm sóc sức khỏe...',
-  'Tìm thuốc cảm, đau đầu...',
-  'Tìm vitamin và thực phẩm bổ sung...',
-  'Tìm sản phẩm chăm sóc da...',
-]
+const searchPlaceholderSuggestions = computed(() => [
+  t('home.searchPlaceholder1'),
+  t('home.searchPlaceholder2'),
+  t('home.searchPlaceholder3'),
+  t('home.searchPlaceholder4'),
+])
 const animatedSearchPlaceholder = ref('')
 let saleTimerId: ReturnType<typeof setInterval> | undefined
 let placeholderAnimationTimerId: ReturnType<typeof setTimeout> | undefined
@@ -40,28 +42,28 @@ const carouselResponsiveOptions = [
   { breakpoint: '768px', numVisible: 2, numScroll: 1 },
   { breakpoint: '576px', numVisible: 1, numScroll: 1 },
 ]
-const heroPromotions = [
+const heroPromotions = computed(() => [
   {
     image:
       'https://production-cdn.pharmacity.io/digital/1590x0/plain/e-com/images/banners/20260131173232-0-hen.png?versionId=NH2BO4kn.nEaKeq4MxOqa2xoqdyuubR7',
-    alt: 'Ưu đãi chăm sóc sức khỏe',
+    alt: t('home.heroPromoAlt1'),
   },
   {
     image:
       'https://production-cdn.pharmacity.io/digital/1590x0/plain/e-com/images/banners/20260723075253-0-592_254-hero.jpg?versionId=esUJ2VFBPscRAM5QUe4ggCPiFuklQmEX',
-    alt: 'Khuyến mãi sản phẩm chăm sóc sức khỏe',
+    alt: t('home.heroPromoAlt2'),
   },
   {
     image:
       'https://production-cdn.pharmacity.io/digital/1590x0/plain/e-com/images/banners/20260813093633-0-1184x508.png?versionId=wo2fTjTd7696vv8jyJyXbAjILbyc8wIQ',
-    alt: 'Ưu đãi sản phẩm cho gia đình',
+    alt: t('home.heroPromoAlt3'),
   },
   {
     image:
       'https://production-cdn.pharmacity.io/digital/1590x0/plain/e-com/images/banners/20260818085806-0-Bw.png?versionId=FbNAOyazW.1EQtZij7SBLz6wEApRj_hZ',
-    alt: 'Chương trình ưu đãi Pharmacy',
+    alt: t('home.heroPromoAlt4'),
   },
-]
+])
 const heroPromotionResponsiveOptions = [
   { breakpoint: '768px', numVisible: 1, numScroll: 1 },
   { breakpoint: '576px', numVisible: 1, numScroll: 1 },
@@ -95,7 +97,7 @@ const getProducts = async () => {
     saleProducts.value = saleResponse
     bestSellers.value = bestSellerResponse
   } catch {
-    productsError.value = 'Không thể tải sản phẩm. Vui lòng thử lại.'
+    productsError.value = t('home.productsLoadError')
   } finally {
     isLoadingProducts.value = false
   }
@@ -107,7 +109,7 @@ const getCategories = async () => {
   try {
     categories.value = await CategoryService.getAllCategories()
   } catch {
-    categoriesError.value = 'Không thể tải danh mục. Vui lòng thử lại.'
+    categoriesError.value = t('home.categoriesLoadError')
   } finally {
     isLoadingCategories.value = false
   }
@@ -155,11 +157,11 @@ const submitSearch = () => {
 
 const animateSearchPlaceholder = () => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    animatedSearchPlaceholder.value = searchPlaceholderSuggestions[0]
+    animatedSearchPlaceholder.value = searchPlaceholderSuggestions.value[0]
     return
   }
 
-  const suggestion = searchPlaceholderSuggestions[placeholderSuggestionIndex]
+  const suggestion = searchPlaceholderSuggestions.value[placeholderSuggestionIndex]
   let delay = isDeletingPlaceholder ? 35 : 65
 
   if (isDeletingPlaceholder) {
@@ -168,7 +170,7 @@ const animateSearchPlaceholder = () => {
 
     if (placeholderCharacterIndex === 0) {
       isDeletingPlaceholder = false
-      placeholderSuggestionIndex = (placeholderSuggestionIndex + 1) % searchPlaceholderSuggestions.length
+      placeholderSuggestionIndex = (placeholderSuggestionIndex + 1) % searchPlaceholderSuggestions.value.length
       delay = 450
     }
   } else {
@@ -201,21 +203,21 @@ onUnmounted(() => {
 
 <template>
   <main class="homepage">
-    <section class="hero" aria-label="Khuyến mãi và tìm kiếm sản phẩm">
+    <section class="hero" :aria-label="t('home.heroAriaLabel')">
       <div class="hero__masthead"></div>
 
       <div class="hero__search-panel">
         <form class="hero__search" role="search" @submit.prevent="submitSearch">
-          <label class="sr-only" for="medicine-search">Tìm thuốc, vitamin hoặc sản phẩm chăm sóc sức khỏe</label>
+          <label class="sr-only" for="medicine-search">{{ t('home.searchLabel') }}</label>
           <i class="pi pi-search hero__search-icon" aria-hidden="true"></i>
           <input id="medicine-search" v-model="searchTerm" class="hero__search-input" type="search" autocomplete="off"
             :placeholder="animatedSearchPlaceholder" :aria-expanded="searchResults.length > 0"
             aria-controls="medicine-search-results" @input="handleSearchInput" />
-          <span v-if="isSearching" class="hero__search-status" role="status">Đang tìm</span>
-          <button class="btn-primary hero__search-button" type="submit">Tìm sản phẩm</button>
+          <span v-if="isSearching" class="hero__search-status" role="status">{{ t('home.searching') }}</span>
+          <button class="btn-primary hero__search-button" type="submit">{{ t('home.searchButton') }}</button>
 
           <ul v-if="searchResults.length" id="medicine-search-results" class="hero__search-results" role="listbox"
-            aria-label="Kết quả tìm kiếm">
+            :aria-label="t('home.searchResultsAriaLabel')">
             <li v-for="product in searchResults" :key="product.id" role="option">
               <button type="button" @click="openProduct(product)">
                 <img v-if="product.imageUrl[0]" :src="product.imageUrl[0]" :alt="''" />
@@ -229,24 +231,24 @@ onUnmounted(() => {
           </ul>
         </form>
 
-        <div class="hero__popular-searches" aria-label="Tìm kiếm phổ biến">
-          <span>Gợi ý:</span>
-          <a href="#recommendations">Vitamin</a>
-          <a href="#recommendations">Khẩu trang</a>
-          <a href="#recommendations">Chăm sóc da</a>
-          <a href="#recommendations">Sữa dinh dưỡng</a>
+        <div class="hero__popular-searches" :aria-label="t('home.popularSearchesLabel')">
+          <span>{{ t('home.popularSearchesPrefix') }}</span>
+          <a href="#recommendations">{{ t('home.popularSearch1') }}</a>
+          <a href="#recommendations">{{ t('home.popularSearch2') }}</a>
+          <a href="#recommendations">{{ t('home.popularSearch3') }}</a>
+          <a href="#recommendations">{{ t('home.popularSearch4') }}</a>
         </div>
       </div>
 
-      <div class="hero__services" aria-label="Dịch vụ Pharmacy">
+      <div class="hero__services" :aria-label="t('home.servicesAriaLabel')">
         <a href="#recommendations">
           <i class="pi pi-comments" aria-hidden="true"></i>
-          <span><strong>Tư vấn cùng dược sĩ</strong><small>Hỗ trợ tận tâm mỗi ngày</small></span>
+          <span><strong>{{ t('home.serviceConsultTitle') }}</strong><small>{{ t('home.serviceConsultDesc') }}</small></span>
           <i class="pi pi-angle-right" aria-hidden="true"></i>
         </a>
         <a href="#categories">
           <i class="pi pi-map-marker" aria-hidden="true"></i>
-          <span><strong>Tìm nhà thuốc gần bạn</strong><small>Thuận tiện mua sắm và nhận hàng</small></span>
+          <span><strong>{{ t('home.serviceLocateTitle') }}</strong><small>{{ t('home.serviceLocateDesc') }}</small></span>
           <i class="pi pi-angle-right" aria-hidden="true"></i>
         </a>
       </div>
@@ -264,18 +266,18 @@ onUnmounted(() => {
     <section id="categories" class="homepage__section" aria-labelledby="categories-heading">
       <div class="section-heading">
         <div>
-          <p class="section-heading__eyebrow">Khám phá theo nhu cầu</p>
-          <h2 id="categories-heading">Danh mục sức khỏe</h2>
+          <p class="section-heading__eyebrow">{{ t('home.categoriesEyebrow') }}</p>
+          <h2 id="categories-heading">{{ t('home.categoriesTitle') }}</h2>
         </div>
       </div>
 
-      <div v-if="isLoadingCategories" class="state-card" role="status">Đang tải danh mục...</div>
+      <div v-if="isLoadingCategories" class="state-card" role="status">{{ t('home.loadingCategories') }}</div>
       <div v-else-if="categoriesError" class="state-card state-card--error" role="alert">
         <p>{{ categoriesError }}</p>
-        <button class="btn-secondary" type="button" @click="getCategories">Thử lại</button>
+        <button class="btn-secondary" type="button" @click="getCategories">{{ t('home.retry') }}</button>
       </div>
       <p v-else-if="visibleCategories.length === 0" class="state-card">
-        Chưa có danh mục để hiển thị.
+        {{ t('home.noCategories') }}
       </p>
       <div v-else class="category-grid">
         <router-link v-for="(category, index) in visibleCategories" :key="category.id"
@@ -294,31 +296,31 @@ onUnmounted(() => {
       <div class="flash-sale">
         <img class="flash-sale__banner"
           src="https://prod-cdn.pharmacity.io/e-com/images/flashsale/20260805020324-0-Home_Flashsale_web.png?versionId=qcHQ6.0JKKgkZNotOyzH659ni7BfmvOf"
-          alt="Ưu đãi Flash Sale" />
+          :alt="t('home.flashSaleBannerAlt')" />
 
         <div class="flash-sale__content">
           <div class="flash-sale__heading">
             <div>
-              <p class="flash-sale__eyebrow">Ưu đãi trong ngày</p>
+              <p class="flash-sale__eyebrow">{{ t('home.flashSaleEyebrow') }}</p>
               <h2 id="sale-heading">Flash Sale</h2>
             </div>
-            <div class="flash-sale__timer" aria-live="polite" aria-label="Thời gian còn lại">
-              <span class="flash-sale__timer-label">Kết thúc sau</span>
+            <div class="flash-sale__timer" aria-live="polite" :aria-label="t('home.flashSaleTimeRemainingLabel')">
+              <span class="flash-sale__timer-label">{{ t('home.flashSaleEndsIn') }}</span>
               <span v-for="(unit, index) in saleCountdown" :key="['giờ', 'phút', 'giây'][index]"
                 class="flash-sale__time-unit">
                 <strong>{{ unit }}</strong>
-                <small>{{ ['Giờ', 'Phút', 'Giây'][index] }}</small>
+                <small>{{ [t('home.hours'), t('home.minutes'), t('home.seconds')][index] }}</small>
               </span>
             </div>
             <a class="flash-sale__all-link" href="#best-sellers-heading">
-              Xem tất cả <i class="pi pi-arrow-right" aria-hidden="true"></i>
+              {{ t('home.viewAll') }} <i class="pi pi-arrow-right" aria-hidden="true"></i>
             </a>
           </div>
 
-          <div class="flash-sale__categories" aria-label="Nhóm ưu đãi">
-            <span>Chăm sóc tiêu hóa</span>
-            <span>Sức khỏe đôi mắt</span>
-            <span>Tăng cường đề kháng</span>
+          <div class="flash-sale__categories" :aria-label="t('home.flashSaleCategoriesLabel')">
+            <span>{{ t('home.flashSaleCategory1') }}</span>
+            <span>{{ t('home.flashSaleCategory2') }}</span>
+            <span>{{ t('home.flashSaleCategory3') }}</span>
           </div>
 
           <div v-if="isLoadingProducts" class="flash-sale__products product-grid--loading" aria-busy="true">
@@ -326,7 +328,7 @@ onUnmounted(() => {
           </div>
           <div v-else-if="productsError" class="state-card state-card--error" role="alert">
             <p>{{ productsError }}</p>
-            <button class="btn-secondary" type="button" @click="getProducts">Thử lại</button>
+            <button class="btn-secondary" type="button" @click="getProducts">{{ t('home.retry') }}</button>
           </div>
           <Carousel v-else class="product-carousel product-carousel--flash-sale" :value="saleProducts" :num-visible="4"
             :num-scroll="1" :responsive-options="carouselResponsiveOptions" :show-indicators="false">
@@ -343,11 +345,11 @@ onUnmounted(() => {
     <section class="homepage__section" aria-labelledby="best-sellers-heading">
       <div class="section-heading section-heading--with-action">
         <div>
-          <p class="section-heading__eyebrow">Được nhiều khách hàng lựa chọn</p>
-          <h2 id="best-sellers-heading">Sản phẩm bán chạy</h2>
+          <p class="section-heading__eyebrow">{{ t('home.bestSellersEyebrow') }}</p>
+          <h2 id="best-sellers-heading">{{ t('home.bestSellersTitle') }}</h2>
         </div>
         <router-link class="section-heading__link" :to="{ name: 'best-sellers' }">
-          Xem tất cả <i class="pi pi-arrow-right" aria-hidden="true"></i>
+          {{ t('home.viewAll') }} <i class="pi pi-arrow-right" aria-hidden="true"></i>
         </router-link>
       </div>
 
@@ -356,10 +358,10 @@ onUnmounted(() => {
       </div>
       <div v-else-if="productsError" class="state-card state-card--error" role="alert">
         <p>{{ productsError }}</p>
-        <button class="btn-secondary" type="button" @click="getProducts">Thử lại</button>
+        <button class="btn-secondary" type="button" @click="getProducts">{{ t('home.retry') }}</button>
       </div>
       <p v-else-if="bestSellers.length === 0" class="state-card">
-        Chưa có sản phẩm bán chạy phù hợp.
+        {{ t('home.noBestSellers') }}
       </p>
       <Carousel v-else class="product-carousel" :value="bestSellers" :num-visible="4" :num-scroll="1"
         :responsive-options="carouselResponsiveOptions" :show-indicators="false">

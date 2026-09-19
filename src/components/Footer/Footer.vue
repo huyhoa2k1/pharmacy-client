@@ -5,29 +5,29 @@
         <div class="footer__assurance-item">
           <span class="footer__assurance-icon"><i class="pi pi-verified"></i></span>
           <div>
-            <strong>Sản phẩm chính hãng</strong>
-            <span>Kiểm duyệt chất lượng kỹ lưỡng</span>
+            <strong>{{ t('footer.assuranceGenuineTitle') }}</strong>
+            <span>{{ t('footer.assuranceGenuineDesc') }}</span>
           </div>
         </div>
         <div class="footer__assurance-item">
           <span class="footer__assurance-icon"><i class="pi pi-truck"></i></span>
           <div>
-            <strong>Giao hàng nhanh chóng</strong>
-            <span>Miễn phí đơn hàng từ 300.000đ</span>
+            <strong>{{ t('footer.assuranceDeliveryTitle') }}</strong>
+            <span>{{ t('footer.assuranceDeliveryDesc') }}</span>
           </div>
         </div>
         <div class="footer__assurance-item">
           <span class="footer__assurance-icon"><i class="pi pi-shield"></i></span>
           <div>
-            <strong>Thanh toán an toàn</strong>
-            <span>Bảo mật mọi thông tin giao dịch</span>
+            <strong>{{ t('footer.assurancePaymentTitle') }}</strong>
+            <span>{{ t('footer.assurancePaymentDesc') }}</span>
           </div>
         </div>
         <div class="footer__assurance-item">
           <span class="footer__assurance-icon"><i class="pi pi-headphones"></i></span>
           <div>
-            <strong>Hỗ trợ tận tâm</strong>
-            <span>Phục vụ mỗi ngày, 8:00 - 22:00</span>
+            <strong>{{ t('footer.assuranceSupportTitle') }}</strong>
+            <span>{{ t('footer.servingHours') }}</span>
           </div>
         </div>
       </div>
@@ -36,14 +36,13 @@
     <div class="footer__main">
       <div class="footer__container">
         <div class="footer__grid">
-          <section class="footer__brand" aria-label="Giới thiệu Pharmacy">
+          <section class="footer__brand" :aria-label="t('footer.brandTagline')">
             <router-link to="/" class="footer__logo">
               <span class="footer__logo-mark"><i class="pi pi-plus"></i></span>
               <span>Pharmacy</span>
             </router-link>
             <p>
-              Đồng hành cùng bạn trên hành trình chăm sóc sức khỏe với những sản phẩm chất
-              lượng và dịch vụ đáng tin cậy.
+              {{ t('footer.about') }}
             </p>
             <div class="footer__socials">
               <a href="#" aria-label="Facebook"><i class="pi pi-facebook"></i></a>
@@ -53,30 +52,30 @@
           </section>
 
           <section>
-            <h2>Khám phá</h2>
+            <h2>{{ t('footer.exploreTitle') }}</h2>
             <ul class="footer__links">
-              <li><router-link to="/">Trang chủ</router-link></li>
-              <li><router-link to="/best-sellers">Sản phẩm bán chạy</router-link></li>
-              <li><router-link to="/cart">Giỏ hàng</router-link></li>
-              <li><router-link to="/ca-nhan/thong-tin">Tài khoản của tôi</router-link></li>
+              <li><router-link to="/">{{ t('footer.home') }}</router-link></li>
+              <li><router-link to="/best-sellers">{{ t('footer.bestSellers') }}</router-link></li>
+              <li><router-link to="/cart">{{ t('footer.cart') }}</router-link></li>
+              <li><router-link to="/ca-nhan/thong-tin">{{ t('footer.myAccount') }}</router-link></li>
             </ul>
           </section>
 
           <section>
-            <h2>Hỗ trợ khách hàng</h2>
+            <h2>{{ t('footer.supportTitle') }}</h2>
             <ul class="footer__links">
-              <li><a href="tel:19006565">Trung tâm trợ giúp</a></li>
-              <li><a href="tel:19006565">Chính sách đổi trả</a></li>
-              <li><a href="tel:19006565">Hướng dẫn mua hàng</a></li>
-              <li><a href="mailto:support@pharmacy.com">Câu hỏi thường gặp</a></li>
+              <li><a href="tel:19006565">{{ t('footer.helpCenter') }}</a></li>
+              <li><a href="tel:19006565">{{ t('footer.returnPolicy') }}</a></li>
+              <li><a href="tel:19006565">{{ t('footer.shoppingGuide') }}</a></li>
+              <li><a href="mailto:support@pharmacy.com">{{ t('footer.faq') }}</a></li>
             </ul>
           </section>
 
           <section class="footer__contact">
-            <h2>Liên hệ với chúng tôi</h2>
+            <h2>{{ t('footer.contactTitle') }}</h2>
             <a class="footer__hotline" href="tel:19006565">
               <i class="pi pi-phone"></i>
-              <span><small>Tổng đài tư vấn miễn phí</small>1900 6565</span>
+              <span><small>{{ t('footer.hotlineLabel') }}</small>1900 6565</span>
             </a>
             <a class="footer__contact-row" href="mailto:support@pharmacy.com">
               <i class="pi pi-envelope"></i>
@@ -84,20 +83,21 @@
             </a>
             <div class="footer__contact-row">
               <i class="pi pi-map-marker"></i>
-              <span>123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh</span>
+              <span>{{ t('footer.address') }}</span>
             </div>
           </section>
         </div>
 
         <div class="footer__newsletter">
           <div>
-            <h2>Nhận ưu đãi sức khỏe</h2>
-            <p>Đăng ký để nhận tin mới và ưu đãi dành riêng cho bạn.</p>
+            <h2>{{ t('footer.newsletterTitle') }}</h2>
+            <p>{{ t('footer.newsletterSubtitle') }}</p>
           </div>
           <form class="footer__signup" @submit.prevent>
-            <label class="sr-only" for="footer-email">Địa chỉ email</label>
-            <input id="footer-email" type="email" placeholder="Nhập email của bạn" autocomplete="email" />
-            <button type="submit">Đăng ký <i class="pi pi-arrow-right"></i></button>
+            <label class="sr-only" for="footer-email">{{ t('footer.newsletterEmailLabel') }}</label>
+            <input id="footer-email" type="email" :placeholder="t('footer.newsletterEmailPlaceholder')"
+              autocomplete="email" />
+            <button type="submit">{{ t('footer.subscribe') }} <i class="pi pi-arrow-right"></i></button>
           </form>
         </div>
       </div>
@@ -105,10 +105,10 @@
 
     <div class="footer__bottom">
       <div class="footer__container footer__bottom-content">
-        <p>© {{ currentYear }} Pharmacy. Bảo lưu mọi quyền.</p>
+        <p>{{ t('footer.copyright', { year: currentYear }) }}</p>
         <div>
-          <span><i class="pi pi-credit-card"></i> Thanh toán bảo mật</span>
-          <span><i class="pi pi-lock"></i> Bảo vệ dữ liệu</span>
+          <span><i class="pi pi-credit-card"></i> {{ t('footer.securePayment') }}</span>
+          <span><i class="pi pi-lock"></i> {{ t('footer.dataProtection') }}</span>
         </div>
       </div>
     </div>
@@ -116,6 +116,9 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const currentYear = new Date().getFullYear()
 </script>
 
@@ -286,7 +289,7 @@ const currentYear = new Date().getFullYear()
   color: #fff;
 }
 
-.footer__hotline > i {
+.footer__hotline>i {
   display: grid;
   width: 34px;
   height: 34px;
@@ -319,7 +322,7 @@ const currentYear = new Date().getFullYear()
   line-height: 1.5;
 }
 
-.footer__contact-row > i {
+.footer__contact-row>i {
   width: 16px;
   margin-top: 3px;
   color: #5eead4;
@@ -388,7 +391,7 @@ const currentYear = new Date().getFullYear()
 }
 
 .footer__bottom-content,
-.footer__bottom-content > div {
+.footer__bottom-content>div {
   display: flex;
   gap: 20px;
   align-items: center;
@@ -403,7 +406,7 @@ const currentYear = new Date().getFullYear()
   margin: 0;
 }
 
-.footer__bottom-content > div {
+.footer__bottom-content>div {
   gap: 18px;
 }
 
@@ -442,6 +445,7 @@ const currentYear = new Date().getFullYear()
 }
 
 @media (max-width: 600px) {
+
   .footer__assurance-grid,
   .footer__grid {
     grid-template-columns: 1fr;
@@ -478,7 +482,7 @@ const currentYear = new Date().getFullYear()
   }
 
   .footer__bottom-content,
-  .footer__bottom-content > div {
+  .footer__bottom-content>div {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -488,7 +492,7 @@ const currentYear = new Date().getFullYear()
     padding: 17px 0;
   }
 
-  .footer__bottom-content > div {
+  .footer__bottom-content>div {
     gap: 7px;
   }
 }

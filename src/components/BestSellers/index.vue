@@ -3,14 +3,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
         <div>
-          <h4 class="title">Sản phẩm bán chạy nhất</h4>
-          <p class="subtitle">Các sản phẩm đã bán nhiều hơn hoặc bằng 5 lượt mua</p>
+          <h4 class="title">{{ t('bestSellers.title') }}</h4>
+          <p class="subtitle">{{ t('bestSellers.subtitle') }}</p>
         </div>
       </div>
 
-      <div v-if="isLoading" class="text-center py-10 text-gray-500">Đang tải sản phẩm...</div>
+      <div v-if="isLoading" class="text-center py-10 text-gray-500">{{ t('bestSellers.loading') }}</div>
       <div v-else-if="products.length === 0" class="text-center py-10 text-gray-500">
-        Chưa có sản phẩm bán chạy nào đủ điều kiện.
+        {{ t('bestSellers.empty') }}
       </div>
       <div v-else class="carousel-wrap">
         <Carousel
@@ -37,6 +37,9 @@ import ProductCard from '@/components/ProductCard/ProductCard.vue'
 import { ProductService } from '@/api/services/product'
 import type { IGetProductResponse } from '@/api/models/product'
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const products = ref<IGetProductResponse[]>([])
 const isLoading = ref(false)

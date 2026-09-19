@@ -5,10 +5,10 @@
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-2">
                         <i class="pi pi-receipt cart-summary-icon"></i>
-                        <span>Khuyến mãi</span>
+                        <span>{{ t('cartSummary.promotion') }}</span>
                     </div>
                     <div>
-                        <button @click="$emit('showDrawer')" class="promotion-button">Chọn mã</button>
+                        <button @click="$emit('showDrawer')" class="promotion-button">{{ t('cartSummary.chooseCode') }}</button>
                     </div>
                 </div>
             </div>
@@ -18,21 +18,21 @@
                 class="cart-summary-card grid grid-flow-col items-center gap-2 md:grid-flow-row md:items-start md:gap-4">
                 <div class="grid gap-4">
                     <div class="hidden grid-flow-col items-center justify-between gap-2 md:grid">
-                        <p class="text-sm text-neutral-900">Tạm tính</p>
+                        <p class="text-sm text-neutral-900">{{ t('cartSummary.subtotal') }}</p>
                         <p class="text-sm font-semibold text-neutral-900">{{ formattedSubTotal }}</p>
                     </div>
                     <div class="hidden grid-flow-col items-center justify-between gap-2 md:grid">
-                        <p class="text-sm text-neutral-900">Giảm giá ưu đãi</p>
+                        <p class="text-sm text-neutral-900">{{ t('cartSummary.promotionDiscount') }}</p>
                         <p class="text-sm font-semibold text-neutral-900">-</p>
                     </div>
                     <div class="hidden grid-flow-col items-center justify-between gap-2 md:grid">
-                        <p class="text-sm text-neutral-900">Giảm giá sản phẩm</p>
+                        <p class="text-sm text-neutral-900">{{ t('cartSummary.productDiscount') }}</p>
                         <p class="text-sm font-semibold text-neutral-900">-</p>
                     </div>
                     <div class="summary-divider hidden w-full md:block"></div>
                     <div
                         class="grid items-center justify-items-end gap-0.5 md:grid-flow-col md:justify-between md:gap-2">
-                        <p class="text-sm text-neutral-900 md:text-base md:font-semibold">Tổng tiền</p>
+                        <p class="text-sm text-neutral-900 md:text-base md:font-semibold">{{ t('cartSummary.total') }}</p>
                         <p class="total-price text-xl font-bold leading-8 no-underline md:text-2xl">{{
                             formattedSubTotal }}</p>
                     </div>
@@ -40,7 +40,7 @@
                 <a-button type="primary" class="w-full md:w-auto"
                     @click="isCartPage ? router.push('/check-out') : $emit('submitOrder')" :loading="isSubmitting">
                     <i v-if="!isSubmitting" class="pi pi-shopping-cart mr-2"></i>
-                    {{ isSubmitting ? 'Đang xử lý...' : `Mua hàng (${totalQuantity})` }}
+                    {{ isSubmitting ? t('cartSummary.processing') : t('cartSummary.buyNow', { count: totalQuantity }) }}
                 </a-button>
             </div>
         </div>
@@ -50,8 +50,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import type { IGetProductResponse } from '@/api/models/product';
 import { formatPrice } from '@/utils/format';
+
+const { t } = useI18n();
 
 interface CartSummaryItem extends Partial<IGetProductResponse> {
     cartQuantity: number;

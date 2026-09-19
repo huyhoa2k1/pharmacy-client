@@ -9,7 +9,7 @@
     <div class="product-right">
       <!-- Quantity Section -->
       <div class="border-b border-[var(--color-border)] pb-6">
-        <p class="text-[var(--color-foreground)] font-semibold text-sm mb-3">Số lượng</p>
+        <p class="text-[var(--color-foreground)] font-semibold text-sm mb-3">{{ t('productDetail.quantity') }}</p>
         <div class="flex items-center gap-3 bg-[var(--color-muted)] w-fit p-2 rounded-lg">
           <button @click="decreaseQuantity"
             class="quantity-control rounded-full w-8 h-8 flex items-center justify-center cursor-pointer transition">
@@ -22,7 +22,7 @@
             <PlusOutlined class="text-sm" />
           </button>
         </div>
-        <p class="text-xs text-[var(--color-muted-foreground)] mt-2">Còn {{ data.amount }} sản phẩm</p>
+        <p class="text-xs text-[var(--color-muted-foreground)] mt-2">{{ t('productDetail.remaining', { amount: data.amount }) }}</p>
       </div>
 
       <!-- Action Buttons -->
@@ -30,12 +30,12 @@
         <a-button type="primary" size="large" @click="buyNow"
           class="product-buy-button w-full font-semibold text-base h-12 rounded-lg border-0">
           <i class="pi pi-bolt mr-2"></i>
-          Mua ngay
+          {{ t('productDetail.buyNow') }}
         </a-button>
         <a-button size="large" @click="addToCart"
           class="product-cart-button w-full font-semibold text-base h-12 rounded-lg border-2">
           <i class="pi pi-shopping-cart mr-2"></i>
-          Thêm vào giỏ hàng
+          {{ t('productDetail.addToCart') }}
         </a-button>
       </div>
 
@@ -45,15 +45,15 @@
           <div class="flex justify-center mb-2">
             <i class="pi pi-clock text-[var(--color-accent)] text-2xl"></i>
           </div>
-          <p class="text-xs font-semibold text-[var(--color-foreground)]">Giao hàng siêu tốc</p>
-          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">Trong 24h</p>
+          <p class="text-xs font-semibold text-[var(--color-foreground)]">{{ t('productDetail.fastDeliveryTitle') }}</p>
+          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">{{ t('productDetail.fastDeliveryDesc') }}</p>
         </div>
         <div class="text-center">
           <div class="flex justify-center mb-2">
             <i class="pi pi-truck text-[var(--color-accent)] text-2xl"></i>
           </div>
-          <p class="text-xs font-semibold text-[var(--color-foreground)]">Miễn phí vận chuyển</p>
-          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">Từ 50.000đ</p>
+          <p class="text-xs font-semibold text-[var(--color-foreground)]">{{ t('productDetail.freeShippingTitle') }}</p>
+          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">{{ t('productDetail.freeShippingDesc') }}</p>
         </div>
       </div>
 
@@ -61,15 +61,15 @@
       <div class="pt-4 space-y-3">
         <div class="flex items-center gap-2">
           <i class="pi pi-shield text-[var(--color-accent)]"></i>
-          <span class="text-sm text-[var(--color-foreground)]">Bảo hành chính hãng</span>
+          <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.warrantyGenuine') }}</span>
         </div>
         <div class="flex items-center gap-2">
           <i class="pi pi-check-circle text-[var(--color-accent)]"></i>
-          <span class="text-sm text-[var(--color-foreground)]">Hàng chính hãng 100%</span>
+          <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.genuine100') }}</span>
         </div>
         <div class="flex items-center gap-2">
           <i class="pi pi-times-circle text-[var(--color-destructive)]"></i>
-          <span class="text-sm text-[var(--color-foreground)]">Không chấp nhận đổi trả</span>
+          <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.noReturns') }}</span>
         </div>
       </div>
     </div>
@@ -78,6 +78,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import Swiper from '@/components/Product/Swiper/Swiper.vue';
 import MainInfo from '@/components/Product/MainInfo/index.vue';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
@@ -89,6 +90,7 @@ import type { IGetProductResponse } from '@/api/models/product';
 import type { CartItem } from '@/utils/index.type';
 
 const route = useRoute();
+const { t } = useI18n();
 const cartStore = useCartStore();
 const data = ref<IGetProductResponse>({} as IGetProductResponse);
 const quantity = ref(1);
@@ -114,7 +116,7 @@ const increaseQuantity = () => {
 
 const addToCart = () => {
   if (!data.value.id) {
-    message.warning('Không tìm thấy sản phẩm');
+    message.warning(t('productDetail.notFound'));
     return;
   }
 
@@ -125,7 +127,7 @@ const addToCart = () => {
     const newQuantity = cartStore.cart[existingItemIndex].cartQuantity + quantity.value;
     if (newQuantity > data.value.amount) {
       cartStore.updateItem(existingItemIndex, data.value.amount);
-      message.warning(`Chỉ có thể thêm tối đa ${data.value.amount} sản phẩm`);
+      message.warning(t('productDetail.maxAddable', { amount: data.value.amount }));
     } else {
       cartStore.updateItem(existingItemIndex, newQuantity);
     }
@@ -139,7 +141,7 @@ const addToCart = () => {
     cartStore.addToCart(newItem);
   }
 
-  message.success(`Đã thêm ${quantity.value} sản phẩm vào giỏ hàng`);
+  message.success(t('productDetail.addedToCart', { qty: quantity.value }));
   quantity.value = 1; // Reset quantity
 };
 
