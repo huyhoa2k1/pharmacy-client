@@ -2,56 +2,40 @@
   <section class="product-filter">
     <header class="product-filter__header">
       <div>
-        <h2>Bộ lọc</h2>
-        <p>Tìm sản phẩm phù hợp với bạn</p>
+        <h2>{{ t('filter.title') }}</h2>
+        <p>{{ t('filter.subtitle') }}</p>
       </div>
-      <button type="button" class="product-filter__reset" @click="reset">Xóa lọc</button>
+      <button type="button" class="product-filter__reset" @click="reset">{{ t('filter.reset') }}</button>
     </header>
 
     <div class="product-filter__section">
-      <h3>Khoảng giá</h3>
+      <h3>{{ t('filter.priceRangeTitle') }}</h3>
       <div class="product-filter__price-inputs">
-        <a-input-number
-          v-model:value="local.priceFrom"
-          :min="0"
-          :controls="false"
-          :formatter="formatCurrencyInput"
-          :parser="parseCurrencyInput"
-          placeholder="Từ"
-          class="product-filter__price-input"
-        >
+        <a-input-number v-model:value="local.priceFrom" :min="0" :controls="false" :formatter="formatCurrencyInput"
+          :parser="parseCurrencyInput" :placeholder="t('filter.priceFromPlaceholder')"
+          class="product-filter__price-input">
           <template #suffix>đ</template>
         </a-input-number>
         <span aria-hidden="true">-</span>
-        <a-input-number
-          v-model:value="local.priceTo"
-          :min="0"
-          :controls="false"
-          :formatter="formatCurrencyInput"
-          :parser="parseCurrencyInput"
-          placeholder="Đến"
-          class="product-filter__price-input"
-        >
+        <a-input-number v-model:value="local.priceTo" :min="0" :controls="false" :formatter="formatCurrencyInput"
+          :parser="parseCurrencyInput" :placeholder="t('filter.priceToPlaceholder')"
+          class="product-filter__price-input">
           <template #suffix>đ</template>
         </a-input-number>
       </div>
-      <a-button type="primary" class="product-filter__apply" @click="apply">Áp dụng</a-button>
+      <a-button type="primary" class="product-filter__apply" @click="apply">{{ t('filter.apply') }}</a-button>
 
       <a-radio-group v-model:value="local.priceRange" class="product-filter__price-ranges">
-        <a-radio :value="1">Dưới 100.000 đ</a-radio>
-        <a-radio :value="2">100.000 đ - 300.000 đ</a-radio>
-        <a-radio :value="3">Trên 300.000 đ</a-radio>
+        <a-radio :value="1">{{ t('filter.priceUnder100k') }}</a-radio>
+        <a-radio :value="2">{{ t('filter.price100kTo300k') }}</a-radio>
+        <a-radio :value="3">{{ t('filter.priceOver300k') }}</a-radio>
       </a-radio-group>
     </div>
 
     <div class="product-filter__section product-filter__section--brands">
-      <h3>Thương hiệu</h3>
-      <a-input
-        v-model:value="brandSearch"
-        placeholder="Tìm thương hiệu"
-        allow-clear
-        class="product-filter__brand-search"
-      >
+      <h3>{{ t('filter.brandsTitle') }}</h3>
+      <a-input v-model:value="brandSearch" :placeholder="t('filter.brandSearchPlaceholder')" allow-clear
+        class="product-filter__brand-search">
         <template #prefix><i class="pi pi-search" aria-hidden="true"></i></template>
       </a-input>
       <a-checkbox-group v-model:value="local.brands" class="product-filter__brands">
@@ -60,7 +44,7 @@
         </a-checkbox>
       </a-checkbox-group>
       <p v-if="!filteredBrands.length" class="product-filter__no-brands">
-        Không tìm thấy thương hiệu.
+        {{ t('filter.noBrandsFound') }}
       </p>
     </div>
   </section>
@@ -71,8 +55,10 @@ import type { IGetBrandResponse } from '@/api/models/brand'
 import { BrandService } from '@/api/services/brand'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
+const { t } = useI18n()
 
 const props = defineProps<{
   filters: Record<string, unknown>
@@ -229,7 +215,7 @@ onMounted(async () => {
   border-top: 1px solid #E2ECE9;
 }
 
-.product-filter__section + .product-filter__section {
+.product-filter__section+.product-filter__section {
   margin-top: var(--space-lg);
 }
 

@@ -1,30 +1,26 @@
 <template>
   <section class="catalogue">
-    <aside class="catalogue__sidebar" aria-label="Bộ lọc sản phẩm">
+    <aside class="catalogue__sidebar" :aria-label="t('products.filterAriaLabel')">
       <Filter v-model:filters="filters" />
     </aside>
 
     <main class="catalogue__content">
       <header class="catalogue__header">
         <div>
-          <p class="catalogue__eyebrow">Mua sắm theo danh mục</p>
-          <h1>Danh sách sản phẩm</h1>
+          <p class="catalogue__eyebrow">{{ t('products.eyebrow') }}</p>
+          <h1>{{ t('products.title') }}</h1>
           <p class="catalogue__result-count">
             {{ resultSummary }}
           </p>
         </div>
 
         <div class="catalogue__sort">
-          <label for="product-sort">Sắp xếp theo</label>
-          <a-select
-            id="product-sort"
-            v-model:value="sort"
-            class="catalogue__sort-select"
-            aria-label="Sắp xếp sản phẩm"
-          >
-            <a-select-option :value="null">Phổ biến nhất</a-select-option>
-            <a-select-option value="asc">Giá: Thấp đến cao</a-select-option>
-            <a-select-option value="desc">Giá: Cao đến thấp</a-select-option>
+          <label for="product-sort">{{ t('products.sortLabel') }}</label>
+          <a-select id="product-sort" v-model:value="sort" class="catalogue__sort-select"
+            :aria-label="t('products.sortAriaLabel')">
+            <a-select-option :value="null">{{ t('products.sortPopular') }}</a-select-option>
+            <a-select-option value="asc">{{ t('products.sortPriceAsc') }}</a-select-option>
+            <a-select-option value="desc">{{ t('products.sortPriceDesc') }}</a-select-option>
           </a-select>
         </div>
       </header>
@@ -35,8 +31,8 @@
 
       <div v-else class="catalogue__empty">
         <i class="pi pi-search" aria-hidden="true"></i>
-        <h2>Không tìm thấy sản phẩm phù hợp</h2>
-        <p>Hãy thử điều chỉnh khoảng giá hoặc lựa chọn thương hiệu khác.</p>
+        <h2>{{ t('products.emptyTitle') }}</h2>
+        <p>{{ t('products.emptyDesc') }}</p>
       </div>
     </main>
   </section>
@@ -49,8 +45,10 @@ import Filter from '@/components/Filter/Filter.vue'
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
+const { t } = useI18n()
 const data = ref<IGetProductResponse[]>([])
 const filters = ref<Record<string, unknown>>({})
 const sort = ref<string | null>(null)
@@ -58,7 +56,7 @@ const response = ref<IPageResponse<IGetProductResponse> | null>(null)
 
 const resultSummary = computed(() => {
   const count = response.value?.totalElements ?? data.value.length
-  return `${new Intl.NumberFormat('vi-VN').format(count)} sản phẩm`
+  return t('products.resultCount', { count: new Intl.NumberFormat('vi-VN').format(count) })
 })
 
 const getAllProductsByCategory = async () => {

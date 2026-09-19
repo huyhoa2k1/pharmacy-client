@@ -9,14 +9,14 @@
             </template>
           </a-avatar>
           <div>
-            <p class="profile-card__eyebrow">Tài khoản của tôi</p>
-            <h1 class="profile-card__name">{{ user?.userName || 'Khách hàng' }}</h1>
-            <p class="profile-card__phone">{{ user?.phone || 'Chưa cập nhật số điện thoại' }}</p>
+            <p class="profile-card__eyebrow">{{ t('personal.myAccount') }}</p>
+            <h1 class="profile-card__name">{{ user?.userName || t('personal.defaultUsername') }}</h1>
+            <p class="profile-card__phone">{{ user?.phone || t('personal.noPhone') }}</p>
           </div>
         </div>
       </a-card>
 
-      <nav class="personal-navigation" aria-label="Tài khoản cá nhân">
+      <nav class="personal-navigation" :aria-label="t('personal.navAriaLabel')">
         <router-link
           v-for="item in navigationItems"
           :key="item.key"
@@ -39,8 +39,10 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { ShoppingOutlined, UserOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 
+const { t } = useI18n()
 const userStore = useUserStore()
 const user = computed(() =>
   userStore.isLogin
@@ -51,10 +53,10 @@ const user = computed(() =>
     : null,
 )
 
-const navigationItems = [
-  { key: 'information', label: 'Thông tin cá nhân', to: '/ca-nhan/thong-tin', icon: UserOutlined },
-  { key: 'orders', label: 'Đơn hàng của tôi', to: '/ca-nhan/don-hang', icon: ShoppingOutlined },
-]
+const navigationItems = computed(() => [
+  { key: 'information', label: t('personal.navInfo'), to: '/ca-nhan/thong-tin', icon: UserOutlined },
+  { key: 'orders', label: t('personal.navOrders'), to: '/ca-nhan/don-hang', icon: ShoppingOutlined },
+])
 </script>
 
 <style scoped>

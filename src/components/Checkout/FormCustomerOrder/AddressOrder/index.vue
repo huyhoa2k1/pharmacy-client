@@ -1,26 +1,26 @@
 <template>
     <div class="address-form">
-        <h3 class="form-title">Địa chỉ nhận hàng</h3>
+        <h3 class="form-title">{{ t('checkout.addressFormTitle') }}</h3>
 
         <div class="form-group">
-            <label class="form-label">Tỉnh / Thành phố <span class="required">*</span></label>
-            <a-select v-model:value="checkoutStore.addressInfo.province" placeholder="Chọn tỉnh / thành phố"
+            <label class="form-label">{{ t('checkout.provinceLabel') }} <span class="required">*</span></label>
+            <a-select v-model:value="checkoutStore.addressInfo.province" :placeholder="t('checkout.provincePlaceholder')"
                 :options="provinces" :filter-option="filterOption" show-search @change="onProvinceChange"
                 class="w-full" />
             <span v-if="errors.province" class="error-message">{{ errors.province }}</span>
         </div>
 
         <div class="form-group">
-            <label class="form-label">Phường / Xã <span class="required">*</span></label>
-            <a-select v-model:value="checkoutStore.addressInfo.ward" placeholder="Chọn phường / xã" :options="wards"
+            <label class="form-label">{{ t('checkout.wardLabel') }} <span class="required">*</span></label>
+            <a-select v-model:value="checkoutStore.addressInfo.ward" :placeholder="t('checkout.wardPlaceholder')" :options="wards"
                 :filter-option="filterOption" show-search :disabled="!checkoutStore.addressInfo.province"
                 @change="validateForm" class="w-full" />
             <span v-if="errors.ward" class="error-message">{{ errors.ward }}</span>
         </div>
 
         <div class="form-group">
-            <label class="form-label">Địa chỉ cụ thể <span class="required">*</span></label>
-            <a-input v-model:value="checkoutStore.addressInfo.address" placeholder="Nhập số nhà, tên đường..."
+            <label class="form-label">{{ t('checkout.addressLabel') }} <span class="required">*</span></label>
+            <a-input v-model:value="checkoutStore.addressInfo.address" :placeholder="t('checkout.addressPlaceholder')"
                 allow-clear @change="validateForm" />
             <span v-if="errors.address" class="error-message">{{ errors.address }}</span>
         </div>
@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useCheckoutStore } from '@/stores/checkoutStore';
 import { ProvinceService } from '@/api/services/province';
 
@@ -44,6 +45,7 @@ interface Errors {
     address?: string;
 }
 
+const { t } = useI18n();
 const checkoutStore = useCheckoutStore();
 const errors = ref<Errors>({});
 const provinces = ref<SelectOption[]>([]);
@@ -86,17 +88,17 @@ const validateForm = (): boolean => {
     errors.value = {};
 
     if (!checkoutStore.addressInfo.province) {
-        errors.value.province = 'Vui lòng chọn tỉnh / thành phố';
+        errors.value.province = t('checkout.provinceRequired');
     }
 
     if (!checkoutStore.addressInfo.ward) {
-        errors.value.ward = 'Vui lòng chọn phường / xã';
+        errors.value.ward = t('checkout.wardRequired');
     }
 
     if (!checkoutStore.addressInfo.address?.trim()) {
-        errors.value.address = 'Vui lòng nhập địa chỉ cụ thể';
+        errors.value.address = t('checkout.addressRequired');
     } else if (checkoutStore.addressInfo.address.length < 5) {
-        errors.value.address = 'Địa chỉ phải có ít nhất 5 ký tự';
+        errors.value.address = t('checkout.addressMinLength');
     }
 
     return Object.keys(errors.value).length === 0;

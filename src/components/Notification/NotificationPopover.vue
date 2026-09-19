@@ -4,17 +4,17 @@
       <div class="notification-list">
         <div class="notification-list__header">
           <div>
-            <h2>Thông báo</h2>
-            <p>{{ unreadCount ? `${unreadCount} chưa đọc` : 'Bạn đã đọc tất cả thông báo' }}</p>
+            <h2>{{ t('notification.title') }}</h2>
+            <p>{{ unreadCount ? t('notification.unread', { count: unreadCount }) : t('notification.allRead') }}</p>
           </div>
           <a-button v-if="unreadCount" type="link" size="small" @click="markAllRead">
-            Đánh dấu đã đọc
+            {{ t('notification.markAllRead') }}
           </a-button>
         </div>
         <a-empty
           v-if="!listNoti.length"
           :image="Empty.PRESENTED_IMAGE_SIMPLE"
-          description="Chưa có thông báo"
+          :description="t('notification.empty')"
           class="notification-list__empty"
         />
         <template v-else>
@@ -54,7 +54,7 @@
 
     <template #default>
       <a-badge :count="unreadCount" :overflow-count="99">
-        <a-button type="text" class="notification-trigger" aria-label="Mở thông báo">
+        <a-button type="text" class="notification-trigger" :aria-label="t('notification.openAria')">
           <template #icon><BellFilled /></template>
         </a-button>
       </a-badge>
@@ -65,11 +65,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Empty } from 'ant-design-vue'
+import { useI18n } from 'vue-i18n'
 import SockJS from 'sockjs-client/dist/sockjs'
 import { Client } from '@stomp/stompjs'
 import { BellFilled, ClockCircleOutlined } from '@ant-design/icons-vue'
 import { NotificationService } from '@/api/services/notification'
 import { SOCKET_URL } from '@/helpers/https'
+
+const { t } = useI18n()
 
 const listNoti = ref<any[]>([])
 const currentPage = ref(1)

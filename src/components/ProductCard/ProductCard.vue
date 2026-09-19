@@ -1,24 +1,13 @@
 <template>
   <article class="product-card">
-    <router-link
-      class="product-card__details"
-      :to="productRoute"
-      :aria-label="`Xem chi tiết ${data.name}`"
-    >
+    <router-link class="product-card__details" :to="productRoute"
+      :aria-label="t('productCard.viewDetailsAria', { name: data.name })">
       <div class="product-card__image-wrap">
-        <img
-          v-if="data.imageUrl?.[0]"
-          class="product-card__image"
-          :src="data.imageUrl[0]"
-          :alt="data.name"
-        />
+        <img v-if="data.imageUrl?.[0]" class="product-card__image" :src="data.imageUrl[0]" :alt="data.name" />
         <i v-else class="pi pi-image product-card__image-placeholder" aria-hidden="true"></i>
 
         <span v-if="data.discount > 0" class="product-card__discount">-{{ data.discount }}%</span>
-        <span
-          class="product-card__availability"
-          :class="{ 'product-card__availability--out': data.amount <= 0 }"
-        >
+        <span class="product-card__availability" :class="{ 'product-card__availability--out': data.amount <= 0 }">
           <i class="pi pi-check-circle" aria-hidden="true"></i>
           {{ availabilityLabel }}
         </span>
@@ -28,7 +17,7 @@
         <p v-if="data.brand?.name" class="product-card__brand">{{ data.brand.name }}</p>
         <h3 class="product-card__name">{{ data.name }}</h3>
 
-        <p class="product-card__sold">Đã bán {{ formatSoldCount(data.sold) }}</p>
+        <p class="product-card__sold">{{ t('productCard.soldCount', { count: formatSoldCount(data.sold) }) }}</p>
 
         <div class="product-card__price">
           <span class="product-card__current-price">{{ formatPrice(discountedPrice) }} đ</span>
@@ -40,15 +29,11 @@
     </router-link>
 
     <div class="product-card__action">
-      <button
-        type="button"
-        class="product-card__add-to-cart"
-        :aria-label="`Thêm ${data.name} vào giỏ hàng`"
-        :disabled="data.amount <= 0"
-        @click="addToCart"
-      >
+      <button type="button" class="product-card__add-to-cart"
+        :aria-label="t('productCard.addToCartAria', { name: data.name })" :disabled="data.amount <= 0"
+        @click="addToCart">
         <i class="pi pi-shopping-cart" aria-hidden="true"></i>
-        <span>{{ data.amount > 0 ? 'Thêm vào giỏ' : 'Tạm hết hàng' }}</span>
+        <span>{{ data.amount > 0 ? t('productCard.addToCart') : t('productCard.outOfStock') }}</span>
       </button>
     </div>
   </article>
@@ -57,10 +42,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { message } from 'ant-design-vue'
+import { useI18n } from 'vue-i18n'
 import { useCartStore } from '@/stores/cart'
 import type { IGetProductResponse } from '@/api/models/product'
 import type { CartItem } from '@/utils/index.type'
 
+const { t } = useI18n()
 const cartStore = useCartStore()
 
 const props = defineProps<{
@@ -80,7 +67,11 @@ const discountedPrice = computed(
 )
 
 const availabilityLabel = computed(() =>
-  props.data.amount <= 0 ? 'Tạm hết hàng' : props.data.amount <= 10 ? `Chỉ còn ${props.data.amount}` : 'Còn hàng',
+  props.data.amount <= 0
+    ? t('productCard.outOfStock')
+    : props.data.amount <= 10
+      ? t('productCard.onlyLeft', { amount: props.data.amount })
+      : t('productCard.inStock'),
 )
 
 function formatPrice(price: number): string {
@@ -93,7 +84,7 @@ function formatSoldCount(sold: number): string {
 
 const addToCart = () => {
   if (props.data.amount <= 0) {
-    message.warning('Sản phẩm hiện đã hết hàng')
+    message.warning(t('productCard.outOfStockToast'))
     return
   }
 
@@ -102,7 +93,7 @@ const addToCart = () => {
   if (existingItemIndex !== -1) {
     const nextQuantity = cartStore.cart[existingItemIndex].cartQuantity + 1
     if (nextQuantity > props.data.amount) {
-      message.warning(`Chỉ có thể thêm tối đa ${props.data.amount} sản phẩm`)
+      message.warning(t('productCard.maxAddable', { amount: props.data.amount }))
       return
     }
     cartStore.updateItem(existingItemIndex, nextQuantity)
@@ -115,7 +106,7 @@ const addToCart = () => {
     cartStore.addToCart(newItem)
   }
 
-  message.success('Đã thêm vào giỏ hàng')
+  message.success(t('productCard.addedToCart'))
 }
 </script>
 
@@ -313,6 +304,7 @@ const addToCart = () => {
 }
 
 @media (max-width: 480px) {
+
   .product-card__content,
   .product-card__action {
     padding-right: var(--space-sm);

@@ -2,8 +2,8 @@
   <main class="best-sellers-page">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="mb-6">
-        <h1 class="page-title">Sản phẩm bán chạy nhất</h1>
-        <p class="page-description">Xem các sản phẩm đã bán nhiều hơn hoặc bằng 5 lượt mua.</p>
+        <h1 class="page-title">{{ t('bestSellers.pageTitle') }}</h1>
+        <p class="page-description">{{ t('bestSellers.pageDescription') }}</p>
       </div>
       <BestSellers />
     </div>
@@ -11,7 +11,10 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import BestSellers from '@/components/BestSellers/index.vue'
+
+const { t } = useI18n()
 </script>
 
 <style scoped>

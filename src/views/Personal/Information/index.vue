@@ -2,8 +2,8 @@
   <a-card :bordered="false" class="information-card">
     <template #title>
       <div>
-        <p class="section-eyebrow">Hồ sơ tài khoản</p>
-        <h2 class="section-title">Thông tin cá nhân</h2>
+        <p class="section-eyebrow">{{ t('personalInfo.eyebrow') }}</p>
+        <h2 class="section-title">{{ t('personalInfo.title') }}</h2>
       </div>
     </template>
 
@@ -16,16 +16,16 @@
 
       <dl class="information-list">
         <div class="information-list__item">
-          <dt>Họ và tên</dt>
-          <dd>{{ user?.username || 'Chưa cập nhật' }}</dd>
+          <dt>{{ t('personalInfo.fullName') }}</dt>
+          <dd>{{ user?.username || t('personalInfo.notUpdated') }}</dd>
         </div>
         <div class="information-list__item">
-          <dt>Email</dt>
-          <dd>{{ user?.email || 'Chưa cập nhật' }}</dd>
+          <dt>{{ t('personalInfo.email') }}</dt>
+          <dd>{{ user?.email || t('personalInfo.notUpdated') }}</dd>
         </div>
         <div class="information-list__item">
-          <dt>Điện thoại</dt>
-          <dd>{{ user?.phone || 'Chưa cập nhật' }}</dd>
+          <dt>{{ t('personalInfo.phone') }}</dt>
+          <dd>{{ user?.phone || t('personalInfo.notUpdated') }}</dd>
         </div>
       </dl>
     </div>
@@ -35,8 +35,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { UserOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 
+const { t } = useI18n()
 const userStore = useUserStore()
 const user = computed(() =>
   userStore.isLogin

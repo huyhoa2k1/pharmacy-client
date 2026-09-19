@@ -6,6 +6,7 @@ import { loadLayoutMiddleware } from './middleware'
 import NoneLayout from '@/layouts/NoneLayout.vue'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { handlePermissions } from '@/middlewares/permission'
+import i18n from '@/i18n'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +17,7 @@ const router = createRouter({
       component: HomeView,
       meta: {
         layout: AppLayout,
-        title: 'Pharmacy Management System',
+        titleKey: 'routeTitles.home',
       },
     },
     {
@@ -25,7 +26,7 @@ const router = createRouter({
       component: () => import('../views/Products/ProductsView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Danh sách sản phẩm - Pharmacy Management System',
+        titleKey: 'routeTitles.products',
       },
     },
     {
@@ -34,7 +35,7 @@ const router = createRouter({
       component: () => import('@/views/Products/_id/ProductView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Chi tiết',
+        titleKey: 'routeTitles.productDetail',
       },
     },
     {
@@ -43,7 +44,7 @@ const router = createRouter({
       component: () => import('@/views/Cart/CartView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Giỏ hàng',
+        titleKey: 'routeTitles.cart',
       },
     },
     {
@@ -52,7 +53,7 @@ const router = createRouter({
       component: () => import('@/views/Checkout/CheckoutView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Thanh toán',
+        titleKey: 'routeTitles.checkout',
       },
     },
     {
@@ -61,7 +62,7 @@ const router = createRouter({
       component: () => import('@/views/BestSellersView.vue'),
       meta: {
         layout: DetailLayout,
-        title: 'Sản phẩm bán chạy nhất',
+        titleKey: 'routeTitles.bestSellers',
       },
     },
     {
@@ -75,7 +76,7 @@ const router = createRouter({
           component: () => import('@/views/Personal/Information/index.vue'),
           meta: {
             layout: DetailLayout,
-            title: 'Thông tin cá nhân',
+            titleKey: 'routeTitles.personalInfo',
           },
         },
         {
@@ -84,7 +85,7 @@ const router = createRouter({
           component: () => import('@/views/Personal/MyOrder/index.vue'),
           meta: {
             layout: DetailLayout,
-            title: 'Đơn hàng của tôi',
+            titleKey: 'routeTitles.personalOrders',
           },
         },
       ],
@@ -97,7 +98,7 @@ const router = createRouter({
       component: () => import('@/views/Admin/ProductManagement/index.vue'),
       meta: {
         layout: AdminLayout,
-        title: 'Quản lý sản phẩm',
+        titleKey: 'adminLayout.productsPageTitle',
         roles: [],
       },
     },
@@ -107,7 +108,7 @@ const router = createRouter({
       component: () => import('@/views/Admin/ProductManagement/create/product/index.vue'),
       meta: {
         layout: AdminLayout,
-        title: 'Thêm sản phẩm',
+        titleKey: 'adminLayout.productCreatePageTitle',
         roles: [],
       },
     },
@@ -117,7 +118,7 @@ const router = createRouter({
       component: () => import('@/views/Admin/CategoryManagement/index.vue'),
       meta: {
         layout: AdminLayout,
-        title: 'Quản lý category',
+        titleKey: 'adminLayout.categoriesPageTitle',
         roles: [],
       },
     },
@@ -127,7 +128,7 @@ const router = createRouter({
       component: () => import('@/views/Admin/BrandManagement/index.vue'),
       meta: {
         layout: AdminLayout,
-        title: 'Quản lý brand',
+        titleKey: 'adminLayout.brandsPageTitle',
         roles: [],
       },
     },
@@ -137,7 +138,7 @@ const router = createRouter({
       component: () => import('@/views/Admin/OrderManagement/index.vue'),
       meta: {
         layout: AdminLayout,
-        title: 'Quản lý đơn hàng',
+        titleKey: 'adminLayout.ordersPageTitle',
         roles: [],
       },
     },
@@ -147,7 +148,7 @@ const router = createRouter({
       component: () => import('@/views/Admin/Setting/General/index.vue'),
       meta: {
         layout: AdminLayout,
-        title: 'Cài đặt chung',
+        titleKey: 'adminLayout.generalSettingsPageTitle',
         roles: [],
       },
     },
@@ -157,7 +158,7 @@ const router = createRouter({
       component: () => import('@/views/Admin/Setting/Province/index.vue'),
       meta: {
         layout: AdminLayout,
-        title: 'Quản lý province và ward',
+        titleKey: 'adminLayout.provincePageTitle',
         roles: [],
       },
     },
@@ -167,7 +168,7 @@ const router = createRouter({
       component: () => import('@/views/Error/ErrorView.vue'),
       meta: {
         layout: NoneLayout,
-        title: 'Error',
+        titleKey: 'routeTitles.error',
       },
     },
     {
@@ -180,7 +181,8 @@ const router = createRouter({
 router.beforeEach(handlePermissions)
 router.beforeEach(loadLayoutMiddleware)
 router.beforeEach((to, from, next) => {
-  ;(<any>document).title = to.meta.title || 'Default Title'
+  const titleKey = to.meta.titleKey as string | undefined
+  document.title = titleKey ? i18n.global.t(titleKey) : (to.meta.title as string) || 'Default Title'
   next()
 })
 
