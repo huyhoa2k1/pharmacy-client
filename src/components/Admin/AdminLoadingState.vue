@@ -1,12 +1,17 @@
 <template>
-    <section class="admin-state admin-loading-state" :aria-label="label" aria-busy="true">
+    <section class="admin-state admin-loading-state" :aria-label="label || t('adminCommon.loadingData')"
+        aria-busy="true">
         <a-spin size="large" />
-        <p>{{ label }}</p>
+        <p>{{ label || t('adminCommon.loadingData') }}</p>
     </section>
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{ label?: string }>(), { label: 'Đang tải dữ liệu...' })
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
+defineProps<{ label?: string }>()
 </script>
 
 <style scoped>

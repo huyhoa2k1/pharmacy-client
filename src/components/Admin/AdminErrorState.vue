@@ -1,25 +1,30 @@
 <template>
     <section class="admin-state admin-error-state" role="alert">
-        <div class="admin-error-state__icon" aria-hidden="true"><WarningOutlined /></div>
+        <div class="admin-error-state__icon" aria-hidden="true">
+            <WarningOutlined />
+        </div>
         <div>
-            <h2>{{ title }}</h2>
-            <p>{{ description }}</p>
+            <h2>{{ title || t('adminCommon.loadErrorTitle') }}</h2>
+            <p>{{ description || t('adminCommon.loadErrorDescription') }}</p>
         </div>
         <a-button v-if="$slots.action" type="primary" @click="$emit('retry')">
-            <slot name="action">Thử lại</slot>
+            <slot name="action">{{ t('adminCommon.retry') }}</slot>
         </a-button>
     </section>
 </template>
 
 <script setup lang="ts">
 import { WarningOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 withDefaults(defineProps<{
     title?: string
     description?: string
 }>(), {
-    title: 'Không thể tải dữ liệu',
-    description: 'Đã xảy ra sự cố. Vui lòng thử lại.',
+    title: '',
+    description: '',
 })
 
 defineEmits<{ retry: [] }>()

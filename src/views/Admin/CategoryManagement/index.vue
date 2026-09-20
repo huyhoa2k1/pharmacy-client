@@ -2,119 +2,80 @@
   <div class="entity-management">
     <AdminTableToolbar>
       <template #search>
-        <AdminSearch
-          v-model="searchText"
-          label="Tìm danh mục"
-          placeholder="Tìm tên hoặc slug danh mục..."
-          @search="resetPage"
-        />
+        <AdminSearch v-model="searchText" :label="t('adminCategories.searchLabel')"
+          :placeholder="t('adminCategories.searchPlaceholder')" @search="resetPage" />
       </template>
       <template #actions>
-        <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal"
-          >Thêm danh mục</a-button
-        >
+        <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">{{ t('adminCategories.addCategory')
+          }}</a-button>
       </template>
     </AdminTableToolbar>
 
     <div v-if="selectedRowKeys.length" class="selection-bar" role="status">
-      <span
-        ><strong>{{ selectedRowKeys.length }}</strong> danh mục đã chọn</span
-      >
+      <span>{{ t('adminCategories.selectedCount', { count: selectedRowKeys.length }) }}</span>
       <div>
-        <a-button danger :icon="h(DeleteOutlined)" @click="confirmDeleteSelected"
-          >Xóa đã chọn</a-button
-        >
-        <a-button type="link" @click="selectedRowKeys = []">Bỏ chọn</a-button>
+        <a-button danger :icon="h(DeleteOutlined)" @click="confirmDeleteSelected">{{ t('adminCategories.deleteSelected')
+          }}</a-button>
+        <a-button type="link" @click="selectedRowKeys = []">{{ t('adminCategories.deselect') }}</a-button>
       </div>
     </div>
 
-    <AdminLoadingState v-if="loading" label="Đang tải danh mục..." />
-    <AdminErrorState
-      v-else-if="loadError"
-      title="Không thể tải danh mục"
-      description="Vui lòng kiểm tra kết nối và thử lại."
-      @retry="loadCategories"
-    >
-      <template #action>Thử tải lại</template>
+    <AdminLoadingState v-if="loading" :label="t('adminCategories.loading')" />
+    <AdminErrorState v-else-if="loadError" :title="t('adminCategories.loadErrorTitle')"
+      :description="t('adminCategories.loadErrorDescription')" @retry="loadCategories">
+      <template #action>{{ t('adminCategories.reloadAction') }}</template>
     </AdminErrorState>
-    <AdminEmptyState
-      v-else-if="!filteredCategories.length"
-      :title="searchText ? 'Không tìm thấy danh mục' : 'Chưa có danh mục'"
-      :description="
-        searchText
-          ? 'Thử thay đổi từ khóa tìm kiếm.'
-          : 'Hãy tạo danh mục đầu tiên để sắp xếp sản phẩm.'
-      "
-    >
+    <AdminEmptyState v-else-if="!filteredCategories.length"
+      :title="searchText ? t('adminCategories.emptyTitleFiltered') : t('adminCategories.emptyTitleDefault')"
+      :description="searchText
+          ? t('adminCategories.emptyDescFiltered')
+          : t('adminCategories.emptyDescDefault')
+        ">
       <template #action>
-        <a-button v-if="searchText" type="primary" @click="searchText = ''">Xóa tìm kiếm</a-button>
-        <a-button v-else type="primary" @click="openCreateModal">Thêm danh mục</a-button>
+        <a-button v-if="searchText" type="primary" @click="searchText = ''">{{ t('adminCategories.clearSearch')
+          }}</a-button>
+        <a-button v-else type="primary" @click="openCreateModal">{{ t('adminCategories.addCategory') }}</a-button>
       </template>
     </AdminEmptyState>
-    <AdminDataTable
-      v-else
-      :columns="columns"
-      :data-source="paginatedCategories"
-      row-key="id"
-      :row-selection="rowSelection"
-    >
+    <AdminDataTable v-else :columns="columns" :data-source="paginatedCategories" row-key="id"
+      :row-selection="rowSelection">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
           <div class="entity-cell">
             <a-avatar shape="square" :size="40">{{ record.name.charAt(0).toUpperCase() }}</a-avatar>
             <div>
-              <strong>{{ record.name }}</strong
-              ><span>#{{ record.id }}</span>
+              <strong>{{ record.name }}</strong><span>#{{ record.id }}</span>
             </div>
           </div>
         </template>
         <template v-else-if="column.key === 'action'">
-          <AdminActionMenu
-            :items="[{ key: 'delete', label: 'Xóa danh mục', danger: true }]"
-            label="Thao tác danh mục"
-            @select="handleRowAction(record, $event)"
-          />
+          <AdminActionMenu :items="[{ key: 'delete', label: t('adminCategories.deleteCategory'), danger: true }]"
+            :label="t('adminCategories.rowActionsLabel')" @select="handleRowAction(record, $event)" />
         </template>
       </template>
       <template #pagination>
-        <AdminPagination
-          :current="currentPage"
-          :page-size="pageSize"
-          :total="filteredCategories.length"
-          @change="handlePageChange"
-          @size-change="handlePageSizeChange"
-        />
+        <AdminPagination :current="currentPage" :page-size="pageSize" :total="filteredCategories.length"
+          @change="handlePageChange" @size-change="handlePageSizeChange" />
       </template>
     </AdminDataTable>
 
-    <AdminModal
-      :open="createModalVisible"
-      title="Tạo danh mục"
-      ok-text="Tạo danh mục"
-      :loading="creating"
-      @update:open="createModalVisible = $event"
-      @confirm="handleCreateCategory"
-      @cancel="closeCreateModal"
-    >
+    <AdminModal :open="createModalVisible" :title="t('adminCategories.createModalTitle')"
+      :ok-text="t('adminCategories.createModalOk')" :loading="creating" @update:open="createModalVisible = $event"
+      @confirm="handleCreateCategory" @cancel="closeCreateModal">
       <a-form layout="vertical">
-        <a-form-item label="Ảnh minh họa">
+        <a-form-item :label="t('adminCategories.imageLabel')">
           <a-upload accept="image/*" :custom-request="uploadImage" :show-upload-list="false">
-            <a-button :icon="h(UploadOutlined)">Chọn ảnh</a-button>
+            <a-button :icon="h(UploadOutlined)">{{ t('adminCategories.chooseImage') }}</a-button>
           </a-upload>
-          <a-image
-            v-if="imagePreview"
-            class="preview"
-            width="80"
-            :src="imagePreview"
-            alt="Ảnh danh mục đã chọn"
-          />
-          <p v-else class="field-help">Ảnh chỉ dùng để xem trước và chưa được lưu lên máy chủ.</p>
+          <a-image v-if="imagePreview" class="preview" width="80" :src="imagePreview"
+            :alt="t('adminCategories.imageAlt')" />
+          <p v-else class="field-help">{{ t('adminCategories.imageHelp') }}</p>
         </a-form-item>
-        <a-form-item label="Tên danh mục" name="name" required>
-          <a-input v-model:value="createForm.name" placeholder="Nhập tên danh mục" />
+        <a-form-item :label="t('adminCategories.nameLabel')" name="name" required>
+          <a-input v-model:value="createForm.name" :placeholder="t('adminCategories.namePlaceholder')" />
         </a-form-item>
-        <a-form-item label="Slug" name="slug" required>
-          <a-input v-model:value="createForm.slug" placeholder="Nhập slug danh mục" />
+        <a-form-item :label="t('adminCategories.slugLabel')" name="slug" required>
+          <a-input v-model:value="createForm.slug" :placeholder="t('adminCategories.slugPlaceholder')" />
         </a-form-item>
       </a-form>
     </AdminModal>
@@ -138,7 +99,9 @@ import {
 import { message, Modal } from 'ant-design-vue'
 import { computed, h, onMounted, reactive, ref, watch } from 'vue'
 import { DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const categories = ref<IGetCategoryResponse[]>([])
 const selectedRowKeys = ref<number[]>([])
 const createModalVisible = ref(false)
@@ -152,27 +115,27 @@ const loadError = ref(false)
 const creating = ref(false)
 const createForm = reactive({ name: '', slug: '' })
 
-const columns = [
+const columns = computed(() => [
   {
-    title: 'Danh mục',
+    title: t('adminCategories.columnCategory'),
     dataIndex: 'name',
     key: 'name',
     width: 320,
     sorter: (a: IGetCategoryResponse, b: IGetCategoryResponse) => a.name.localeCompare(b.name),
   },
-  { title: 'Slug', dataIndex: 'slug', key: 'slug', width: 320 },
-  { title: 'Thao tác', key: 'action', width: 96, fixed: 'right' },
-]
+  { title: t('adminCategories.columnSlug'), dataIndex: 'slug', key: 'slug', width: 320 },
+  { title: t('adminCategories.columnAction'), key: 'action', width: 96, fixed: 'right' },
+])
 
 const filteredCategories = computed(() => {
   const keyword = searchText.value.trim().toLocaleLowerCase('vi-VN')
   return !keyword
     ? categories.value
     : categories.value.filter((category) =>
-        [category.name, category.slug, String(category.id)].some((value) =>
-          value.toLocaleLowerCase('vi-VN').includes(keyword),
-        ),
-      )
+      [category.name, category.slug, String(category.id)].some((value) =>
+        value.toLocaleLowerCase('vi-VN').includes(keyword),
+      ),
+    )
 })
 const paginatedCategories = computed(() =>
   filteredCategories.value.slice(
@@ -195,7 +158,7 @@ const loadCategories = async () => {
   } catch (error) {
     console.error(error)
     loadError.value = true
-    message.error('Không thể tải danh sách category')
+    message.error(t('adminCategories.loadListError'))
   } finally {
     loading.value = false
   }
@@ -213,18 +176,18 @@ const closeCreateModal = () => {
 }
 const handleCreateCategory = async () => {
   if (!createForm.name.trim() || !createForm.slug.trim()) {
-    message.warning('Vui lòng điền đầy đủ tên và slug')
+    message.warning(t('adminCategories.fillNameSlugWarning'))
     return
   }
   creating.value = true
   try {
     await CategoryService.createCategory(createForm.name.trim(), createForm.slug.trim())
-    message.success('Tạo category thành công')
+    message.success(t('adminCategories.createSuccess'))
     closeCreateModal()
     await loadCategories()
   } catch (error) {
     console.error(error)
-    message.error('Tạo category thất bại')
+    message.error(t('adminCategories.createFailed'))
   } finally {
     creating.value = false
   }
@@ -232,21 +195,21 @@ const handleCreateCategory = async () => {
 const deleteCategories = async (ids: number[]) => {
   try {
     await Promise.all(ids.map((id) => CategoryService.deleteCategory(id)))
-    message.success('Xóa category thành công')
+    message.success(t('adminCategories.deleteSuccess'))
     selectedRowKeys.value = []
     await loadCategories()
   } catch (error) {
     console.error(error)
-    message.error('Xóa category thất bại')
+    message.error(t('adminCategories.deleteFailed'))
   }
 }
 const confirmDelete = (ids: number[]) =>
   Modal.confirm({
-    title: 'Xóa danh mục đã chọn?',
-    content: `Bạn sắp xóa ${ids.length} danh mục. Thao tác này không thể hoàn tác.`,
-    okText: 'Xóa danh mục',
+    title: t('adminCategories.confirmDeleteTitle'),
+    content: t('adminCategories.confirmDeleteContent', { count: ids.length }),
+    okText: t('adminCategories.confirmDeleteOk'),
     okButtonProps: { danger: true },
-    cancelText: 'Hủy',
+    cancelText: t('adminCategories.cancel'),
     onOk: () => deleteCategories(ids),
   })
 const confirmDeleteSelected = () => confirmDelete(selectedRowKeys.value)
@@ -292,41 +255,50 @@ onMounted(loadCategories)
   border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--color-primary) 8%, var(--color-card));
 }
-.selection-bar > div {
+
+.selection-bar>div {
   display: flex;
   gap: var(--space-sm);
 }
+
 .entity-cell {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   min-width: 190px;
 }
+
 .entity-cell :deep(.ant-avatar) {
   background: var(--color-muted);
   color: var(--color-primary);
   font-weight: 700;
 }
+
 .entity-cell div {
   display: grid;
   gap: 2px;
 }
+
 .entity-cell span,
 .field-help {
   margin: var(--space-sm) 0 0;
   color: var(--color-muted-foreground);
   font-size: 0.8125rem;
 }
+
 .preview {
   display: block;
   margin-top: var(--space-md);
 }
+
 @media (max-width: 640px) {
+
   .selection-bar,
-  .selection-bar > div {
+  .selection-bar>div {
     align-items: stretch;
     flex-direction: column;
   }
+
   .selection-bar :deep(.ant-btn) {
     width: 100%;
   }

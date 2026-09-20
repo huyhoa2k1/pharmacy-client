@@ -1,7 +1,10 @@
 <template>
     <a-dropdown :trigger="['click']">
-        <a-button class="admin-action-menu__trigger" type="text" :aria-label="label">
-            <template #icon><MoreOutlined /></template>
+        <a-button class="admin-action-menu__trigger" type="text"
+            :aria-label="label || t('adminCommon.openActionsMenu')">
+            <template #icon>
+                <MoreOutlined />
+            </template>
         </a-button>
         <template #overlay>
             <a-menu @click="handleClick">
@@ -15,6 +18,7 @@
 
 <script setup lang="ts">
 import { MoreOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 type ActionItem = {
     key: string
@@ -23,12 +27,12 @@ type ActionItem = {
     disabled?: boolean
 }
 
-withDefaults(defineProps<{
+const { t } = useI18n()
+
+defineProps<{
     items: ActionItem[]
     label?: string
-}>(), {
-    label: 'Mở menu thao tác',
-})
+}>()
 
 const emit = defineEmits<{ select: [key: string] }>()
 

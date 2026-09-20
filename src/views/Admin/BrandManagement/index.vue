@@ -2,139 +2,85 @@
   <div class="entity-management">
     <AdminTableToolbar>
       <template #search>
-        <AdminSearch
-          v-model="searchText"
-          label="Tìm thương hiệu"
-          placeholder="Tìm tên hoặc slug thương hiệu..."
-          @search="resetPage"
-        />
+        <AdminSearch v-model="searchText" :label="t('adminBrands.searchLabel')"
+          :placeholder="t('adminBrands.searchPlaceholder')" @search="resetPage" />
       </template>
       <template #filters>
-        <AdminFilterBar label="Lọc thương hiệu" @reset="categoryFilter = 'all'">
-          <a-select
-            v-model:value="categoryFilter"
-            aria-label="Lọc theo danh mục"
-            class="brand-filter"
-            :options="categoryFilterOptions"
-          />
-          <template #reset>Xóa lọc</template>
+        <AdminFilterBar :label="t('adminBrands.filterLabel')" @reset="categoryFilter = 'all'">
+          <a-select v-model:value="categoryFilter" :aria-label="t('adminBrands.filterByCategory')" class="brand-filter"
+            :options="categoryFilterOptions" />
+          <template #reset>{{ t('adminBrands.clearFilters') }}</template>
         </AdminFilterBar>
       </template>
       <template #actions>
-        <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal"
-          >Thêm thương hiệu</a-button
-        >
+        <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">{{ t('adminBrands.addBrand')
+          }}</a-button>
       </template>
     </AdminTableToolbar>
 
     <div v-if="selectedRowKeys.length" class="selection-bar" role="status">
-      <span
-        ><strong>{{ selectedRowKeys.length }}</strong> thương hiệu đã chọn</span
-      >
+      <span>{{ t('adminBrands.selectedCount', { count: selectedRowKeys.length }) }}</span>
       <div>
-        <a-button danger :icon="h(DeleteOutlined)" @click="confirmDeleteSelected"
-          >Xóa đã chọn</a-button
-        ><a-button type="link" @click="selectedRowKeys = []">Bỏ chọn</a-button>
+        <a-button danger :icon="h(DeleteOutlined)" @click="confirmDeleteSelected">{{ t('adminBrands.deleteSelected')
+          }}</a-button><a-button type="link" @click="selectedRowKeys = []">{{ t('adminBrands.deselect') }}</a-button>
       </div>
     </div>
 
-    <AdminLoadingState v-if="loading" label="Đang tải thương hiệu..." />
-    <AdminErrorState
-      v-else-if="loadError"
-      title="Không thể tải thương hiệu"
-      description="Vui lòng kiểm tra kết nối và thử lại."
-      @retry="loadBrands"
-      ><template #action>Thử tải lại</template></AdminErrorState
-    >
-    <AdminEmptyState
-      v-else-if="!filteredBrands.length"
-      :title="hasActiveFilters ? 'Không tìm thấy thương hiệu' : 'Chưa có thương hiệu'"
-      :description="
-        hasActiveFilters
-          ? 'Thử thay đổi từ khóa hoặc bộ lọc.'
-          : 'Hãy thêm thương hiệu đầu tiên để bắt đầu.'
-      "
-    >
-      <template #action
-        ><a-button v-if="hasActiveFilters" type="primary" @click="resetFilters">Xóa bộ lọc</a-button
-        ><a-button v-else type="primary" @click="openCreateModal"
-          >Thêm thương hiệu</a-button
-        ></template
-      >
+    <AdminLoadingState v-if="loading" :label="t('adminBrands.loading')" />
+    <AdminErrorState v-else-if="loadError" :title="t('adminBrands.loadErrorTitle')"
+      :description="t('adminBrands.loadErrorDescription')" @retry="loadBrands"><template #action>{{
+        t('adminBrands.reloadAction') }}</template></AdminErrorState>
+    <AdminEmptyState v-else-if="!filteredBrands.length"
+      :title="hasActiveFilters ? t('adminBrands.emptyTitleFiltered') : t('adminBrands.emptyTitleDefault')" :description="hasActiveFilters
+          ? t('adminBrands.emptyDescFiltered')
+          : t('adminBrands.emptyDescDefault')
+        ">
+      <template #action><a-button v-if="hasActiveFilters" type="primary" @click="resetFilters">{{
+        t('adminBrands.clearFilters') }}</a-button><a-button v-else type="primary" @click="openCreateModal">{{
+            t('adminBrands.addBrand') }}</a-button></template>
     </AdminEmptyState>
-    <AdminDataTable
-      v-else
-      :columns="columns"
-      :data-source="paginatedBrands"
-      row-key="id"
-      :row-selection="rowSelection"
-    >
+    <AdminDataTable v-else :columns="columns" :data-source="paginatedBrands" row-key="id" :row-selection="rowSelection">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
           <div class="entity-cell">
             <a-avatar shape="square" :size="40">{{ record.name.charAt(0).toUpperCase() }}</a-avatar>
             <div>
-              <strong>{{ record.name }}</strong
-              ><span>#{{ record.id }}</span>
+              <strong>{{ record.name }}</strong><span>#{{ record.id }}</span>
             </div>
           </div>
         </template>
-        <template v-else-if="column.dataIndex === 'categoryId'"
-          ><span class="category-reference">Danh mục #{{ record.categoryId }}</span></template
-        >
-        <template v-else-if="column.key === 'action'"
-          ><AdminActionMenu
-            :items="[{ key: 'delete', label: 'Xóa thương hiệu', danger: true }]"
-            label="Thao tác thương hiệu"
-            @select="handleRowAction(record, $event)"
-        /></template>
+        <template v-else-if="column.dataIndex === 'categoryId'"><span class="category-reference">{{
+          t('adminBrands.categoryReference', { id: record.categoryId }) }}</span></template>
+        <template v-else-if="column.key === 'action'">
+          <AdminActionMenu :items="[{ key: 'delete', label: t('adminBrands.deleteBrand'), danger: true }]"
+            :label="t('adminBrands.rowActionsLabel')" @select="handleRowAction(record, $event)" />
+        </template>
       </template>
-      <template #pagination
-        ><AdminPagination
-          :current="currentPage"
-          :page-size="pageSize"
-          :total="filteredBrands.length"
-          @change="handlePageChange"
-          @size-change="handlePageSizeChange"
-      /></template>
+      <template #pagination>
+        <AdminPagination :current="currentPage" :page-size="pageSize" :total="filteredBrands.length"
+          @change="handlePageChange" @size-change="handlePageSizeChange" />
+      </template>
     </AdminDataTable>
 
-    <AdminModal
-      :open="createModalVisible"
-      title="Tạo thương hiệu"
-      ok-text="Tạo thương hiệu"
-      :loading="creating"
-      @update:open="createModalVisible = $event"
-      @confirm="handleCreateBrand"
-      @cancel="closeCreateModal"
-    >
+    <AdminModal :open="createModalVisible" :title="t('adminBrands.createModalTitle')"
+      :ok-text="t('adminBrands.createModalOk')" :loading="creating" @update:open="createModalVisible = $event"
+      @confirm="handleCreateBrand" @cancel="closeCreateModal">
       <a-form layout="vertical">
-        <a-form-item label="Ảnh minh họa"
-          ><a-upload accept="image/*" :custom-request="uploadImage" :show-upload-list="false"
-            ><a-button :icon="h(UploadOutlined)">Chọn ảnh</a-button></a-upload
-          ><a-image
-            v-if="imagePreview"
-            class="preview"
-            width="80"
-            :src="imagePreview"
-            alt="Ảnh thương hiệu đã chọn"
-          />
+        <a-form-item :label="t('adminBrands.imageLabel')"><a-upload accept="image/*" :custom-request="uploadImage"
+            :show-upload-list="false"><a-button :icon="h(UploadOutlined)">{{ t('adminBrands.chooseImage')
+              }}</a-button></a-upload><a-image v-if="imagePreview" class="preview" width="80" :src="imagePreview"
+            :alt="t('adminBrands.imageAlt')" />
           <p v-else class="field-help">
-            Ảnh chỉ dùng để xem trước và chưa được lưu lên máy chủ.
-          </p></a-form-item
-        >
-        <a-form-item label="Tên thương hiệu" name="name" required
-          ><a-input v-model:value="createForm.name" placeholder="Nhập tên thương hiệu"
-        /></a-form-item>
-        <a-form-item label="Slug" name="slug" required
-          ><a-input v-model:value="createForm.slug" placeholder="Nhập slug thương hiệu"
-        /></a-form-item>
-        <a-form-item label="Danh mục" name="categoryId" required
-          ><a-select
-            v-model:value="createForm.categoryId"
-            placeholder="Chọn danh mục"
-            :options="categoryOptions"
-        /></a-form-item>
+            {{ t('adminBrands.imageHelp') }}
+          </p>
+        </a-form-item>
+        <a-form-item :label="t('adminBrands.nameLabel')" name="name" required><a-input v-model:value="createForm.name"
+            :placeholder="t('adminBrands.namePlaceholder')" /></a-form-item>
+        <a-form-item :label="t('adminBrands.slugLabel')" name="slug" required><a-input v-model:value="createForm.slug"
+            :placeholder="t('adminBrands.slugPlaceholder')" /></a-form-item>
+        <a-form-item :label="t('adminBrands.categoryLabel')" name="categoryId" required><a-select
+            v-model:value="createForm.categoryId" :placeholder="t('adminBrands.categoryPlaceholder')"
+            :options="categoryOptions" /></a-form-item>
       </a-form>
     </AdminModal>
   </div>
@@ -160,7 +106,9 @@ import {
 import { message, Modal } from 'ant-design-vue'
 import { computed, h, onMounted, reactive, ref, watch } from 'vue'
 import { DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const brands = ref<IGetBrandResponse[]>([])
 const categories = ref<IGetCategoryResponse[]>([])
 const selectedRowKeys = ref<number[]>([])
@@ -176,23 +124,23 @@ const loadError = ref(false)
 const creating = ref(false)
 const createForm = reactive({ name: '', slug: '', categoryId: null as number | null })
 
-const columns = [
+const columns = computed(() => [
   {
-    title: 'Thương hiệu',
+    title: t('adminBrands.columnBrand'),
     dataIndex: 'name',
     key: 'name',
     width: 320,
     sorter: (a: IGetBrandResponse, b: IGetBrandResponse) => a.name.localeCompare(b.name),
   },
-  { title: 'Slug', dataIndex: 'slug', key: 'slug', width: 280 },
-  { title: 'Danh mục', dataIndex: 'categoryId', key: 'categoryId', width: 180 },
-  { title: 'Thao tác', key: 'action', width: 96, fixed: 'right' },
-]
+  { title: t('adminBrands.columnSlug'), dataIndex: 'slug', key: 'slug', width: 280 },
+  { title: t('adminBrands.columnCategory'), dataIndex: 'categoryId', key: 'categoryId', width: 180 },
+  { title: t('adminBrands.columnAction'), key: 'action', width: 96, fixed: 'right' },
+])
 const categoryOptions = computed(() =>
   categories.value.map((category) => ({ label: category.name, value: category.id })),
 )
 const categoryFilterOptions = computed(() => [
-  { label: 'Tất cả danh mục', value: 'all' },
+  { label: t('adminBrands.allCategories'), value: 'all' },
   ...categoryOptions.value,
 ])
 const filteredBrands = computed(() => {
@@ -230,7 +178,7 @@ const loadBrands = async () => {
   } catch (error) {
     console.error(error)
     loadError.value = true
-    message.error('Không thể tải danh sách brand')
+    message.error(t('adminBrands.loadListError'))
   } finally {
     loading.value = false
   }
@@ -240,7 +188,7 @@ const loadCategories = async () => {
     categories.value = await CategoryService.getAllCategories()
   } catch (error) {
     console.error(error)
-    message.error('Không thể tải danh sách category')
+    message.error(t('adminBrands.loadCategoriesError'))
   }
 }
 const openCreateModal = async () => {
@@ -257,7 +205,7 @@ const closeCreateModal = () => {
 }
 const handleCreateBrand = async () => {
   if (!createForm.name.trim() || !createForm.slug.trim() || !createForm.categoryId) {
-    message.warning('Vui lòng điền đầy đủ tên, slug và category')
+    message.warning(t('adminBrands.fillFieldsWarning'))
     return
   }
   creating.value = true
@@ -267,12 +215,12 @@ const handleCreateBrand = async () => {
       createForm.slug.trim(),
       createForm.categoryId,
     )
-    message.success('Tạo brand thành công')
+    message.success(t('adminBrands.createSuccess'))
     closeCreateModal()
     await loadBrands()
   } catch (error) {
     console.error(error)
-    message.error('Tạo brand thất bại')
+    message.error(t('adminBrands.createFailed'))
   } finally {
     creating.value = false
   }
@@ -280,21 +228,21 @@ const handleCreateBrand = async () => {
 const deleteBrands = async (ids: number[]) => {
   try {
     await Promise.all(ids.map((id) => BrandService.deleteBrand(id)))
-    message.success('Xóa brand thành công')
+    message.success(t('adminBrands.deleteSuccess'))
     selectedRowKeys.value = []
     await loadBrands()
   } catch (error) {
     console.error(error)
-    message.error('Xóa brand thất bại')
+    message.error(t('adminBrands.deleteFailed'))
   }
 }
 const confirmDelete = (ids: number[]) =>
   Modal.confirm({
-    title: 'Xóa thương hiệu đã chọn?',
-    content: `Bạn sắp xóa ${ids.length} thương hiệu. Thao tác này không thể hoàn tác.`,
-    okText: 'Xóa thương hiệu',
+    title: t('adminBrands.confirmDeleteTitle'),
+    content: t('adminBrands.confirmDeleteContent', { count: ids.length }),
+    okText: t('adminBrands.confirmDeleteOk'),
     okButtonProps: { danger: true },
-    cancelText: 'Hủy',
+    cancelText: t('adminBrands.cancel'),
     onOk: () => deleteBrands(ids),
   })
 const confirmDeleteSelected = () => confirmDelete(selectedRowKeys.value)
@@ -339,6 +287,7 @@ onMounted(async () => {
 .brand-filter {
   width: min(100%, 210px);
 }
+
 .selection-bar {
   display: flex;
   align-items: center;
@@ -350,25 +299,30 @@ onMounted(async () => {
   border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--color-primary) 8%, var(--color-card));
 }
-.selection-bar > div {
+
+.selection-bar>div {
   display: flex;
   gap: var(--space-sm);
 }
+
 .entity-cell {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   min-width: 190px;
 }
+
 .entity-cell :deep(.ant-avatar) {
   background: var(--color-muted);
   color: var(--color-primary);
   font-weight: 700;
 }
+
 .entity-cell div {
   display: grid;
   gap: 2px;
 }
+
 .entity-cell span,
 .field-help,
 .category-reference {
@@ -376,19 +330,23 @@ onMounted(async () => {
   color: var(--color-muted-foreground);
   font-size: 0.8125rem;
 }
+
 .preview {
   display: block;
   margin-top: var(--space-md);
 }
+
 @media (max-width: 640px) {
   .brand-filter {
     width: 100%;
   }
+
   .selection-bar,
-  .selection-bar > div {
+  .selection-bar>div {
     align-items: stretch;
     flex-direction: column;
   }
+
   .selection-bar :deep(.ant-btn) {
     width: 100%;
   }
