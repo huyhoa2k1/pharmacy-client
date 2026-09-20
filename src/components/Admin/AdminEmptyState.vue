@@ -2,8 +2,8 @@
     <section class="admin-state admin-state--empty">
         <a-empty :image="image">
             <template #description>
-                <h2>{{ title }}</h2>
-                <p>{{ description }}</p>
+                <h2>{{ title || t('adminCommon.noDataTitle') }}</h2>
+                <p>{{ description || t('adminCommon.noDataDescription') }}</p>
             </template>
             <slot name="action" />
         </a-empty>
@@ -11,13 +11,17 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 withDefaults(defineProps<{
     title?: string
     description?: string
     image?: string
 }>(), {
-    title: 'Chưa có dữ liệu',
-    description: 'Dữ liệu sẽ xuất hiện tại đây khi sẵn sàng.',
+    title: '',
+    description: '',
     image: '',
 })
 </script>

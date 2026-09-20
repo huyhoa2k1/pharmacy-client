@@ -1,6 +1,6 @@
-export const columns = [
+export const getColumns = (t: (key: string) => string) => [
   {
-    title: 'Sản phẩm',
+    title: t('adminProducts.columnProduct'),
     dataIndex: 'name',
     key: 'name',
     width: 360,
@@ -9,7 +9,7 @@ export const columns = [
     sortDirections: ['ascend', 'descend'],
   },
   {
-    title: 'Giá',
+    title: t('adminProducts.columnPrice'),
     dataIndex: 'price',
     key: 'price',
     width: 150,
@@ -18,7 +18,7 @@ export const columns = [
     sortDirections: ['ascend', 'descend'],
   },
   {
-    title: 'Số lượng',
+    title: t('adminProducts.columnQuantity'),
     dataIndex: 'amount',
     key: 'amount',
     width: 150,
@@ -27,7 +27,7 @@ export const columns = [
     sortDirections: ['ascend', 'descend'],
   },
   {
-    title: 'Đã bán',
+    title: t('adminProducts.columnSold'),
     dataIndex: 'sold',
     key: 'sold',
     width: 150,
@@ -36,14 +36,14 @@ export const columns = [
     sortDirections: ['ascend', 'descend'],
   },
   {
-    title: 'Khuyến mãi',
+    title: t('adminProducts.columnSale'),
     dataIndex: 'isSale',
     key: 'isSale',
     width: 150,
     resizable: true,
   },
   {
-    title: 'Thao tác',
+    title: t('adminProducts.columnAction'),
     key: 'action',
     width: 96,
     fixed: 'right',

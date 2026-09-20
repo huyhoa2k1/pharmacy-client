@@ -2,55 +2,57 @@
     <div class="product-management">
         <AdminTableToolbar>
             <template #search>
-                <AdminSearch v-model="searchText" label="Tìm sản phẩm" placeholder="Tìm tên, mã hoặc thương hiệu..."
-                    @search="resetPage" />
+                <AdminSearch v-model="searchText" :label="t('adminProducts.searchLabel')"
+                    :placeholder="t('adminProducts.searchPlaceholder')" @search="resetPage" />
             </template>
             <template #filters>
-                <AdminFilterBar label="Lọc sản phẩm" @reset="resetFilters">
-                    <a-select v-model:value="saleFilter" aria-label="Lọc theo khuyến mãi" class="product-filter"
-                        :options="saleFilterOptions" />
-                    <a-select v-model:value="stockFilter" aria-label="Lọc theo tồn kho" class="product-filter"
-                        :options="stockFilterOptions" />
-                    <template #reset>Xóa lọc</template>
+                <AdminFilterBar :label="t('adminProducts.filterLabel')" @reset="resetFilters">
+                    <a-select v-model:value="saleFilter" :aria-label="t('adminProducts.filterBySale')"
+                        class="product-filter" :options="saleFilterOptions" />
+                    <a-select v-model:value="stockFilter" :aria-label="t('adminProducts.filterByStock')"
+                        class="product-filter" :options="stockFilterOptions" />
+                    <template #reset>{{ t('adminProducts.clearFilters') }}</template>
                 </AdminFilterBar>
             </template>
             <template #actions>
                 <router-link :to="{ name: 'admin-product-create' }">
                     <a-button type="primary" :icon="h(PlusOutlined)">
-                        Thêm sản phẩm
+                        {{ t('adminProducts.addProduct') }}
                     </a-button>
                 </router-link>
-                <a-button :disabled="true" :icon="h(FileExcelOutlined)" title="Chức năng xuất Excel chưa khả dụng">
-                    Xuất Excel
+                <a-button :disabled="true" :icon="h(FileExcelOutlined)"
+                    :title="t('adminProducts.exportExcelDisabledTitle')">
+                    {{ t('adminProducts.exportExcel') }}
                 </a-button>
             </template>
         </AdminTableToolbar>
 
         <div v-if="selectedRowKeys.length" class="product-selection-bar" role="status">
-            <span><strong>{{ selectedRowKeys.length }}</strong> sản phẩm đã chọn</span>
+            <span>{{ t('adminProducts.selectedCount', { count: selectedRowKeys.length }) }}</span>
             <div class="product-selection-bar__actions">
                 <a-button type="primary" :icon="h(TagOutlined)" @click="openSaleModal">
-                    Cập nhật khuyến mãi
+                    {{ t('adminProducts.updateSale') }}
                 </a-button>
                 <a-button danger :disabled="true" :icon="h(DeleteOutlined)"
-                    title="Chức năng xóa sản phẩm chưa khả dụng">
-                Xóa sản phẩm
+                    :title="t('adminProducts.deleteProductDisabledTitle')">
+                    {{ t('adminProducts.deleteProduct') }}
                 </a-button>
-                <a-button type="link" @click="selectedRowKeys = []">Bỏ chọn</a-button>
+                <a-button type="link" @click="selectedRowKeys = []">{{ t('adminProducts.deselect') }}</a-button>
             </div>
         </div>
 
-        <AdminLoadingState v-if="loading" label="Đang tải danh sách sản phẩm..." />
-        <AdminErrorState v-else-if="loadError" title="Không thể tải danh sách sản phẩm"
-            description="Vui lòng kiểm tra kết nối và thử lại." @retry="getAllProducts">
-            <template #action>Thử tải lại</template>
+        <AdminLoadingState v-if="loading" :label="t('adminProducts.loadingList')" />
+        <AdminErrorState v-else-if="loadError" :title="t('adminProducts.loadErrorTitle')"
+            :description="t('adminProducts.loadErrorDescription')" @retry="getAllProducts">
+            <template #action>{{ t('adminProducts.reloadAction') }}</template>
         </AdminErrorState>
         <AdminEmptyState v-else-if="!filteredProducts.length" :title="emptyStateTitle"
             :description="emptyStateDescription">
             <template #action>
-                <a-button v-if="hasActiveFilters" type="primary" @click="resetFilters">Xóa bộ lọc</a-button>
+                <a-button v-if="hasActiveFilters" type="primary" @click="resetFilters">{{
+                    t('adminProducts.clearFilters') }}</a-button>
                 <router-link v-else :to="{ name: 'admin-product-create' }">
-                    <a-button type="primary">Thêm sản phẩm</a-button>
+                    <a-button type="primary">{{ t('adminProducts.addProduct') }}</a-button>
                 </router-link>
             </template>
         </AdminEmptyState>
@@ -64,7 +66,7 @@
                         </a-avatar>
                         <div class="product-cell__details">
                             <strong>{{ record.name }}</strong>
-                            <span>{{ record.brand?.name || 'Chưa có thương hiệu' }}</span>
+                            <span>{{ record.brand?.name || t('adminProducts.noBrand') }}</span>
                             <span class="product-cell__code">#{{ record.id }}</span>
                         </div>
                     </div>
@@ -72,18 +74,20 @@
                 <template v-else-if="column.dataIndex === 'price'">
                     <div class="price-cell">
                         <strong>{{ formatCurrency(record.price) }}</strong>
-                        <span v-if="record.isSale">Giảm {{ record.discount }}%</span>
+                        <span v-if="record.isSale">{{ t('adminProducts.discountBadge', { discount: record.discount })
+                            }}</span>
                     </div>
                 </template>
                 <template v-else-if="column.dataIndex === 'amount'">
                     <AdminStatusBadge :label="stockStatus(record).label" :tone="stockStatus(record).tone" />
                 </template>
                 <template v-else-if="column.dataIndex === 'isSale'">
-                    <AdminStatusBadge :label="record.isSale ? `Đang giảm ${record.discount}%` : 'Giá thường'"
+                    <AdminStatusBadge
+                        :label="record.isSale ? t('adminProducts.onSaleBadge', { discount: record.discount }) : t('adminProducts.regularPrice')"
                         :tone="record.isSale ? 'success' : 'neutral'" />
                 </template>
                 <template v-else-if="column.key === 'action'">
-                    <AdminActionMenu :items="rowActions(record)" label="Thao tác sản phẩm"
+                    <AdminActionMenu :items="rowActions(record)" :label="t('adminProducts.rowActionsLabel')"
                         @select="handleRowAction(record, $event)" />
                 </template>
             </template>
@@ -93,20 +97,21 @@
             </template>
         </AdminDataTable>
 
-        <AdminModal :open="saleModalVisible" title="Cập nhật khuyến mãi" ok-text="Lưu khuyến mãi"
-            :loading="submittingSale" @update:open="saleModalVisible = $event" @confirm="handleSaleSubmit"
-            @cancel="saleModalVisible = false">
+        <AdminModal :open="saleModalVisible" :title="t('adminProducts.saleModalTitle')"
+            :ok-text="t('adminProducts.saveSale')" :loading="submittingSale" @update:open="saleModalVisible = $event"
+            @confirm="handleSaleSubmit" @cancel="saleModalVisible = false">
             <p class="sale-modal__description">
-                Áp dụng khuyến mãi cho {{ selectedNotSaleProducts.length }} sản phẩm đã chọn.
+                {{ t('adminProducts.saleModalDescription', { count: selectedNotSaleProducts.length }) }}
             </p>
             <a-form ref="saleFormRef" layout="vertical">
-                <a-form-item label="Giảm giá (%)" name="discount">
+                <a-form-item :label="t('adminProducts.discountLabel')" name="discount">
                     <a-input-number v-model:value="saleForm.discount" :min="0" :max="100" class="w-full"
-                        placeholder="Nhập mức giảm giá" />
+                        :placeholder="t('adminProducts.discountPlaceholder')" />
                 </a-form-item>
-                <a-form-item label="Thời gian kết thúc" name="saleEndTime">
+                <a-form-item :label="t('adminProducts.saleEndTimeLabel')" name="saleEndTime">
                     <a-date-picker v-model:value="saleForm.saleEndTime" show-time format="DD/MM/YYYY HH:mm"
-                        value-format="YYYY-MM-DDTHH:mm:ss" class="w-full" placeholder="Chọn ngày giờ kết thúc" />
+                        value-format="YYYY-MM-DDTHH:mm:ss" class="w-full"
+                        :placeholder="t('adminProducts.saleEndTimePlaceholder')" />
                 </a-form-item>
             </a-form>
         </AdminModal>
@@ -115,9 +120,10 @@
 
 <script setup lang="ts">
 import type { IGetProductResponse } from '@/api/models/product'
-import { columns } from './index.type'
+import { getColumns } from './index.type'
 import { ProductService } from '@/api/services/product'
 import { message } from 'ant-design-vue'
+import { useI18n } from 'vue-i18n'
 import {
     AdminActionMenu,
     AdminDataTable,
@@ -135,6 +141,8 @@ import { onMounted, ref, reactive, computed, h, watch } from 'vue'
 import { DeleteOutlined, PlusOutlined, TagOutlined, FileExcelOutlined } from '@ant-design/icons-vue'
 import type { FormInstance } from 'ant-design-vue'
 
+const { t } = useI18n()
+const columns = computed(() => getColumns(t))
 const data = ref<IGetProductResponse[]>([])
 const selectedRowKeys = ref<number[]>([])
 const saleModalVisible = ref(false)
@@ -152,18 +160,18 @@ const saleForm = reactive({
     saleEndTime: null as string | null,
 })
 
-const saleFilterOptions = [
-    { label: 'Tất cả khuyến mãi', value: 'all' },
-    { label: 'Đang khuyến mãi', value: 'on-sale' },
-    { label: 'Giá thường', value: 'regular' },
-]
+const saleFilterOptions = computed(() => [
+    { label: t('adminProducts.saleFilterAll'), value: 'all' },
+    { label: t('adminProducts.saleFilterOnSale'), value: 'on-sale' },
+    { label: t('adminProducts.saleFilterRegular'), value: 'regular' },
+])
 
-const stockFilterOptions = [
-    { label: 'Tất cả tồn kho', value: 'all' },
-    { label: 'Còn hàng', value: 'in-stock' },
-    { label: 'Sắp hết hàng', value: 'low-stock' },
-    { label: 'Hết hàng', value: 'out-of-stock' },
-]
+const stockFilterOptions = computed(() => [
+    { label: t('adminProducts.stockFilterAll'), value: 'all' },
+    { label: t('adminProducts.stockFilterInStock'), value: 'in-stock' },
+    { label: t('adminProducts.stockFilterLowStock'), value: 'low-stock' },
+    { label: t('adminProducts.stockFilterOutOfStock'), value: 'out-of-stock' },
+])
 
 const selectedProducts = computed(() =>
     data.value.filter((item) => selectedRowKeys.value.includes(item.id)),
@@ -208,10 +216,10 @@ const hasActiveFilters = computed(
     () => Boolean(searchText.value.trim()) || saleFilter.value !== 'all' || stockFilter.value !== 'all',
 )
 
-const emptyStateTitle = computed(() => hasActiveFilters.value ? 'Không tìm thấy sản phẩm' : 'Chưa có sản phẩm')
+const emptyStateTitle = computed(() => hasActiveFilters.value ? t('adminProducts.emptyTitleFiltered') : t('adminProducts.emptyTitleDefault'))
 const emptyStateDescription = computed(() => hasActiveFilters.value
-    ? 'Thử thay đổi từ khóa tìm kiếm hoặc điều chỉnh bộ lọc.'
-    : 'Hãy thêm sản phẩm đầu tiên để bắt đầu quản lý danh mục.')
+    ? t('adminProducts.emptyDescFiltered')
+    : t('adminProducts.emptyDescDefault'))
 
 const getAllProducts = async () => {
     loading.value = true
@@ -237,11 +245,11 @@ const onSelectChange = (changeableRowKeys: number[]) => {
 
 const openSaleModal = () => {
     if (selectedProducts.value.length === 0) {
-        message.warning('Vui lòng chọn sản phẩm để sale');
+        message.warning(t('adminProducts.selectProductsWarning'));
         return
     }
     if (hasOnSaleSelected.value) {
-        message.warning('Không thể sale sản phẩm đã đang onSale. Vui lòng bỏ chọn sản phẩm đang sale');
+        message.warning(t('adminProducts.alreadyOnSaleWarning'));
         return
     }
     saleForm.discount = null
@@ -251,11 +259,11 @@ const openSaleModal = () => {
 
 const handleSaleSubmit = async () => {
     if (saleForm.discount === null || saleForm.discount < 0) {
-        message.warning('Vui lòng nhập discount hợp lệ')
+        message.warning(t('adminProducts.invalidDiscountWarning'))
         return
     }
     if (!saleForm.saleEndTime) {
-        message.warning('Vui lòng chọn thời gian kết thúc sale')
+        message.warning(t('adminProducts.selectEndTimeWarning'))
         return
     }
 
@@ -270,15 +278,15 @@ const handleSaleSubmit = async () => {
         const result = await ProductService.setSaleProducts(payload)
 
         if (result) {
-            message.success('Cập nhật sale thành công')
+            message.success(t('adminProducts.saleUpdateSuccess'))
             saleModalVisible.value = false
             await getAllProducts()
         } else {
-            message.error('Cập nhật sale thất bại')
+            message.error(t('adminProducts.saleUpdateFailed'))
         }
     } catch (error) {
         console.error(error)
-        message.error('Cập nhật sale thất bại')
+        message.error(t('adminProducts.saleUpdateFailed'))
     } finally {
         submittingSale.value = false
     }
@@ -288,15 +296,15 @@ const formatCurrency = (value: number) =>
     value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
 
 const stockStatus = (product: IGetProductResponse) => {
-    if (product.amount === 0) return { label: 'Hết hàng', tone: 'danger' as const }
-    if (product.amount <= 10) return { label: `Sắp hết: ${product.amount}`, tone: 'warning' as const }
-    return { label: `Còn hàng: ${product.amount}`, tone: 'info' as const }
+    if (product.amount === 0) return { label: t('adminProducts.outOfStock'), tone: 'danger' as const }
+    if (product.amount <= 10) return { label: t('adminProducts.lowStock', { amount: product.amount }), tone: 'warning' as const }
+    return { label: t('adminProducts.inStockCount', { amount: product.amount }), tone: 'info' as const }
 }
 
 const rowActions = (product: IGetProductResponse) => [
     {
         key: 'sale',
-        label: product.isSale ? 'Đang khuyến mãi' : 'Cập nhật khuyến mãi',
+        label: product.isSale ? t('adminProducts.saleFilterOnSale') : t('adminProducts.updateSale'),
         disabled: product.isSale,
     },
 ]

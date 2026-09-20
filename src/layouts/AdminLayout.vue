@@ -4,8 +4,8 @@
             <div class="admin-brand">
                 <div class="admin-brand__mark" aria-hidden="true"></div>
                 <div v-show="!collapsed" class="admin-brand__copy">
-                    <span>Online Pharmacy</span>
-                    <strong>Quản trị</strong>
+                    <span>{{ t('adminLayout.brandName') }}</span>
+                    <strong>{{ t('adminLayout.brandSubtitle') }}</strong>
                 </div>
             </div>
             <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" theme="dark" mode="inline"
@@ -13,32 +13,36 @@
                 <a-sub-menu key="catalog">
                     <template #title>
                         <AppstoreOutlined />
-                        <span>Quản lý sản phẩm</span>
+                        <span>{{ t('adminLayout.navCatalog') }}</span>
                     </template>
                     <a-menu-item key="/admin/products-management">
-                        <router-link to="/admin/products-management">Danh sách sản phẩm</router-link>
+                        <router-link to="/admin/products-management">{{ t('adminLayout.navProductList') }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/categories-management">
-                        <router-link to="/admin/categories-management">Danh mục</router-link>
+                        <router-link to="/admin/categories-management">{{ t('adminLayout.navCategories')
+                            }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/brands-management">
-                        <router-link to="/admin/brands-management">Thương hiệu</router-link>
+                        <router-link to="/admin/brands-management">{{ t('adminLayout.navBrands') }}</router-link>
                     </a-menu-item>
                 </a-sub-menu>
                 <a-menu-item key="/admin/orders-management">
                     <ShoppingCartOutlined />
-                    <span><router-link to="/admin/orders-management">Quản lý đơn hàng</router-link></span>
+                    <span><router-link to="/admin/orders-management">{{ t('adminLayout.navOrders')
+                            }}</router-link></span>
                 </a-menu-item>
                 <a-sub-menu key="settings">
                     <template #title>
                         <SettingOutlined />
-                        <span>Cài đặt</span>
+                        <span>{{ t('adminLayout.navSettings') }}</span>
                     </template>
                     <a-menu-item key="/admin/general-settings">
-                        <router-link to="/admin/general-settings">Cài đặt chung</router-link>
+                        <router-link to="/admin/general-settings">{{ t('adminLayout.navGeneralSettings')
+                            }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/province-ward-management">
-                        <router-link to="/admin/province-ward-management">Tỉnh thành & phường xã</router-link>
+                        <router-link to="/admin/province-ward-management">{{ t('adminLayout.navProvinceWard')
+                            }}</router-link>
                     </a-menu-item>
                 </a-sub-menu>
             </a-menu>
@@ -47,7 +51,7 @@
             <a-layout-header class="admin-header">
                 <div class="admin-header__left">
                     <a-button class="admin-header__control admin-header__desktop-control" type="text"
-                        :aria-label="collapsed ? 'Mở rộng thanh điều hướng' : 'Thu gọn thanh điều hướng'"
+                        :aria-label="collapsed ? t('adminLayout.expandNav') : t('adminLayout.collapseNav')"
                         :aria-expanded="!collapsed" @click="collapsed = !collapsed">
                         <template #icon>
                             <MenuUnfoldOutlined v-if="collapsed" />
@@ -55,13 +59,13 @@
                         </template>
                     </a-button>
                     <a-button class="admin-header__control admin-header__mobile-control" type="text"
-                        aria-label="Mở thanh điều hướng" @click="mobileMenuOpen = true">
+                        :aria-label="t('adminLayout.openNav')" @click="mobileMenuOpen = true">
                         <template #icon>
                             <MenuOutlined />
                         </template>
                     </a-button>
                     <div>
-                        <p class="admin-header__section">Quản trị nhà thuốc</p>
+                        <p class="admin-header__section">{{ t('adminCommon.headerSection') }}</p>
                         <span class="admin-header__title">{{ pageTitle }}</span>
                     </div>
                 </div>
@@ -71,7 +75,7 @@
                     </div>
                     <a-dropdown>
                         <a-button class="admin-user-trigger" type="text"
-                            :aria-label="`Mở menu tài khoản${userStore.username ? ` của ${userStore.username}` : ''}`">
+                            :aria-label="userStore.username ? t('adminLayout.openUserMenuWithName', { name: userStore.username }) : t('adminLayout.openUserMenu')">
                             <a-avatar shape="square" :size="36" class="admin-user-trigger__avatar">
                                 {{ userInitials }}
                             </a-avatar>
@@ -85,7 +89,7 @@
                                 </a-menu-item>
                                 <a-menu-divider />
                                 <a-menu-item>
-                                    <span>Đăng xuất</span>
+                                    <span>{{ t('adminLayout.logout') }}</span>
                                 </a-menu-item>
                             </a-menu>
                         </template>
@@ -103,41 +107,45 @@
             </a-layout-content>
         </a-layout>
         <a-drawer v-model:open="mobileMenuOpen" placement="left" :width="288" class="admin-mobile-drawer"
-            title="Online Pharmacy">
+            :title="t('adminLayout.brandName')">
             <template #extra>
-                <span class="admin-mobile-drawer__label">Quản trị</span>
+                <span class="admin-mobile-drawer__label">{{ t('adminLayout.brandSubtitle') }}</span>
             </template>
             <a-menu v-model:selectedKeys="selectedKeys" v-model:openKeys="openKeys" mode="inline"
                 @click="mobileMenuOpen = false">
                 <a-sub-menu key="catalog">
                     <template #title>
                         <AppstoreOutlined />
-                        <span>Quản lý sản phẩm</span>
+                        <span>{{ t('adminLayout.navCatalog') }}</span>
                     </template>
                     <a-menu-item key="/admin/products-management">
-                        <router-link to="/admin/products-management">Danh sách sản phẩm</router-link>
+                        <router-link to="/admin/products-management">{{ t('adminLayout.navProductList') }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/categories-management">
-                        <router-link to="/admin/categories-management">Danh mục</router-link>
+                        <router-link to="/admin/categories-management">{{ t('adminLayout.navCategories')
+                            }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/brands-management">
-                        <router-link to="/admin/brands-management">Thương hiệu</router-link>
+                        <router-link to="/admin/brands-management">{{ t('adminLayout.navBrands') }}</router-link>
                     </a-menu-item>
                 </a-sub-menu>
                 <a-menu-item key="/admin/orders-management">
                     <ShoppingCartOutlined />
-                    <span><router-link to="/admin/orders-management">Quản lý đơn hàng</router-link></span>
+                    <span><router-link to="/admin/orders-management">{{ t('adminLayout.navOrders')
+                            }}</router-link></span>
                 </a-menu-item>
                 <a-sub-menu key="settings">
                     <template #title>
                         <SettingOutlined />
-                        <span>Cài đặt</span>
+                        <span>{{ t('adminLayout.navSettings') }}</span>
                     </template>
                     <a-menu-item key="/admin/general-settings">
-                        <router-link to="/admin/general-settings">Cài đặt chung</router-link>
+                        <router-link to="/admin/general-settings">{{ t('adminLayout.navGeneralSettings')
+                            }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/province-ward-management">
-                        <router-link to="/admin/province-ward-management">Tỉnh thành & phường xã</router-link>
+                        <router-link to="/admin/province-ward-management">{{ t('adminLayout.navProvinceWard')
+                            }}</router-link>
                     </a-menu-item>
                 </a-sub-menu>
             </a-menu>
@@ -152,6 +160,7 @@ import NotificationPopover from '@/components/Notification/NotificationPopover.v
 import { useUserStore } from '@/stores/user'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import {
     AppstoreOutlined,
     DownOutlined,
@@ -164,51 +173,53 @@ import {
 } from '@ant-design/icons-vue'
 
 const route = useRoute()
+const { t } = useI18n()
 const userStore = useUserStore()
 const collapsed = ref<boolean>(false)
 const mobileMenuOpen = ref(false)
 const selectedKeys = ref<string[]>([route.path])
 const openKeys = ref<string[]>([])
 
-const pageDetails: Record<string, { title: string; description: string; hasOwnHeader?: boolean }> =
-{
+const pageDetails = computed<Record<string, { title: string; description: string; hasOwnHeader?: boolean }>>(() => ({
     'admin-products-management': {
-        title: 'Quản lý sản phẩm',
-        description: 'Theo dõi danh mục, giá bán, tồn kho và chương trình khuyến mãi.',
+        title: t('adminLayout.productsPageTitle'),
+        description: t('adminLayout.productsPageDescription'),
     },
     'admin-product-create': {
-        title: 'Thêm sản phẩm',
-        description: 'Tạo sản phẩm mới và thiết lập thông tin bán hàng.',
+        title: t('adminLayout.productCreatePageTitle'),
+        description: t('adminLayout.productCreatePageDescription'),
         hasOwnHeader: true,
     },
     'admin-categories-management': {
-        title: 'Quản lý danh mục',
-        description: 'Sắp xếp danh mục sản phẩm để khách hàng dễ tìm kiếm.',
+        title: t('adminLayout.categoriesPageTitle'),
+        description: t('adminLayout.categoriesPageDescription'),
     },
     'admin-brands-management': {
-        title: 'Quản lý thương hiệu',
-        description: 'Quản lý các thương hiệu và danh mục liên kết.',
+        title: t('adminLayout.brandsPageTitle'),
+        description: t('adminLayout.brandsPageDescription'),
     },
     'admin-orders-management': {
-        title: 'Quản lý đơn hàng',
-        description: 'Theo dõi thanh toán, xử lý và trạng thái giao hàng.',
+        title: t('adminLayout.ordersPageTitle'),
+        description: t('adminLayout.ordersPageDescription'),
     },
     'admin-general-settings': {
-        title: 'Cài đặt chung',
-        description: 'Quản lý hình ảnh thương hiệu và banner trang chủ.',
+        title: t('adminLayout.generalSettingsPageTitle'),
+        description: t('adminLayout.generalSettingsPageDescription'),
         hasOwnHeader: true,
     },
     'admin-province-ward-management': {
-        title: 'Tỉnh thành & phường xã',
-        description: 'Quản lý dữ liệu địa chỉ phục vụ giao hàng.',
+        title: t('adminLayout.provincePageTitle'),
+        description: t('adminLayout.provincePageDescription'),
         hasOwnHeader: true,
     },
-}
+}))
 
 const currentPageDetails = computed(
     () =>
-        pageDetails[String(route.name)] ?? {
-            title: String(route.meta.title ?? 'Quản trị'),
+        pageDetails.value[String(route.name)] ?? {
+            title: route.meta.titleKey
+                ? t(route.meta.titleKey as string)
+                : String(route.meta.title ?? t('common.admin')),
             description: '',
         },
 )

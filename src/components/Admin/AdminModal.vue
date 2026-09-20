@@ -1,7 +1,8 @@
 <template>
-    <a-modal class="admin-modal" :open="open" :title="title" :ok-text="okText" :cancel-text="cancelText"
-        :confirm-loading="loading" :destroy-on-close="destroyOnClose" @update:open="$emit('update:open', $event)"
-        @ok="$emit('confirm')" @cancel="$emit('cancel')">
+    <a-modal class="admin-modal" :open="open" :title="title" :ok-text="okText || t('adminCommon.save')"
+        :cancel-text="cancelText || t('adminCommon.cancel')" :confirm-loading="loading"
+        :destroy-on-close="destroyOnClose" @update:open="$emit('update:open', $event)" @ok="$emit('confirm')"
+        @cancel="$emit('cancel')">
         <slot />
         <template v-if="$slots.footer" #footer>
             <slot name="footer" />
@@ -10,6 +11,10 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 withDefaults(defineProps<{
     open: boolean
     title: string
@@ -18,8 +23,8 @@ withDefaults(defineProps<{
     loading?: boolean
     destroyOnClose?: boolean
 }>(), {
-    okText: 'Lưu',
-    cancelText: 'Hủy',
+    okText: '',
+    cancelText: '',
     loading: false,
     destroyOnClose: true,
 })

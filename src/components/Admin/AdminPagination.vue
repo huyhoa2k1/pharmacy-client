@@ -8,6 +8,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<{
     current: number
@@ -25,7 +28,7 @@ const emit = defineEmits<{
     'size-change': [current: number, size: number]
 }>()
 
-const totalLabel = computed(() => `${props.total.toLocaleString('vi-VN')} kết quả`)
+const totalLabel = computed(() => t('adminCommon.resultsCount', { count: props.total.toLocaleString('vi-VN') }))
 
 const handleChange = (page: number, size: number) => {
     emit('change', page, size)

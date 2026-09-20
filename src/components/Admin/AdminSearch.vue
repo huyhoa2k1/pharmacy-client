@@ -1,12 +1,17 @@
 <template>
     <label class="admin-search">
-        <span v-if="label" class="sr-only">{{ label }}</span>
-        <a-input-search :value="modelValue" :placeholder="placeholder" allow-clear :enter-button="searchLabel"
+        <span class="sr-only">{{ label || t('adminCommon.search') }}</span>
+        <a-input-search :value="modelValue" :placeholder="placeholder || t('adminCommon.search')" allow-clear
+            :enter-button="searchLabel || t('adminCommon.searchButton')"
             @update:value="$emit('update:modelValue', $event)" @search="$emit('search', $event)" />
     </label>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 withDefaults(defineProps<{
     modelValue?: string
     label?: string
@@ -14,9 +19,9 @@ withDefaults(defineProps<{
     searchLabel?: string
 }>(), {
     modelValue: '',
-    label: 'Tìm kiếm',
-    placeholder: 'Tìm kiếm',
-    searchLabel: 'Tìm',
+    label: '',
+    placeholder: '',
+    searchLabel: '',
 })
 
 defineEmits<{

@@ -1,16 +1,20 @@
 <template>
-    <section class="admin-filter-bar" :aria-label="label">
+    <section class="admin-filter-bar" :aria-label="label || t('adminCommon.filters')">
         <div class="admin-filter-bar__content">
             <slot />
         </div>
         <a-button v-if="$slots.reset" type="link" class="admin-filter-bar__reset" @click="$emit('reset')">
-            <slot name="reset">Xóa bộ lọc</slot>
+            <slot name="reset">{{ t('adminCommon.clearFilters') }}</slot>
         </a-button>
     </section>
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{ label?: string }>(), { label: 'Bộ lọc' })
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
+defineProps<{ label?: string }>()
 defineEmits<{ reset: [] }>()
 </script>
 

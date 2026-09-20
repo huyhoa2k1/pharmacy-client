@@ -1,7 +1,7 @@
 <template>
     <section class="admin-page-header" aria-labelledby="admin-page-title">
         <div>
-            <p class="admin-page-header__eyebrow">Hệ thống quản trị</p>
+            <p class="admin-page-header__eyebrow">{{ t('common.admin') }}</p>
             <h1 id="admin-page-title">{{ title }}</h1>
             <p v-if="description" class="admin-page-header__description">{{ description }}</p>
         </div>
@@ -12,6 +12,10 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps<{
     title: string
     description?: string
