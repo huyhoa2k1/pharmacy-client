@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AuthDialog from '@/components/Auth/AuthDialog.vue'
@@ -165,6 +165,8 @@ const openAuthDialog = () => {
   authDialogRef.value?.openModal()
 }
 
+const handleChatSignIn = () => openAuthDialog()
+
 const handleLogout = () => {
   userStore.logout()
 }
@@ -172,6 +174,11 @@ const handleLogout = () => {
 onMounted(() => {
   cartStore.loadCart()
   cartStore.initStorageListener()
+  window.addEventListener('pharmacy:open-auth', handleChatSignIn)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('pharmacy:open-auth', handleChatSignIn)
 })
 </script>
 
