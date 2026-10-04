@@ -8,10 +8,12 @@
       <router-view></router-view>
     </div>
     <Footer />
+    <FloatingChat />
   </div>
 </template>
 
 <script setup lang="ts">
+import FloatingChat from '@/components/Chat/FloatingChat.vue'
 import Header from '@/components/Header/Header.vue'
 import Advertisement from '@/components/Advertisement/index.vue'
 import Navbar from '@/components/Navbar/Navbar.vue'
