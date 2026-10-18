@@ -10,10 +10,16 @@ export const useUserStore = defineStore('user', {
     isLogin: false,
   }),
   actions: {
-    setUser(user: { id: number; username: string; email: string; phone: string; role: string }) {
+    setUser(user: {
+      id: number
+      username: string
+      email?: string | null
+      phone: string
+      role: string
+    }) {
       this.userId = user.id
       this.username = user.username
-      this.email = user.email
+      this.email = user.email ?? ''
       this.phone = user.phone
       ;(this.role = user.role), (this.isLogin = true)
     },

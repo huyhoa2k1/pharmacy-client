@@ -62,16 +62,6 @@
             <form v-show="!isLogin" @submit.prevent="handleRegister" class="animate-fadeIn">
                 <div class="mb-4">
                     <label class="auth-label">
-                        {{ t('auth.emailLabel') }} <span class="auth-required">*</span>
-                    </label>
-                    <a-input v-model:value="registerForm.email" type="email" :placeholder="t('auth.emailPlaceholder')" size="large"
-                        allow-clear :status="registerErrors.email ? 'error' : ''" />
-                    <span v-if="registerErrors.email" class="auth-error">{{ registerErrors.email
-                        }}</span>
-                </div>
-
-                <div class="mb-4">
-                    <label class="auth-label">
                         {{ t('auth.phoneLabel') }} <span class="auth-required">*</span>
                     </label>
                     <a-input v-model:value="registerForm.phone" :placeholder="t('auth.phonePlaceholder')" size="large"
@@ -137,13 +127,11 @@ const isLoginSubmitting = ref(false);
 
 // Register form
 const registerForm = ref({
-    email: '',
     phone: '',
     password: ''
 });
 
 const registerErrors = ref({
-    email: '',
     phone: '',
     password: ''
 });
@@ -151,11 +139,6 @@ const registerErrors = ref({
 const isRegisterSubmitting = ref(false);
 
 // Validation functions
-const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-};
-
 const isValidPhone = (phone: string): boolean => {
     const phoneRegex = /^(\+84|0)[0-9]{9,10}$/;
     return phoneRegex.test(phone);
@@ -190,16 +173,9 @@ const validateLogin = (): boolean => {
 // Register validation
 const validateRegister = (): boolean => {
     registerErrors.value = {
-        email: '',
         phone: '',
         password: ''
     };
-
-    if (!registerForm.value.email?.trim()) {
-        registerErrors.value.email = t('auth.emailRequired');
-    } else if (!isValidEmail(registerForm.value.email)) {
-        registerErrors.value.email = t('auth.emailInvalid');
-    }
 
     if (!registerForm.value.phone?.trim()) {
         registerErrors.value.phone = t('auth.phoneRequired');
@@ -263,7 +239,6 @@ const handleRegister = async () => {
 
     try {
         await AuthService.register({
-            email: registerForm.value.email,
             phone: registerForm.value.phone,
             password: registerForm.value.password
         });
@@ -273,7 +248,7 @@ const handleRegister = async () => {
         isLogin.value = true;
 
         // Reset form
-        registerForm.value = { email: '', phone: '', password: '' };
+        registerForm.value = { phone: '', password: '' };
     } catch {
         message.error(t('auth.registerFailed'));
     } finally {

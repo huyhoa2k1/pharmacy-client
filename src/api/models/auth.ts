@@ -9,7 +9,7 @@ export interface ILoginResponse {
   user: {
     id: number
     username: string
-    email: string
+    email?: string | null
     phone: string
     role: string
   }
@@ -17,7 +17,6 @@ export interface ILoginResponse {
 
 export interface IRegisterRequest {
   username?: string
-  email: string
   phone: string
   password: string
 }

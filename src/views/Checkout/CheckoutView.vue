@@ -100,11 +100,6 @@ const validateCheckout = (): boolean => {
         return false;
     }
 
-    if (!checkoutStore.customerInfo.email?.trim()) {
-        message.error(t('checkout.emailRequired'));
-        return false;
-    }
-
     if (!checkoutStore.addressInfo.province) {
         message.error(t('checkout.provinceRequired'));
         return false;
@@ -189,7 +184,6 @@ const handleSubmitOrder = async () => {
         //         address: checkoutStore.addressInfo.address,
         //         fullname: checkoutStore.customerInfo.fullName,
         //         phone: checkoutStore.customerInfo.phone,
-        //         email: ''
         //     },
         //     orderItems: cartItems.value.map(item => ({
         //         productId: item.id,
