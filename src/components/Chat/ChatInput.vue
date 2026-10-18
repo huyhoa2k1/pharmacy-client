@@ -58,7 +58,7 @@ function handleKeydown(event: KeyboardEvent) {
       <textarea
         v-model="input"
         rows="1"
-        placeholder="Hỏi về thuốc, đơn hàng hoặc sức khỏe..."
+        placeholder="Hỏi về sản phẩm, giá hoặc chính sách cửa hàng..."
         class="composer-textarea max-h-32 min-h-10 flex-1 resize-none px-2 py-2 text-sm outline-none"
         :disabled="isLoading"
         @keydown="handleKeydown"

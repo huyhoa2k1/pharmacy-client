@@ -20,7 +20,6 @@ export interface ICreateOrderRequest {
     address: string
     fullname: string
     phone: string
-    email?: string
   }
   orderItems: {
     productId: number
@@ -43,7 +42,6 @@ export interface IOrderResponse {
     address: string
     fullname: string
     phone: string
-    email?: string
   }
   orderItems: {
     productId: number

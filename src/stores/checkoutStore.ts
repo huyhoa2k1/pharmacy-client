@@ -5,7 +5,6 @@ import { ref } from 'vue'
 export interface CustomerInfo {
   fullName: string
   phone: string
-  email: string
   note: string
 }
 
@@ -27,7 +26,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
   const customerInfo = ref<CustomerInfo>({
     fullName: '',
     phone: '',
-    email: '',
     note: '',
   })
 
@@ -68,7 +66,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
     customerInfo.value = {
       fullName: '',
       phone: '',
-      email: '',
       note: '',
     }
     addressInfo.value = {
@@ -81,13 +78,8 @@ export const useCheckoutStore = defineStore('checkout', () => {
 
   // Validate all required fields
   const isCheckoutValid = (): boolean => {
-    const { fullName, phone, email } = customerInfo.value
+    const { fullName, phone } = customerInfo.value
     const { province, ward, address } = addressInfo.value
-
-    const isValidEmail = (email: string): boolean => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(email)
-    }
 
     const isValidPhone = (phone: string): boolean => {
       const phoneRegex = /^(\+84|0)[0-9]{9,10}$/
@@ -97,7 +89,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
     return (
       fullName?.trim().length >= 3 &&
       isValidPhone(phone) &&
-      isValidEmail(email) &&
       province !== '' &&
       ward !== '' &&
       address?.trim().length >= 5

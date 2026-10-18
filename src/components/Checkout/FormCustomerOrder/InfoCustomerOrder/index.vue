@@ -17,12 +17,6 @@
                 <span v-if="errors.phone" class="error-message">{{ errors.phone }}</span>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">{{ t('checkout.emailLabel') }} <span class="required">*</span></label>
-                <a-input v-model:value="checkoutStore.customerInfo.email" type="email" :placeholder="t('checkout.emailPlaceholder')"
-                    allow-clear @change="validateForm" />
-                <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
-            </div>
         </div>
 
         <div class="form-group">
@@ -41,18 +35,11 @@ import { useCheckoutStore } from '@/stores/checkoutStore';
 interface Errors {
     fullName?: string;
     phone?: string;
-    email?: string;
 }
 
 const { t } = useI18n();
 const checkoutStore = useCheckoutStore();
 const errors = ref<Errors>({});
-
-// Validate email
-const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-};
 
 // Validate phone
 const isValidPhone = (phone: string): boolean => {
@@ -73,12 +60,6 @@ const validateForm = (): boolean => {
         errors.value.phone = t('checkout.phoneRequired');
     } else if (!isValidPhone(checkoutStore.customerInfo.phone)) {
         errors.value.phone = t('checkout.phoneInvalid');
-    }
-
-    if (!checkoutStore.customerInfo.email?.trim()) {
-        errors.value.email = t('checkout.emailRequired');
-    } else if (!isValidEmail(checkoutStore.customerInfo.email)) {
-        errors.value.email = t('checkout.emailInvalid');
     }
 
     return Object.keys(errors.value).length === 0;
