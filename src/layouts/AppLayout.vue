@@ -9,6 +9,7 @@
     </div>
     <Footer />
     <FloatingChat />
+    <BackToTop />
   </div>
 </template>
 
@@ -23,6 +24,7 @@ import { CategoryService } from '@/api/services/category'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { globalLoading } from '@/stores/loading'
+import BackToTop from '@/components/common/back-to-top/index.vue'
 
 const { t } = useI18n()
 const categories = ref<IGetCategoryResponse[]>([])
