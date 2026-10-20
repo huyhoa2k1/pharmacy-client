@@ -97,58 +97,33 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
 
 <template>
   <Transition name="chat">
-    <section
-      v-if="isOpen"
+    <section v-if="isOpen"
       class="chat-panel fixed bottom-24 right-5 z-50 flex h-[min(640px,calc(100dvh-7rem))] w-[min(420px,calc(100vw-2rem))] flex-col overflow-hidden"
-      aria-label="Trợ lý chăm sóc sức khỏe"
-    >
-      <div
-        v-if="userStore.isLogin"
-        class="conversation-bar flex shrink-0 items-center gap-2 px-4 py-3"
-      >
-        <select
-          :value="activeThreadId"
-          :disabled="isLoadingConversations || conversations.length === 0"
-          class="conversation-select min-w-0 flex-1"
-          aria-label="Chọn cuộc trò chuyện"
-          @change="onConversationChange"
-        >
-          <option
-            v-for="conversation in conversations"
-            :key="conversation.id"
-            :value="conversation.id"
-          >
+      aria-label="Trợ lý chăm sóc sức khỏe">
+      <div v-if="userStore.isLogin" class="conversation-bar flex shrink-0 items-center gap-2 px-4 py-3">
+        <select :value="activeThreadId" :disabled="isLoadingConversations || conversations.length === 0"
+          class="conversation-select min-w-0 flex-1" aria-label="Chọn cuộc trò chuyện" @change="onConversationChange">
+          <option v-for="conversation in conversations" :key="conversation.id" :value="conversation.id">
             {{ conversation.title }}
           </option>
         </select>
-        <button
-          type="button"
-          title="Cuộc trò chuyện mới"
-          aria-label="Cuộc trò chuyện mới"
-          class="chat-icon-button"
-          @click="createConversation"
-        >
+        <button type="button" title="Cuộc trò chuyện mới" aria-label="Cuộc trò chuyện mới" class="chat-icon-button"
+          @click="createConversation">
           <PlusOutlined />
         </button>
-        <button
-          type="button"
-          title="Xóa cuộc trò chuyện"
-          aria-label="Xóa cuộc trò chuyện"
-          :disabled="!activeThreadId"
-          class="chat-icon-button chat-icon-button--danger"
-          @click="deleteConversation"
-        >
+        <button type="button" title="Xóa cuộc trò chuyện" aria-label="Xóa cuộc trò chuyện" :disabled="!activeThreadId"
+          class="chat-icon-button chat-icon-button--danger" @click="deleteConversation">
           <DeleteOutlined />
         </button>
       </div>
       <p v-if="conversationError" role="alert" class="chat-error shrink-0 px-4 py-2 text-xs">
         {{ conversationError }}
       </p>
-      <div
-        v-if="!userStore.isLogin"
-        class="chat-sign-in flex flex-1 flex-col items-center justify-center px-8 text-center"
-      >
-        <div class="chat-sign-in__icon"><CommentOutlined /></div>
+      <div v-if="!userStore.isLogin"
+        class="chat-sign-in flex flex-1 flex-col items-center justify-center px-8 text-center">
+        <div class="chat-sign-in__icon">
+          <CommentOutlined />
+        </div>
         <h2>Trò chuyện cùng dược sĩ AI</h2>
         <p>Đăng nhập để nhận tư vấn phù hợp và lưu lại các cuộc trò chuyện của bạn.</p>
         <button type="button" class="chat-sign-in__button" @click="requestSignIn">Đăng nhập</button>
@@ -159,12 +134,8 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
     </section>
   </Transition>
 
-  <button
-    class="chat-launcher fixed bottom-5 right-5 z-50 flex items-center justify-center"
-    :aria-label="isOpen ? 'Đóng trợ lý AI' : 'Mở trợ lý AI'"
-    :aria-expanded="isOpen"
-    @click="isOpen = !isOpen"
-  >
+  <button class="chat-launcher fixed bottom-25 right-5 z-50 flex items-center justify-center"
+    :aria-label="isOpen ? 'Đóng trợ lý AI' : 'Mở trợ lý AI'" :aria-expanded="isOpen" @click="isOpen = !isOpen">
     <CloseOutlined v-if="isOpen" />
     <CommentOutlined v-else />
   </button>
@@ -341,6 +312,7 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .chat-enter-active,
   .chat-leave-active,
   .chat-launcher,

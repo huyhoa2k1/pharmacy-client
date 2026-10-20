@@ -9,6 +9,8 @@
             <router-view></router-view>
         </div>
         <Footer />
+        <FloatingChat />
+        <BackToTop />
     </div>
 </template>
 
@@ -19,7 +21,9 @@ import Footer from '@/components/Footer/Footer.vue';
 import Header from '@/components/Header/Header.vue';
 import Navbar from '@/components/Navbar/Navbar.vue';
 import Breadcrumb from '@/components/common/breadcrumb/index.vue';
+import BackToTop from '@/components/common/back-to-top/index.vue';
 import { onMounted, ref } from 'vue';
+import FloatingChat from '@/components/Chat/FloatingChat.vue';
 
 const categories = ref<IGetCategoryResponse[]>([]);
 
