@@ -1,85 +1,94 @@
 <template>
-  <div class="product-view">
-    <div class="product-left">
-      <div class="product-description">
-        <Swiper :images="data.imageUrl" />
-        <MainInfo :product="data" />
+  <PageLoading :loading="loading">
+    <div class="product-view">
+      <div class="product-left">
+        <div class="product-description">
+          <Swiper :images="data.imageUrl" />
+          <MainInfo :product="data" />
+        </div>
+      </div>
+      <div class="product-right">
+        <!-- Quantity Section -->
+        <div class="border-b border-[var(--color-border)] pb-6">
+          <p class="text-[var(--color-foreground)] font-semibold text-sm mb-3">{{ t('productDetail.quantity') }}</p>
+          <div class="flex items-center gap-3 bg-[var(--color-muted)] w-fit p-2 rounded-lg">
+            <button @click="decreaseQuantity"
+              class="quantity-control rounded-full w-8 h-8 flex items-center justify-center cursor-pointer transition">
+              <MinusOutlined class="text-sm" />
+            </button>
+            <input type="text"
+              class="w-12 text-center font-bold text-[var(--color-foreground)] bg-transparent border-0 outline-none"
+              v-model.number="quantity" readonly>
+            <button @click="increaseQuantity"
+              class="quantity-control rounded-full w-8 h-8 flex items-center justify-center cursor-pointer transition">
+              <PlusOutlined class="text-sm" />
+            </button>
+          </div>
+          <p class="text-xs text-[var(--color-muted-foreground)] mt-2">{{ t('productDetail.remaining', {
+            amount:
+              data.amount
+          }) }}</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col gap-3 py-6 border-b border-[var(--color-border)]">
+          <a-button type="primary" size="large" @click="buyNow"
+            class="product-buy-button w-full font-semibold text-base h-12 rounded-lg border-0">
+            <i class="pi pi-bolt mr-2"></i>
+            {{ t('productDetail.buyNow') }}
+          </a-button>
+          <a-button size="large" @click="addToCart"
+            class="product-cart-button w-full font-semibold text-base h-12 rounded-lg border-2">
+            <i class="pi pi-shopping-cart mr-2"></i>
+            {{ t('productDetail.addToCart') }}
+          </a-button>
+        </div>
+
+        <!-- Benefits -->
+        <div class="grid grid-cols-2 gap-4 py-6 border-b border-[var(--color-border)]">
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <i class="pi pi-clock text-[var(--color-accent)] text-2xl"></i>
+            </div>
+            <p class="text-xs font-semibold text-[var(--color-foreground)]">{{ t('productDetail.fastDeliveryTitle') }}
+            </p>
+            <p class="text-xs text-[var(--color-muted-foreground)] mt-1">{{ t('productDetail.fastDeliveryDesc') }}</p>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <i class="pi pi-truck text-[var(--color-accent)] text-2xl"></i>
+            </div>
+            <p class="text-xs font-semibold text-[var(--color-foreground)]">{{ t('productDetail.freeShippingTitle') }}
+            </p>
+            <p class="text-xs text-[var(--color-muted-foreground)] mt-1">{{ t('productDetail.freeShippingDesc') }}</p>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="pt-4 space-y-3">
+          <div class="flex items-center gap-2">
+            <i class="pi pi-shield text-[var(--color-accent)]"></i>
+            <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.warrantyGenuine') }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-check-circle text-[var(--color-accent)]"></i>
+            <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.genuine100') }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-times-circle text-[var(--color-destructive)]"></i>
+            <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.noReturns') }}</span>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="product-right">
-      <!-- Quantity Section -->
-      <div class="border-b border-[var(--color-border)] pb-6">
-        <p class="text-[var(--color-foreground)] font-semibold text-sm mb-3">{{ t('productDetail.quantity') }}</p>
-        <div class="flex items-center gap-3 bg-[var(--color-muted)] w-fit p-2 rounded-lg">
-          <button @click="decreaseQuantity"
-            class="quantity-control rounded-full w-8 h-8 flex items-center justify-center cursor-pointer transition">
-            <MinusOutlined class="text-sm" />
-          </button>
-          <input type="text" class="w-12 text-center font-bold text-[var(--color-foreground)] bg-transparent border-0 outline-none"
-            v-model.number="quantity" readonly>
-          <button @click="increaseQuantity"
-            class="quantity-control rounded-full w-8 h-8 flex items-center justify-center cursor-pointer transition">
-            <PlusOutlined class="text-sm" />
-          </button>
-        </div>
-        <p class="text-xs text-[var(--color-muted-foreground)] mt-2">{{ t('productDetail.remaining', { amount: data.amount }) }}</p>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-col gap-3 py-6 border-b border-[var(--color-border)]">
-        <a-button type="primary" size="large" @click="buyNow"
-          class="product-buy-button w-full font-semibold text-base h-12 rounded-lg border-0">
-          <i class="pi pi-bolt mr-2"></i>
-          {{ t('productDetail.buyNow') }}
-        </a-button>
-        <a-button size="large" @click="addToCart"
-          class="product-cart-button w-full font-semibold text-base h-12 rounded-lg border-2">
-          <i class="pi pi-shopping-cart mr-2"></i>
-          {{ t('productDetail.addToCart') }}
-        </a-button>
-      </div>
-
-      <!-- Benefits -->
-      <div class="grid grid-cols-2 gap-4 py-6 border-b border-[var(--color-border)]">
-        <div class="text-center">
-          <div class="flex justify-center mb-2">
-            <i class="pi pi-clock text-[var(--color-accent)] text-2xl"></i>
-          </div>
-          <p class="text-xs font-semibold text-[var(--color-foreground)]">{{ t('productDetail.fastDeliveryTitle') }}</p>
-          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">{{ t('productDetail.fastDeliveryDesc') }}</p>
-        </div>
-        <div class="text-center">
-          <div class="flex justify-center mb-2">
-            <i class="pi pi-truck text-[var(--color-accent)] text-2xl"></i>
-          </div>
-          <p class="text-xs font-semibold text-[var(--color-foreground)]">{{ t('productDetail.freeShippingTitle') }}</p>
-          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">{{ t('productDetail.freeShippingDesc') }}</p>
-        </div>
-      </div>
-
-      <!-- Additional Info -->
-      <div class="pt-4 space-y-3">
-        <div class="flex items-center gap-2">
-          <i class="pi pi-shield text-[var(--color-accent)]"></i>
-          <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.warrantyGenuine') }}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <i class="pi pi-check-circle text-[var(--color-accent)]"></i>
-          <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.genuine100') }}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <i class="pi pi-times-circle text-[var(--color-destructive)]"></i>
-          <span class="text-sm text-[var(--color-foreground)]">{{ t('productDetail.noReturns') }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  </PageLoading>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swiper from '@/components/Product/Swiper/Swiper.vue';
+import PageLoading from '@/components/common/page-loading/index.vue';
 import MainInfo from '@/components/Product/MainInfo/index.vue';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import { ProductService } from '@/api/services/product';
@@ -94,12 +103,16 @@ const { t } = useI18n();
 const cartStore = useCartStore();
 const data = ref<IGetProductResponse>({} as IGetProductResponse);
 const quantity = ref(1);
-
-
+const loading = ref(false);
 
 const getProductDetail = async () => {
-  const res = await ProductService.getProductById(Number(route.params.id));
-  data.value = res;
+  loading.value = true;
+  try {
+    const res = await ProductService.getProductById(Number(route.params.id));
+    data.value = res;
+  } finally {
+    loading.value = false;
+  }
 };
 
 const decreaseQuantity = () => {

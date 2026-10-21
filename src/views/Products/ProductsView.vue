@@ -1,47 +1,51 @@
 <template>
-  <section class="catalogue">
-    <aside class="catalogue__sidebar" :aria-label="t('products.filterAriaLabel')">
-      <Filter v-model:filters="filters" />
-    </aside>
+  <PageLoading :loading="loading">
+    <section class="catalogue">
+      <aside class="catalogue__sidebar" :aria-label="t('products.filterAriaLabel')">
+        <Filter v-model:filters="filters" />
+      </aside>
 
-    <main class="catalogue__content">
-      <header class="catalogue__header">
-        <div>
-          <p class="catalogue__eyebrow">{{ t('products.eyebrow') }}</p>
-          <h1>{{ t('products.title') }}</h1>
-          <p class="catalogue__result-count">
-            {{ resultSummary }}
-          </p>
+      <main class="catalogue__content">
+        <header class="catalogue__header">
+          <div>
+            <p class="catalogue__eyebrow">{{ t('products.eyebrow') }}</p>
+            <h1>{{ t('products.title') }}</h1>
+            <p class="catalogue__result-count">
+              {{ resultSummary }}
+            </p>
+          </div>
+
+          <div class="catalogue__sort">
+            <label for="product-sort">{{ t('products.sortLabel') }}</label>
+            <a-select id="product-sort" v-model:value="sort" class="catalogue__sort-select"
+              :aria-label="t('products.sortAriaLabel')">
+              <a-select-option :value="null">{{ t('products.sortPopular') }}</a-select-option>
+              <a-select-option value="asc">{{ t('products.sortPriceAsc') }}</a-select-option>
+              <a-select-option value="desc">{{ t('products.sortPriceDesc') }}</a-select-option>
+            </a-select>
+          </div>
+        </header>
+
+        <div v-if="data.length" class="products">
+          <ProductCard v-for="item in data" :key="item.id" :data="item" />
         </div>
 
-        <div class="catalogue__sort">
-          <label for="product-sort">{{ t('products.sortLabel') }}</label>
-          <a-select id="product-sort" v-model:value="sort" class="catalogue__sort-select"
-            :aria-label="t('products.sortAriaLabel')">
-            <a-select-option :value="null">{{ t('products.sortPopular') }}</a-select-option>
-            <a-select-option value="asc">{{ t('products.sortPriceAsc') }}</a-select-option>
-            <a-select-option value="desc">{{ t('products.sortPriceDesc') }}</a-select-option>
-          </a-select>
+        <div v-else-if="!loading" class="catalogue__empty">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          <h2>{{ t('products.emptyTitle') }}</h2>
+          <p>{{ t('products.emptyDesc') }}</p>
         </div>
-      </header>
-
-      <div v-if="data.length" class="products">
-        <ProductCard v-for="item in data" :key="item.id" :data="item" />
-      </div>
-
-      <div v-else class="catalogue__empty">
-        <i class="pi pi-search" aria-hidden="true"></i>
-        <h2>{{ t('products.emptyTitle') }}</h2>
-        <p>{{ t('products.emptyDesc') }}</p>
-      </div>
-    </main>
-  </section>
+        <div v-else class="catalogue__loading"></div>
+      </main>
+    </section>
+  </PageLoading>
 </template>
 
 <script setup lang="ts">
 import type { IGetProductResponse, IPageResponse } from '@/api/models/product'
 import { ProductService } from '@/api/services/product'
 import Filter from '@/components/Filter/Filter.vue'
+import PageLoading from '@/components/common/page-loading/index.vue'
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -59,17 +63,24 @@ const resultSummary = computed(() => {
   return t('products.resultCount', { count: new Intl.NumberFormat('vi-VN').format(count) })
 })
 
+const loading = ref(true)
+
 const getAllProductsByCategory = async () => {
   const categoryId = Number(route.params.categoryId)
-  const res = await ProductService.getProductsByCategory(categoryId, {
-    brandIds: filters.value.brands,
-    minPrice: filters.value.priceFrom,
-    maxPrice: filters.value.priceTo,
-    sortDirection: sort.value,
-  })
+  loading.value = true
+  try {
+    const res = await ProductService.getProductsByCategory(categoryId, {
+      brandIds: filters.value.brands,
+      minPrice: filters.value.priceFrom,
+      maxPrice: filters.value.priceTo,
+      sortDirection: sort.value,
+    })
 
-  response.value = res
-  data.value = res.content
+    response.value = res
+    data.value = res.content
+  } finally {
+    loading.value = false
+  }
 }
 
 watch(
@@ -170,6 +181,10 @@ h1 {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-md);
+}
+
+.catalogue__loading {
+  min-height: 320px;
 }
 
 .catalogue__empty {
