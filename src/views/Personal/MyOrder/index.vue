@@ -1,109 +1,103 @@
 <template>
-  <section class="orders-section">
-    <header class="orders-header">
-      <div>
-        <p class="section-eyebrow">{{ t('personalOrders.eyebrow') }}</p>
-        <h2 class="section-title">{{ t('personalOrders.title') }}</h2>
-        <p class="section-description">
-          {{ t('personalOrders.description') }}
-        </p>
-      </div>
-      <div class="orders-count">
-        <strong>{{ ordersData.length }}</strong>
-        <span>{{ t('personalOrders.countSuffix') }}</span>
-      </div>
-    </header>
-
-    <a-tabs v-model:activeKey="activeKey" class="orders-tabs" @tabClick="handleChange">
-      <a-tab-pane v-for="tab in tabs" :key="tab.key" :tab="tab.label" />
-    </a-tabs>
-
-    <div class="orders-list">
-      <a-table
-        :columns="tableColumns"
-        :data-source="displayOrders"
-        :row-key="'id'"
-        :pagination="{ pageSize: 8, showSizeChanger: false }"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'total'">
-            {{ formatPrice(record.total) }}
-          </template>
-          <template v-else-if="column.dataIndex === 'statusText'">
-            <a-tag :color="formatStatusOrder(record.raw.status).color">{{
-              record.statusText
-            }}</a-tag>
-          </template>
-          <template v-else-if="column.dataIndex === 'paymentMethod'">
-            {{ record.raw.paymentMethod === 'CASH' ? t('personalOrders.paymentCash') : t('personalOrders.paymentOnline') }}
-          </template>
-          <template v-else-if="column.key === 'action'">
-            <a-button type="link" class="view-order-button" @click="viewOrder(record.raw)"
-              >{{ t('personalOrders.viewDetails') }}</a-button
-            >
-          </template>
-        </template>
-      </a-table>
-    </div>
-
-    <a-modal
-      v-model:open="detailVisible"
-      :title="t('personalOrders.orderDetailTitle')"
-      :footer="null"
-      class="order-detail-modal"
-    >
-      <div v-if="selectedOrder" class="order-detail">
-        <div class="order-detail__summary">
-          <div>
-            <span>{{ t('personalOrders.orderCodeLabel') }}</span>
-            <strong>{{ selectedOrder.orderCode }}</strong>
-          </div>
-          <a-tag :color="formatStatusOrder(selectedOrder.status).color">
-            {{ formatStatusOrder(selectedOrder.status).text }}
-          </a-tag>
+  <PageLoading :loading="loading">
+    <section class="orders-section">
+      <header class="orders-header">
+        <div>
+          <p class="section-eyebrow">{{ t('personalOrders.eyebrow') }}</p>
+          <h2 class="section-title">{{ t('personalOrders.title') }}</h2>
+          <p class="section-description">
+            {{ t('personalOrders.description') }}
+          </p>
         </div>
-
-        <dl class="order-detail__information">
-          <div>
-            <dt>{{ t('personalOrders.orderDateLabel') }}</dt>
-            <dd>{{ formatDate(selectedOrder.createdAt || selectedOrder.updatedAt) }}</dd>
-          </div>
-          <div>
-            <dt>{{ t('personalOrders.paymentMethodLabel') }}</dt>
-            <dd>{{ selectedOrder.paymentMethod === 'CASH' ? t('personalOrders.paymentCash') : t('personalOrders.paymentOnline') }}</dd>
-          </div>
-          <div class="order-detail__address">
-            <dt>{{ t('personalOrders.shippingAddressLabel') }}</dt>
-            <dd>
-              {{ selectedOrder.shippingAddress?.fullname }} -
-              {{ selectedOrder.shippingAddress?.phone }}<br />
-              {{ selectedOrder.shippingAddress?.address }},
-              {{ selectedOrder.shippingAddress?.ward }},
-              {{ selectedOrder.shippingAddress?.district }},
-              {{ selectedOrder.shippingAddress?.province }}
-            </dd>
-          </div>
-        </dl>
-
-        <div class="order-detail__items">
-          <h3>{{ t('personalOrders.productsLabel') }}</h3>
-          <ul>
-            <li v-for="item in selectedOrder.orderItems" :key="item.productId">
-              <span
-                >{{ item.productName }} <small>x{{ item.amount }}</small></span
-              >
-              <strong>{{ formatPrice(item.price * item.amount) }}</strong>
-            </li>
-          </ul>
+        <div class="orders-count">
+          <strong>{{ ordersData.length }}</strong>
+          <span>{{ t('personalOrders.countSuffix') }}</span>
         </div>
+      </header>
 
-        <div class="order-detail__total">
-          <span>{{ t('personalOrders.totalPaymentLabel') }}</span>
-          <strong>{{ formatPrice(selectedOrder.totalPrice) }}</strong>
-        </div>
+      <a-tabs v-model:activeKey="activeKey" class="orders-tabs" @tabClick="handleChange">
+        <a-tab-pane v-for="tab in tabs" :key="tab.key" :tab="tab.label" />
+      </a-tabs>
+
+      <div class="orders-list">
+        <a-table :columns="tableColumns" :data-source="displayOrders" :row-key="'id'"
+          :pagination="{ pageSize: 8, showSizeChanger: false }">
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex === 'total'">
+              {{ formatPrice(record.total) }}
+            </template>
+            <template v-else-if="column.dataIndex === 'statusText'">
+              <a-tag :color="formatStatusOrder(record.raw.status).color">{{
+                record.statusText
+                }}</a-tag>
+            </template>
+            <template v-else-if="column.dataIndex === 'paymentMethod'">
+              {{ record.raw.paymentMethod === 'CASH' ? t('personalOrders.paymentCash') :
+                t('personalOrders.paymentOnline')
+              }}
+            </template>
+            <template v-else-if="column.key === 'action'">
+              <a-button type="link" class="view-order-button" @click="viewOrder(record.raw)">{{
+                t('personalOrders.viewDetails') }}</a-button>
+            </template>
+          </template>
+        </a-table>
       </div>
-    </a-modal>
-  </section>
+
+      <a-modal v-model:open="detailVisible" :title="t('personalOrders.orderDetailTitle')" :footer="null"
+        class="order-detail-modal">
+        <div v-if="selectedOrder" class="order-detail">
+          <div class="order-detail__summary">
+            <div>
+              <span>{{ t('personalOrders.orderCodeLabel') }}</span>
+              <strong>{{ selectedOrder.orderCode }}</strong>
+            </div>
+            <a-tag :color="formatStatusOrder(selectedOrder.status).color">
+              {{ formatStatusOrder(selectedOrder.status).text }}
+            </a-tag>
+          </div>
+
+          <dl class="order-detail__information">
+            <div>
+              <dt>{{ t('personalOrders.orderDateLabel') }}</dt>
+              <dd>{{ formatDate(selectedOrder.createdAt || selectedOrder.updatedAt) }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('personalOrders.paymentMethodLabel') }}</dt>
+              <dd>{{ selectedOrder.paymentMethod === 'CASH' ? t('personalOrders.paymentCash') :
+                t('personalOrders.paymentOnline') }}</dd>
+            </div>
+            <div class="order-detail__address">
+              <dt>{{ t('personalOrders.shippingAddressLabel') }}</dt>
+              <dd>
+                {{ selectedOrder.shippingAddress?.fullname }} -
+                {{ selectedOrder.shippingAddress?.phone }}<br />
+                {{ selectedOrder.shippingAddress?.address }},
+                {{ selectedOrder.shippingAddress?.ward }},
+                {{ selectedOrder.shippingAddress?.district }},
+                {{ selectedOrder.shippingAddress?.province }}
+              </dd>
+            </div>
+          </dl>
+
+          <div class="order-detail__items">
+            <h3>{{ t('personalOrders.productsLabel') }}</h3>
+            <ul>
+              <li v-for="item in selectedOrder.orderItems" :key="item.productId">
+                <span>{{ item.productName }} <small>x{{ item.amount }}</small></span>
+                <strong>{{ formatPrice(item.price * item.amount) }}</strong>
+              </li>
+            </ul>
+          </div>
+
+          <div class="order-detail__total">
+            <span>{{ t('personalOrders.totalPaymentLabel') }}</span>
+            <strong>{{ formatPrice(selectedOrder.totalPrice) }}</strong>
+          </div>
+        </div>
+      </a-modal>
+    </section>
+  </PageLoading>
 </template>
 
 <script setup lang="ts">
@@ -115,19 +109,25 @@ import { formatStatusOrder, formatPrice } from '@/utils/format'
 import { useUserStore } from '@/stores/user'
 import { message, Input, Button, Space } from 'ant-design-vue'
 import { SearchOutlined } from '@ant-design/icons-vue'
+import PageLoading from '@/components/common/page-loading/index.vue'
 
 const { t } = useI18n()
 const ordersData = ref<IOrderResponse[]>([])
 const userStore = useUserStore()
 const userId = computed(() => (userStore.isLogin ? userStore.userId : undefined))
 
+const loading = ref(!!userId.value)
+
 const getOrdersByUser = async () => {
   if (!userId.value) return
+  loading.value = true
   try {
     const res = await OrderService.getOrderByUserId(userId.value)
     ordersData.value = res || []
   } catch {
     message.error(t('personalOrders.loadError'))
+  } finally {
+    loading.value = false
   }
 }
 
@@ -455,7 +455,7 @@ const handleChange = (tab: any) => {
   margin: var(--space-lg) 0;
 }
 
-.order-detail__information > div {
+.order-detail__information>div {
   padding-bottom: var(--space-sm);
   border-bottom: 1px solid var(--color-border);
 }
