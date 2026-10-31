@@ -55,7 +55,7 @@ const Layout = defineComponent({
               h(
                 'span',
                 {
-                  class: 'ml-3 font-semibold text-slate-800',
+                  class: 'ml-3 font-semibold text-slate-800 dark:text-slate-100',
                 },
                 'Trợ lý sức khỏe',
               ),
@@ -128,7 +128,7 @@ const Fallback = defineComponent({
       h(
         'span',
         {
-          class: 'text-gray-500',
+          class: 'text-gray-500 dark:text-gray-400',
         },
         `[${String((props.part as { type?: string }).type ?? '')}]`,
       )
@@ -153,7 +153,7 @@ const chat = useAppChat()
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 flex-col bg-white">
+  <div class="flex h-full min-h-0 flex-col bg-white dark:bg-[var(--color-card)]">
     <div class="min-h-0 flex-1">
       <UIChat :ui="ui" :chat="chat" />
     </div>
@@ -168,19 +168,19 @@ const chat = useAppChat()
 }
 
 :deep(.chat-header) {
-  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 68%, white);
-  background: linear-gradient(100deg, #effcff, #fff);
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(100deg, var(--color-surface-alt), var(--color-card));
 }
 
 :deep(.chat-header__avatar) {
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   box-shadow:
     -3px -3px 8px #fff,
     3px 3px 8px #b7e6ec;
 }
 
 :deep(.chat-messages) {
-  background: #fcfeff;
+  background: var(--color-surface-alt);
   scrollbar-color: #9edce7 transparent;
   scrollbar-width: thin;
 }

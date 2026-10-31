@@ -86,7 +86,7 @@ const navigationItems = computed(() => [
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-lg);
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   color: #ffffff;
 }
 

@@ -1,3 +1,5 @@
+﻿import { theme } from 'ant-design-vue'
+
 export const pharmacyTheme = {
   token: {
     colorPrimary: '#059669',
@@ -15,5 +17,22 @@ export const pharmacyTheme = {
     controlHeightSM: 32,
     controlHeightLG: 48,
     fontFamily: '"Noto Sans", Arial, sans-serif',
+  },
+}
+
+export const pharmacyDarkTheme = {
+  algorithm: theme.darkAlgorithm,
+  token: {
+    ...pharmacyTheme.token,
+    colorPrimary: '#10B981',
+    colorInfo: '#22D3EE',
+    colorLink: '#67E8F9',
+    colorText: '#E2F3F7',
+    colorTextSecondary: '#9FB6C0',
+    colorBgLayout: '#0B1720',
+    colorBgContainer: '#12232D',
+    colorBgElevated: '#16293A',
+    colorBorder: '#24404E',
+    colorError: '#F87171',
   },
 }

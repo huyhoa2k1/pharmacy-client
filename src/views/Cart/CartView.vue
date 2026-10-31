@@ -224,7 +224,7 @@ onMounted(() => {
 }
 
 .cart-left :deep(.ant-checkbox-checked .ant-checkbox-inner) {
-    background-color: var(--color-primary);
+    background-color: var(--color-primary-solid);
     border-color: var(--color-primary);
 }
 

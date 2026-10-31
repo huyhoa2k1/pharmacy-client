@@ -150,15 +150,15 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
 }
 
 .conversation-bar {
-  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 70%, white);
+  border-bottom: 1px solid var(--color-border);
   background: var(--color-card);
 }
 
 .conversation-select {
   height: 40px;
-  border: 1px solid #cbdde3;
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-sm);
-  background: #f8feff;
+  background: var(--color-surface-alt);
   color: var(--color-foreground);
   font-size: 0.8125rem;
   outline: none;
@@ -170,7 +170,7 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
 
 .conversation-select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px #0891b220;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .chat-icon-button {
@@ -179,9 +179,9 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
   height: 40px;
   align-items: center;
   justify-content: center;
-  border: 1px solid #cbdde3;
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-sm);
-  background: #f8feff;
+  background: var(--color-surface-alt);
   color: var(--color-foreground);
   cursor: pointer;
   transition:
@@ -192,7 +192,7 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
 
 .chat-icon-button:hover:not(:disabled) {
   border-color: var(--color-primary);
-  background: #e8faff;
+  background: var(--color-hover);
   color: var(--color-primary);
 }
 
@@ -203,18 +203,18 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
 
 .chat-icon-button--danger:hover:not(:disabled) {
   border-color: var(--color-destructive);
-  background: #fef2f2;
+  background: var(--color-danger-bg);
   color: var(--color-destructive);
 }
 
 .chat-error {
-  border-bottom: 1px solid #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+  border-bottom: 1px solid var(--color-danger-fg);
+  background: var(--color-danger-bg);
+  color: var(--color-danger-fg);
 }
 
 .chat-sign-in {
-  background: linear-gradient(145deg, #f7feff 0%, var(--color-card) 58%);
+  background: linear-gradient(145deg, var(--color-surface-alt) 0%, var(--color-card) 58%);
 }
 
 .chat-sign-in__icon {
@@ -225,7 +225,7 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
   justify-content: center;
   margin-bottom: var(--space-md);
   border-radius: 18px;
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   box-shadow:
     -5px -5px 12px #fff,
     5px 5px 12px #b9e6ec;

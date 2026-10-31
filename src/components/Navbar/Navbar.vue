@@ -34,13 +34,13 @@ const isActive = (path: string): boolean => {
 <style scoped>
 .navbar-container {
     width: 100%;
-    background: linear-gradient(to right, #f8f9fa 0%, #f3f4f6 100%);
-    border-bottom: 1px solid #e5e7eb;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background: var(--color-muted);
+    border-bottom: 1px solid var(--color-border-soft);
+    box-shadow: var(--shadow-sm);
 }
 
 .nav-link {
-    color: #374151;
+    color: var(--color-card-foreground);
     font-weight: 600;
     transition: all 0.2s ease;
     padding: 1rem 0.5rem;

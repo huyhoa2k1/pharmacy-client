@@ -1,7 +1,7 @@
 <template>
-    <div class="flex items-center gap-4 py-3 border-b border-gray-100">
+    <div class="flex items-center gap-4 py-3 border-b border-gray-100 dark:border-slate-700">
         <div
-            class="w-17 h-17 rounded-lg border border-gray-200 bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+            class="w-17 h-17 rounded-lg border border-gray-200 dark:border-slate-600 bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
             <a :href="link">
                 <img :src="image" alt="" loading="lazy" :srcset="srcset" class="w-full h-full object-cover" />
             </a>

@@ -54,13 +54,13 @@ const isUser = computed(() => props.message.role === 'user')
 }
 
 .message-avatar--assistant {
-  background: #d9f8fc;
-  color: #08758e;
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-card));
+  color: var(--color-link);
 }
 
 .message-avatar--user {
-  background: #d1fae5;
-  color: #047857;
+  background: var(--color-success-bg);
+  color: var(--color-accent-text);
 }
 
 .message-sender {
@@ -78,15 +78,15 @@ const isUser = computed(() => props.message.role === 'user')
 }
 
 .message-bubble--assistant {
-  border: 1px solid #d8e8ed;
+  border: 1px solid var(--color-border);
   border-bottom-left-radius: 4px;
-  background: #f2f8fa;
-  color: #164e63;
+  background: var(--color-muted);
+  color: var(--color-card-foreground);
 }
 
 .message-bubble--user {
   border-bottom-right-radius: 4px;
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   color: #fff;
 }
 </style>

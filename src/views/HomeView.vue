@@ -402,7 +402,7 @@ onUnmounted(() => {
 
 .section-heading__eyebrow {
   margin: 0 0 var(--space-sm);
-  color: #0e7490;
+  color: var(--color-link);
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -434,7 +434,7 @@ onUnmounted(() => {
 
 .hero__search:focus-within {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px #0891b220;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .hero__search-icon {
@@ -513,7 +513,7 @@ onUnmounted(() => {
 }
 
 .hero__search-results small {
-  color: #047857;
+  color: var(--color-accent-text);
   font-weight: 700;
 }
 
@@ -653,7 +653,7 @@ onUnmounted(() => {
 
 .hero__promotions :deep(.p-carousel-prev-button:hover),
 .hero__promotions :deep(.p-carousel-next-button:hover) {
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   color: var(--color-on-primary);
   box-shadow: var(--shadow-sm);
 }
@@ -690,7 +690,7 @@ onUnmounted(() => {
   min-height: 44px;
   align-items: center;
   gap: var(--space-sm);
-  color: #0e7490;
+  color: var(--color-link);
   font-weight: 700;
   text-decoration: none;
 }
@@ -788,7 +788,7 @@ onUnmounted(() => {
 
 .flash-sale__eyebrow {
   margin: 0 0 var(--space-xs);
-  color: #0e7490;
+  color: var(--color-link);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -826,7 +826,7 @@ onUnmounted(() => {
   min-width: 42px;
   padding: var(--space-sm);
   border-radius: var(--radius-sm);
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   color: var(--color-on-primary);
   font-variant-numeric: tabular-nums;
   text-align: center;
@@ -842,7 +842,7 @@ onUnmounted(() => {
   min-height: 44px;
   align-items: center;
   gap: var(--space-sm);
-  color: #0e7490;
+  color: var(--color-link);
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
@@ -937,7 +937,7 @@ onUnmounted(() => {
 
 .product-carousel :deep(.p-carousel-prev-button:hover),
 .product-carousel :deep(.p-carousel-next-button:hover) {
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   color: var(--color-on-primary);
   box-shadow: var(--shadow-md);
 }
@@ -958,7 +958,7 @@ onUnmounted(() => {
 
 .product-skeleton {
   min-height: 360px;
-  background: linear-gradient(110deg, var(--color-muted) 20%, #f7feff 45%, var(--color-muted) 70%);
+  background: linear-gradient(110deg, var(--color-muted) 20%, var(--color-surface-alt) 45%, var(--color-muted) 70%);
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }
@@ -980,7 +980,7 @@ onUnmounted(() => {
 }
 
 .state-card--error {
-  color: #991b1b;
+  color: var(--color-danger-fg);
 }
 
 .trust-signals {

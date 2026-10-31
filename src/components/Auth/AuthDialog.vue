@@ -346,7 +346,7 @@ defineExpose({
 }
 
 .auth-tab-active {
-    background: var(--color-primary);
+    background: var(--color-primary-solid);
     color: var(--color-on-primary);
     box-shadow: var(--shadow-sm);
 }

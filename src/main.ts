@@ -13,6 +13,7 @@ import router from './router'
 import i18n from './i18n'
 import { useUserStore } from './stores/user'
 import { useLocaleStore } from './stores/locale'
+import { useThemeStore } from './stores/theme'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -26,6 +27,8 @@ userStore.restoreSession()
 // sync the i18n instance with the persisted locale (may differ from browser default)
 const localeStore = useLocaleStore()
 localeStore.applyLocale()
+
+useThemeStore().watchSystem()
 
 app.use(router)
 app.use(i18n)

@@ -1,13 +1,13 @@
 <template>
-    <main class="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
+    <main class="grid min-h-full place-items-center bg-white dark:bg-[var(--color-background)] px-6 py-24 sm:py-32 lg:px-8">
         <div class="text-center">
             <p class="text-4xl font-semibold text-indigo-600">{{ statusCode }}</p>
-            <h1 class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
+            <h1 class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 dark:text-gray-100 sm:text-7xl">
                 <div v-if="statusCode == 403">Forbidden</div>
                 <div v-else-if="statusCode == 404">Page not found</div>
                 <div v-else>Server error</div>
             </h1>
-            <div class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+            <div class="mt-6 text-pretty text-lg font-medium text-gray-500 dark:text-gray-400 sm:text-xl/8">
                 <div v-if="statusCode == 403">Sorry, you are not authorized to access this page.</div>
                 <div v-else-if="statusCode == 404">
                     Sorry, the page you are looking for does not exist.
@@ -20,7 +20,7 @@
                     @click="$router.go(-1)">
                     Back to previous page
                 </button>
-                <button class="text-sm font-semibold text-gray-900" @click="$router.push({ name: 'home' })">
+                <button class="text-sm font-semibold text-gray-900 dark:text-gray-100" @click="$router.push({ name: 'home' })">
                     Back to Home <span aria-hidden="true">&rarr;</span>
                 </button>
             </div>

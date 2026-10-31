@@ -114,7 +114,7 @@ onMounted(() => {
   top: var(--space-md);
   max-height: calc(100vh - var(--space-xl));
   overflow-y: auto;
-  border: 1px solid #DCE9E5;
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   background: var(--color-card);
   box-shadow: var(--shadow-sm);
@@ -131,12 +131,12 @@ onMounted(() => {
   gap: var(--space-lg);
   margin-bottom: var(--space-lg);
   padding: var(--space-md) 0;
-  border-bottom: 1px solid #DCE9E5;
+  border-bottom: 1px solid var(--color-border-soft);
 }
 
 .catalogue__eyebrow {
   margin: 0 0 var(--space-xs);
-  color: #047857;
+  color: var(--color-accent-text);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -193,9 +193,9 @@ h1 {
   place-content: center;
   justify-items: center;
   padding: var(--space-xl);
-  border: 1px dashed #A7C9C0;
+  border: 1px dashed var(--color-border-soft);
   border-radius: var(--radius-lg);
-  background: #F7FCFA;
+  background: var(--color-surface-alt);
   color: var(--color-muted-foreground);
   text-align: center;
 }
