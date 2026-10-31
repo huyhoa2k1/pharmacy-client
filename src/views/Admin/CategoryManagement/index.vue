@@ -42,14 +42,18 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'name'">
           <div class="entity-cell">
-            <a-avatar shape="square" :size="40">{{ record.name.charAt(0).toUpperCase() }}</a-avatar>
+            <a-avatar shape="square" :size="40" :src="record.imageUrl || undefined">{{ record.name.charAt(0).toUpperCase() }}</a-avatar>
             <div>
               <strong>{{ record.name }}</strong><span>#{{ record.id }}</span>
             </div>
           </div>
         </template>
         <template v-else-if="column.key === 'action'">
-          <AdminActionMenu :items="[{ key: 'delete', label: t('adminCategories.deleteCategory'), danger: true }]"
+          <AdminActionMenu
+            :items="[
+              { key: 'edit', label: t('adminCategories.editCategory') },
+              { key: 'delete', label: t('adminCategories.deleteCategory'), danger: true },
+            ]"
             :label="t('adminCategories.rowActionsLabel')" @select="handleRowAction(record, $event)" />
         </template>
       </template>
@@ -59,16 +63,21 @@
       </template>
     </AdminDataTable>
 
-    <AdminModal :open="createModalVisible" :title="t('adminCategories.createModalTitle')"
-      :ok-text="t('adminCategories.createModalOk')" :loading="creating" @update:open="createModalVisible = $event"
-      @confirm="handleCreateCategory" @cancel="closeCreateModal">
+    <AdminModal :open="createModalVisible"
+      :title="editingCategory ? t('adminCategories.editModalTitle') : t('adminCategories.createModalTitle')"
+      :ok-text="editingCategory ? t('adminCategories.editModalOk') : t('adminCategories.createModalOk')"
+      :loading="creating" @update:open="createModalVisible = $event"
+      @confirm="handleSubmitCategory" @cancel="closeCreateModal">
       <a-form layout="vertical">
         <a-form-item :label="t('adminCategories.imageLabel')">
           <a-upload accept="image/*" :custom-request="uploadImage" :show-upload-list="false">
             <a-button :icon="h(UploadOutlined)">{{ t('adminCategories.chooseImage') }}</a-button>
           </a-upload>
-          <a-image v-if="imagePreview" class="preview" width="80" :src="imagePreview"
-            :alt="t('adminCategories.imageAlt')" />
+          <template v-if="imagePreview">
+            <a-image class="preview" width="80" :src="imagePreview" :alt="t('adminCategories.imageAlt')" />
+            <a-button type="link" danger class="remove-image" @click="clearImage">{{ t('adminCategories.removeImage')
+            }}</a-button>
+          </template>
           <p v-else class="field-help">{{ t('adminCategories.imageHelp') }}</p>
         </a-form-item>
         <a-form-item :label="t('adminCategories.nameLabel')" name="name" required>
@@ -84,6 +93,7 @@
 
 <script setup lang="ts">
 import { CategoryService } from '@/api/services/category'
+import { AssetService } from '@/api/services/asset'
 import type { IGetCategoryResponse } from '@/api/models/category'
 import {
   AdminActionMenu,
@@ -107,6 +117,8 @@ const selectedRowKeys = ref<number[]>([])
 const createModalVisible = ref(false)
 const imagePreview = ref<string | null>(null)
 const selectedImageFile = ref<File | null>(null)
+const editingCategory = ref<IGetCategoryResponse | null>(null)
+const removeImage = ref(false)
 const searchText = ref('')
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -165,6 +177,16 @@ const loadCategories = async () => {
 }
 
 const openCreateModal = () => {
+  editingCategory.value = null
+  createModalVisible.value = true
+}
+const openEditModal = (category: IGetCategoryResponse) => {
+  editingCategory.value = category
+  createForm.name = category.name
+  createForm.slug = category.slug
+  imagePreview.value = category.imageUrl || null
+  selectedImageFile.value = null
+  removeImage.value = false
   createModalVisible.value = true
 }
 const closeCreateModal = () => {
@@ -173,21 +195,47 @@ const closeCreateModal = () => {
   createForm.slug = ''
   imagePreview.value = null
   selectedImageFile.value = null
+  removeImage.value = false
+  editingCategory.value = null
 }
-const handleCreateCategory = async () => {
+const clearImage = () => {
+  selectedImageFile.value = null
+  imagePreview.value = null
+  removeImage.value = true
+}
+const handleSubmitCategory = async () => {
   if (!createForm.name.trim() || !createForm.slug.trim()) {
     message.warning(t('adminCategories.fillNameSlugWarning'))
     return
   }
+  const editing = editingCategory.value
   creating.value = true
   try {
-    await CategoryService.createCategory(createForm.name.trim(), createForm.slug.trim())
-    message.success(t('adminCategories.createSuccess'))
+    let imageUrl: string | undefined
+    if (selectedImageFile.value) {
+      const formData = new FormData()
+      formData.append('file', selectedImageFile.value)
+      imageUrl = (await AssetService.uploadCategoryImage(formData)).secureUrl
+    } else if (editing && removeImage.value) {
+      imageUrl = ''
+    }
+    if (editing) {
+      await CategoryService.updateCategory(
+        editing.id,
+        createForm.name.trim(),
+        createForm.slug.trim(),
+        imageUrl,
+      )
+      message.success(t('adminCategories.updateSuccess'))
+    } else {
+      await CategoryService.createCategory(createForm.name.trim(), createForm.slug.trim(), imageUrl)
+      message.success(t('adminCategories.createSuccess'))
+    }
     closeCreateModal()
     await loadCategories()
   } catch (error) {
     console.error(error)
-    message.error(t('adminCategories.createFailed'))
+    message.error(editing ? t('adminCategories.updateFailed') : t('adminCategories.createFailed'))
   } finally {
     creating.value = false
   }
@@ -215,6 +263,7 @@ const confirmDelete = (ids: number[]) =>
 const confirmDeleteSelected = () => confirmDelete(selectedRowKeys.value)
 const handleRowAction = (category: IGetCategoryResponse, action: string) => {
   if (action === 'delete') confirmDelete([category.id])
+  if (action === 'edit') openEditModal(category)
 }
 const uploadImage = async ({
   file,
@@ -224,6 +273,7 @@ const uploadImage = async ({
   onSuccess?: (response: unknown, file: File) => void
 }) => {
   selectedImageFile.value = file
+  removeImage.value = false
   imagePreview.value = URL.createObjectURL(file)
   onSuccess?.({}, file)
 }
@@ -289,6 +339,10 @@ onMounted(loadCategories)
 .preview {
   display: block;
   margin-top: var(--space-md);
+}
+
+.remove-image {
+  padding-left: 0;
 }
 
 @media (max-width: 640px) {
