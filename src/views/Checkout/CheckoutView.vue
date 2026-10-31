@@ -1,6 +1,4 @@
 <template>
-    <div id="payos-checkout-container" class="payos-checkout-container"
-        :class="{ 'payos-checkout-container--active': payosVisible }"></div>
     <div class="cart-view">
         <div :class="[cartItems.length === 0 ? 'cart-left-empty' : 'cart-left']">
             <div v-if="cartItems.length > 0" class="list-product">
@@ -47,8 +45,8 @@ import Empty from '@/components/common/empty/index.vue';
 import { useCheckoutStore } from '@/stores/checkoutStore';
 import { useCartStore } from '@/stores/cart';
 import { OrderService } from '@/api/services/order';
+import { EPaymentMethod } from '@/api/models/order';
 import { useRouter } from 'vue-router';
-import { usePayOS } from '@payos/payos-checkout';
 import { PaymentService } from '@/api/services/payment';
 
 interface CartItem extends IGetProductResponse {
@@ -60,8 +58,6 @@ interface CartItem extends IGetProductResponse {
 const { t } = useI18n();
 const open = ref<boolean>(false);
 const isSubmitting = ref(false);
-const payosContainerId = 'payos-checkout-container';
-const payosVisible = ref(false);
 
 const checkoutStore = useCheckoutStore();
 const cartStore = useCartStore();
@@ -134,74 +130,53 @@ const handleSubmitOrder = async () => {
     }
     isSubmitting.value = true;
     try {
-        const response = await PaymentService.createPaymentLink({
-            amount: 2000,
-        });
-        console.debug('PaymentService response:', response);
-        // const response = {
-        //     checkoutUrl: 'https://pay.payos.vn/web/31b484a4c5fb438d8d857e73c629ef9e/'
-        // }
-        const returnUrl = 'http://localhost:5173/?code=00&id=d36c6c096303461785747a4cde23c950&cancel=false&status=PAID&orderCode=1784448167371'
-
-        const checkoutUrl = response?.checkoutUrl;
-        console.debug('checkoutUrl:', checkoutUrl);
-        if (!checkoutUrl) {
-            throw new Error('Không nhận được checkoutUrl từ server');
-        }
-
-        // 2. Cấu hình cấu trúc Pop-up cho payOS
-        const payOSConfig = {
-            RETURN_URL: 'http://localhost:5173',
-            ELEMENT_ID: payosContainerId,
-            CHECKOUT_URL: checkoutUrl,
-            embedded: false,
-            onSuccess: (event: any) => {
-                payosVisible.value = false;
-                // Chuyển hướng user hoặc cập nhật UI tại đây
+        const orderData = {
+            paymentMethod: checkoutStore.paymentMethod,
+            shippingAddress: {
+                province: checkoutStore.addressInfo.province,
+                district: '',
+                ward: checkoutStore.addressInfo.ward,
+                address: checkoutStore.addressInfo.address,
+                fullname: checkoutStore.customerInfo.fullName,
+                phone: checkoutStore.customerInfo.phone,
             },
-            onCancel: (event: any) => {
-                payosVisible.value = false;
-            }
+            orderItems: cartItems.value.map(item => ({
+                productId: item.id,
+                amount: item.cartQuantity
+            }))
         };
-
-        // 3. Mở PayOS checkout
-        const payosInstance = usePayOS(payOSConfig);
-        payosVisible.value = true;
-        try {
-            payosInstance.open();
-        } catch (error) {
-            console.warn('PayOS iframe fallback:', error);
-            payosVisible.value = false;
-            // Nếu SDK kích hoạt chế độ nhảy trang tự động khi lỗi, cho hướng thẳng sang link
-            window.location.href = checkoutUrl;
+        const order = await OrderService.createOrder(orderData);
+        if (!order?.id) {
+            message.error(t('checkout.createOrderError'));
+            return;
         }
-        // const orderData = {
-        //     paymentMethod: checkoutStore.paymentMethod,
-        //     shippingAddress: {
-        //         province: checkoutStore.addressInfo.province,
-        //         district: checkoutStore.addressInfo.district,
-        //         ward: checkoutStore.addressInfo.ward,
-        //         address: checkoutStore.addressInfo.address,
-        //         fullname: checkoutStore.customerInfo.fullName,
-        //         phone: checkoutStore.customerInfo.phone,
-        //     },
-        //     orderItems: cartItems.value.map(item => ({
-        //         productId: item.id,
-        //         amount: item.cartQuantity
-        //     }))
-        // };
-        // const result = await OrderService.createOrder(orderData);
-        // if (result.id) {
-        //     message.success('Đơn hàng của bạn đã được tạo thành công!');
-        //     checkoutStore.resetCheckout();
-        //     cartStore.clearCart();
-        //     router.push('/');
-        // } else {
-        //     message.error('Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.');
-        // }
+
+        const isOnlinePayment = checkoutStore.paymentMethod === EPaymentMethod.CARD;
+        // Đơn đã tạo (đã giữ tồn kho) nên dọn giỏ hàng ngay, kể cả khi sang trang thanh toán
+        checkoutStore.resetCheckout();
+        cartStore.clearCart();
+
+        if (!isOnlinePayment) {
+            message.success(t('checkout.orderSuccess'));
+            router.push('/');
+            return;
+        }
+
+        try {
+            const link = await PaymentService.createPaymentLink(order.id);
+            if (!link?.checkoutUrl) {
+                throw new Error('Missing checkoutUrl');
+            }
+            // PayOS sẽ chuyển về /payment/result?orderCode=...&status=... sau khi thanh toán hoặc huỷ
+            window.location.href = link.checkoutUrl;
+        } catch (error) {
+            console.error('Payment link error:', error);
+            message.error(t('checkout.paymentLinkError'));
+            router.push('/ca-nhan/don-hang');
+        }
     } catch (error) {
-        console.error('Payment error:', error);
-        message.error(t('checkout.paymentLinkError'));
+        console.error('Create order error:', error);
+        message.error(t('checkout.createOrderError'));
     } finally {
         isSubmitting.value = false;
 
@@ -210,26 +185,6 @@ const handleSubmitOrder = async () => {
 </script>
 
 <style scoped>
-.payos-checkout-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 99999;
-    overflow: hidden;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 200ms ease;
-}
-
-.payos-checkout-container--active {
-    pointer-events: auto;
-    opacity: 1;
-}
-
 .cart-view {
     display: grid;
     gap: var(--space-lg);

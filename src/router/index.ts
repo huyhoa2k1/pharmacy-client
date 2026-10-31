@@ -57,6 +57,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/payment/result',
+      name: 'payment-result',
+      component: () => import('@/views/Payment/PaymentResultView.vue'),
+      meta: {
+        layout: DetailLayout,
+        titleKey: 'routeTitles.paymentResult',
+      },
+    },
+    {
       path: '/best-sellers',
       name: 'best-sellers',
       component: () => import('@/views/BestSellersView.vue'),
