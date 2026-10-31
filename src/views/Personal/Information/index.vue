@@ -85,7 +85,7 @@ const user = computed(() =>
 
 .information-avatar {
   border: 4px solid var(--color-background);
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   box-shadow: var(--shadow-sm);
 }
 

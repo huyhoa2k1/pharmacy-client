@@ -212,7 +212,7 @@ onBeforeUnmount(() => {
   width: 3px;
   height: 20px;
   border-radius: 0 4px 4px 0;
-  background: var(--color-primary);
+  background: var(--color-primary-solid);
   content: '';
 }
 

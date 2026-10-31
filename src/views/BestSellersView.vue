@@ -25,12 +25,12 @@ const { t } = useI18n()
 .page-title {
   font-size: 2rem;
   font-weight: 800;
-  color: #3b3660;
+  color: var(--color-card-foreground);
   margin-bottom: 0.5rem;
 }
 
 .page-description {
-  color: #6b7280;
+  color: var(--color-text-subtle);
   font-size: 1rem;
 }
 </style>

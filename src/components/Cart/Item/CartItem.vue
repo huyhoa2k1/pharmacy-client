@@ -3,7 +3,7 @@
         class="grid items-start justify-start gap-2 py-4 md:gap-4 md:p-0 md:grid-cols-[calc(16rem/16)_1fr_calc(24rem/16)] grid-cols-[calc(16rem/16)_1fr]">
         <a-checkbox :checked="checked" @change="onToggle" />
         <div class="grid grid-cols-[calc(68rem/16)_1fr] items-start gap-2">
-            <div class="relative h-[calc(68rem/16)] w-[calc(68rem/16)] rounded-sm border border-neutral-100">
+            <div class="relative h-[calc(68rem/16)] w-[calc(68rem/16)] rounded-sm border border-neutral-100 dark:border-neutral-700">
                 <a :href="link">
                     <img class="object-fit" :src="image" alt="" loading="lazy" width="500" height="500"
                         sizes="(min-width: 769px) 129px, 96px">

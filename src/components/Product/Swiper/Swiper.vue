@@ -131,6 +131,6 @@ function onSlideChange(swiper: SwiperInstance) {
 }
 
 .thumb-list::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary);
+    background: var(--color-primary-solid);
 }
 </style>

@@ -96,7 +96,7 @@ const sideBanners = computed(() => {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #f3f4f6;
+  background: var(--color-muted);
 }
 
 .carousel-slide img {

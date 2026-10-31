@@ -191,14 +191,14 @@ const addToCart = () => {
   bottom: var(--space-sm);
   max-width: calc(100% - var(--space-md));
   padding: var(--space-xs) var(--space-sm);
-  background: #D1FAE5;
-  color: #065F46;
+  background: var(--color-success-bg);
+  color: var(--color-success-fg);
   text-align: right;
 }
 
 .product-card__availability--out {
-  background: #FEE2E2;
-  color: #991B1B;
+  background: var(--color-danger-bg);
+  color: var(--color-danger-fg);
 }
 
 .product-card__content {
@@ -218,7 +218,7 @@ const addToCart = () => {
 
 .product-card__brand {
   margin: 0;
-  color: #047857;
+  color: var(--color-accent-text);
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -252,7 +252,7 @@ const addToCart = () => {
 }
 
 .product-card__current-price {
-  color: #047857;
+  color: var(--color-accent-text);
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.2;
@@ -290,10 +290,10 @@ const addToCart = () => {
 }
 
 .product-card__add-to-cart:disabled {
-  border-color: #CBD5E1;
-  background: #E2E8F0;
+  border-color: var(--color-border-soft);
+  background: var(--color-muted);
   box-shadow: none;
-  color: #64748B;
+  color: var(--color-muted-foreground);
   cursor: not-allowed;
   transform: none;
 }

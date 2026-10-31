@@ -51,7 +51,7 @@ function handleKeydown(event: KeyboardEvent) {
 
 <template>
   <form class="chat-composer shrink-0 p-3" @submit.prevent="submit">
-    <p v-if="visibleError" role="alert" class="mb-2 px-2 text-xs text-red-700">
+    <p v-if="visibleError" role="alert" class="mb-2 px-2 text-xs text-red-700 dark:text-red-300">
       {{ visibleError }}
     </p>
     <div class="composer-field flex items-end gap-2 p-2">
@@ -80,14 +80,14 @@ function handleKeydown(event: KeyboardEvent) {
 
 <style scoped>
 .chat-composer {
-  border-top: 1px solid color-mix(in srgb, var(--color-border) 68%, white);
+  border-top: 1px solid var(--color-border);
   background: var(--color-card);
 }
 
 .composer-field {
-  border: 1px solid #cbdde3;
+  border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-md);
-  background: #f8feff;
+  background: var(--color-surface-alt);
   transition:
     border-color var(--transition-base),
     box-shadow var(--transition-base);
@@ -95,7 +95,7 @@ function handleKeydown(event: KeyboardEvent) {
 
 .composer-field:focus-within {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px #0891b220;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .composer-textarea {
@@ -104,7 +104,7 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 .composer-textarea::placeholder {
-  color: #758a95;
+  color: var(--color-text-subtle);
 }
 
 .send-button {

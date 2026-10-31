@@ -199,20 +199,20 @@ onMounted(async () => {
   padding: 2px 0;
   border: 0;
   background: transparent;
-  color: #047857;
+  color: var(--color-accent-text);
   cursor: pointer;
   font-size: 0.8125rem;
   font-weight: 700;
 }
 
 .product-filter__reset:hover {
-  color: #065F46;
+  color: var(--color-success-fg);
   text-decoration: underline;
 }
 
 .product-filter__section {
   padding-top: var(--space-md);
-  border-top: 1px solid #E2ECE9;
+  border-top: 1px solid var(--color-border-soft);
 }
 
 .product-filter__section+.product-filter__section {

@@ -8,8 +8,8 @@
         </div>
       </div>
 
-      <div v-if="isLoading" class="text-center py-10 text-gray-500">{{ t('bestSellers.loading') }}</div>
-      <div v-else-if="products.length === 0" class="text-center py-10 text-gray-500">
+      <div v-if="isLoading" class="text-center py-10 text-gray-500 dark:text-gray-400">{{ t('bestSellers.loading') }}</div>
+      <div v-else-if="products.length === 0" class="text-center py-10 text-gray-500 dark:text-gray-400">
         {{ t('bestSellers.empty') }}
       </div>
       <div v-else class="carousel-wrap">
@@ -107,6 +107,20 @@ onMounted(() => {
   font-weight: 700;
   color: #6d28d9;
   margin: 0;
+}
+
+:global(html.dark) .product-category-section {
+  background: radial-gradient(circle at top left, rgba(251, 146, 60, 0.16), transparent 30%),
+    linear-gradient(180deg, #2a1d14 0%, #1f1812 48%, var(--color-card) 100%);
+  border-color: rgba(251, 146, 60, 0.28);
+}
+
+:global(html.dark) .title {
+  color: #c4b5fd;
+}
+
+:global(html.dark) .subtitle {
+  color: var(--color-muted-foreground);
 }
 
 .subtitle {

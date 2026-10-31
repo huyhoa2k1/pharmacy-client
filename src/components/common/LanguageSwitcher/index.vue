@@ -43,6 +43,6 @@ const handleSelect = ({ key }: { key: AppLocale }) => {
 }
 
 .language-switcher:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: var(--color-hover);
 }
 </style>

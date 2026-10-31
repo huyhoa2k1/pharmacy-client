@@ -9,7 +9,7 @@
         @click="$router.push('/')"
       >
         <img class="w-10 h-10" :src="logoSrc" alt="Logo" />
-        <span class="text-2xl md:text-3xl font-bold text-cyan-700">Pharmacy</span>
+        <span class="text-2xl md:text-3xl font-bold text-cyan-700 dark:text-cyan-300">Pharmacy</span>
       </div>
 
       <!-- Search -->
@@ -34,8 +34,8 @@
                   class="w-12 h-12 object-cover rounded"
                 />
                 <div class="flex-1">
-                  <div class="font-semibold text-gray-800">{{ label }}</div>
-                  <div class="text-sm text-emerald-700 font-bold">
+                  <div class="font-semibold text-gray-800 dark:text-gray-100">{{ label }}</div>
+                  <div class="text-sm text-emerald-700 dark:text-emerald-300 font-bold">
                     {{ price?.toLocaleString() }} đ
                   </div>
                 </div>
@@ -49,10 +49,10 @@
       <div class="flex items-center justify-center gap-6">
         <router-link to="/cart" class="flex items-center gap-2">
           <div
-            class="icon-hover group relative flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 cursor-pointer transition hover:shadow-md"
+            class="icon-hover group relative flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md"
           >
             <a-badge :size="'small'" :count="cartStore.cartCount" class="animate-pulse">
-              <i class="pi pi-shopping-cart text-lg text-cyan-700 hover:text-cyan-800"></i>
+              <i class="pi pi-shopping-cart text-lg text-cyan-700 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-200"></i>
             </a-badge>
             <span class="text-sm md:text-base font-semibold">{{ t('header.cart') }}</span>
           </div>
@@ -61,7 +61,7 @@
         <a-dropdown :placement="'bottom'" :arrow="{ pointAtCenter: true }">
           <div
             @click="openAuthDialog"
-            class="flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 cursor-pointer transition hover:shadow-md"
+            class="flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md"
           >
             <i class="pi pi-user text-lg"></i>
             <span class="text-sm md:text-base font-semibold">
@@ -93,6 +93,7 @@
         </a-dropdown>
 
         <LanguageSwitcher />
+        <ThemeSwitcher />
       </div>
     </div>
   </div>
@@ -107,6 +108,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AuthDialog from '@/components/Auth/AuthDialog.vue'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher/index.vue'
+import ThemeSwitcher from '@/components/common/ThemeSwitcher/index.vue'
 import { useUserStore } from '@/stores/user'
 import { useCartStore } from '@/stores/cart'
 import { ProductService } from '@/api/services/product'
@@ -184,12 +186,12 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .header-gradient {
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: var(--color-card);
+  box-shadow: var(--shadow-md);
 }
 
 .search-input :deep(.ant-input-affix-wrapper) {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 8px 12px;
@@ -198,13 +200,13 @@ onBeforeUnmount(() => {
 
 .search-input :deep(.ant-input-affix-wrapper:hover),
 .search-input :deep(.ant-input-affix-wrapper:focus-within) {
-  background: rgba(255, 255, 255, 1);
+  background: var(--color-card);
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px #0891b220;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .search-input :deep(.ant-select-selector) {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--color-card) !important;
   border: 1px solid var(--color-border) !important;
   border-radius: 8px !important;
   padding: 8px 12px !important;
@@ -213,18 +215,18 @@ onBeforeUnmount(() => {
 
 .search-input :deep(.ant-select-selector:hover),
 .search-input :deep(.ant-select-focused .ant-select-selector) {
-  background: rgba(255, 255, 255, 1) !important;
+  background: var(--color-card) !important;
   border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px #0891b220 !important;
+  box-shadow: 0 0 0 3px var(--color-focus-ring) !important;
 }
 
 .search-input :deep(.ant-input) {
-  color: #374151;
+  color: var(--color-foreground);
   font-size: 14px;
 }
 
 .search-input :deep(.ant-input::placeholder) {
-  color: #9ca3af;
+  color: var(--color-text-subtle);
 }
 
 .search-input :deep(.ant-input-search-button) {

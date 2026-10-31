@@ -159,6 +159,25 @@ const responsiveOptions = [
     margin: 0;
 }
 
+:global(html.dark) .product-category-section {
+    background: radial-gradient(circle at top left, rgba(251, 146, 60, 0.16), transparent 30%),
+        linear-gradient(180deg, #2a1d14 0%, #1f1812 48%, var(--color-card) 100%);
+    border-color: rgba(251, 146, 60, 0.28);
+}
+
+:global(html.dark) .title,
+:global(html.dark) .view-more {
+    color: #c4b5fd;
+}
+
+:global(html.dark) .subtitle {
+    color: var(--color-muted-foreground);
+}
+
+:global(html.dark) .subtitle-flash {
+    color: #fdba74;
+}
+
 .title-flash {
     background: linear-gradient(90deg, #f97316, #ef4444, #facc15);
     background-clip: text;

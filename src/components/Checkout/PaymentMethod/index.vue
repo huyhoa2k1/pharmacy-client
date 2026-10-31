@@ -138,7 +138,7 @@ selectPayment(paymentOptions.value[0]);
 }
 
 .radio-input:checked+.radio-label {
-    background: var(--color-primary);
+    background: var(--color-primary-solid);
     border-color: var(--color-primary);
     box-shadow: inset 0 0 0 3px white;
 }
@@ -189,7 +189,7 @@ selectPayment(paymentOptions.value[0]);
 }
 
 .radio-input:checked+.radio-label {
-    background: var(--color-primary);
+    background: var(--color-primary-solid);
     border-color: var(--color-primary);
 }
 

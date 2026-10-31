@@ -44,7 +44,7 @@ onMounted(() => {
   position: fixed !important;
   inset: 0;
   z-index: 9999;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--color-overlay);
   display: flex !important;
   justify-content: center;
   align-items: center;
