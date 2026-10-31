@@ -283,7 +283,8 @@ onUnmounted(() => {
         <router-link v-for="(category, index) in visibleCategories" :key="category.id"
           :to="{ name: 'products', params: { categoryId: category.id } }" class="category-card">
           <span class="category-card__icon" aria-hidden="true">
-            <i :class="['pi', categoryIcons[index % categoryIcons.length]]"></i>
+            <img v-if="category.imageUrl" class="category-card__image" :src="category.imageUrl" alt="" />
+            <i v-else :class="['pi', categoryIcons[index % categoryIcons.length]]"></i>
           </span>
           <span>{{ category.name }}</span>
           <i class="pi pi-arrow-right category-card__arrow" aria-hidden="true"></i>
@@ -741,6 +742,13 @@ onUnmounted(() => {
   background: var(--color-muted);
   color: var(--color-primary);
   font-size: 1.25rem;
+}
+
+.category-card__image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .category-card__arrow {

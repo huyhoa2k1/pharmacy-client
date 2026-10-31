@@ -12,16 +12,21 @@ export class CategoryService {
   public static readonly createCategory: (
     name: string,
     slug: string,
-  ) => Promise<IGetCategoryResponse> = async (name, slug) =>
-    axiosInstance.post<IGetCategoryResponse>('/categories', { name, slug }).then((res) => res.data)
+    imageUrl?: string,
+  ) => Promise<IGetCategoryResponse> = async (name, slug, imageUrl) =>
+    axiosInstance
+      .post<IGetCategoryResponse>('/categories', { name, slug, imageUrl })
+      .then((res) => res.data)
 
+  // imageUrl: undefined keeps the current image, '' clears it.
   public static readonly updateCategory: (
     id: number,
     name: string,
     slug: string,
-  ) => Promise<IGetCategoryResponse> = async (id, name, slug) =>
+    imageUrl?: string,
+  ) => Promise<IGetCategoryResponse> = async (id, name, slug, imageUrl) =>
     axiosInstance
-      .patch<IGetCategoryResponse>(`/categories/${id}`, { name, slug })
+      .patch<IGetCategoryResponse>(`/categories/${id}`, { name, slug, imageUrl })
       .then((res) => res.data)
 
   public static readonly deleteCategory: (id: number) => Promise<void> = async (id) =>

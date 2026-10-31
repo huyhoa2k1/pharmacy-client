@@ -20,4 +20,14 @@ export class AssetService {
           timeout: 60000,
         })
         .then((res) => res.data)
+
+  public static readonly uploadCategoryImage: (
+    formData: FormData,
+  ) => Promise<IUploadAssetResponse> = async (formData) =>
+    axiosInstance
+      .post<IUploadAssetResponse>('/assets/upload-category-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 60000,
+      })
+      .then((res) => res.data)
 }
