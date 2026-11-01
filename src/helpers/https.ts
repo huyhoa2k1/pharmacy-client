@@ -7,8 +7,8 @@ import { useUserStore } from '@/stores/user'
 const IP = 'localhost'
 const PORT = '8000'
 
-export const BASE_URL = 'https://egging-factsheet-singer.ngrok-free.dev/api'
-//export const BASE_URL = `http://${IP}:${PORT}/api`
+//export const BASE_URL = 'https://egging-factsheet-singer.ngrok-free.dev/api'
+export const BASE_URL = `http://${IP}:${PORT}/api`
 export const SOCKET_URL = `http://${IP}:${PORT}/ws`
 
 const axiosInstance = axios.create({

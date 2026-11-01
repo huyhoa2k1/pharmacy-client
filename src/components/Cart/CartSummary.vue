@@ -8,7 +8,8 @@
                         <span>{{ t('cartSummary.promotion') }}</span>
                     </div>
                     <div>
-                        <button @click="$emit('showDrawer')" class="promotion-button">{{ t('cartSummary.chooseCode') }}</button>
+                        <button @click="$emit('showDrawer')" class="promotion-button">{{ t('cartSummary.chooseCode')
+                        }}</button>
                     </div>
                 </div>
             </div>
@@ -29,12 +30,23 @@
                         <p class="text-sm text-neutral-900">{{ t('cartSummary.productDiscount') }}</p>
                         <p class="text-sm font-semibold text-neutral-900">-</p>
                     </div>
+                    <div v-if="showShipping" class="grid grid-flow-col items-start justify-between gap-2">
+                        <div>
+                            <p class="text-sm text-neutral-900">{{ t('cartSummary.shippingFee') }}</p>
+                            <p v-if="shippingNote" class="shipping-note">{{ shippingNote }}</p>
+                        </div>
+                        <p class="shipping-value text-sm font-semibold">
+                            <s v-if="hasShippingCost" class="shipping-original">{{ formatPrice(shippingFee ?? 0) }}</s>
+                            <span :class="{ 'shipping-free': hasShippingCost }">{{ shippingText }}</span>
+                        </p>
+                    </div>
                     <div class="summary-divider hidden w-full md:block"></div>
                     <div
                         class="grid items-center justify-items-end gap-0.5 md:grid-flow-col md:justify-between md:gap-2">
-                        <p class="text-sm text-neutral-900 md:text-base md:font-semibold">{{ t('cartSummary.total') }}</p>
+                        <p class="text-sm text-neutral-900 md:text-base md:font-semibold">{{ t('cartSummary.total') }}
+                        </p>
                         <p class="total-price text-xl font-bold leading-8 no-underline md:text-2xl">{{
-                            formattedSubTotal }}</p>
+                            formattedTotal }}</p>
                     </div>
                 </div>
                 <a-button type="primary" class="w-full md:w-auto"
@@ -64,7 +76,12 @@ interface CartSummaryItem extends Partial<IGetProductResponse> {
 
 const props = defineProps<{
     items: CartSummaryItem[],
-    isSubmitting?: boolean
+    isSubmitting?: boolean,
+    // Chỉ truyền ở trang checkout; trang giỏ hàng không hiển thị phí ship
+    showShipping?: boolean,
+    shippingFee?: number | null,
+    shippingLoading?: boolean,
+    shippingNote?: string
 }>();
 defineEmits(['showDrawer', 'submitOrder']);
 
@@ -92,6 +109,19 @@ const subTotal = computed(() => {
 // Format subtotal để hiển thị
 const formattedSubTotal = computed(() => {
     return formatPrice(subTotal.value);
+});
+
+// Khách được miễn phí ship nên tổng tiền chỉ gồm tiền hàng; shippingFee chỉ để hiển thị
+const formattedTotal = computed(() => formatPrice(subTotal.value));
+
+const hasShippingCost = computed(
+    () => !props.shippingLoading && props.shippingFee !== null && props.shippingFee !== undefined,
+);
+
+const shippingText = computed(() => {
+    if (props.shippingLoading) return t('cartSummary.shippingCalculating');
+    if (!hasShippingCost.value) return t('cartSummary.shippingPending');
+    return t('cartSummary.shippingFree');
 });
 
 // Calculate total quantity
@@ -151,6 +181,28 @@ const totalQuantity = computed(() => {
 
 .total-price {
     color: var(--color-destructive);
+}
+
+.shipping-note {
+    font-size: 12px;
+    color: var(--color-muted-foreground);
+    margin-top: 2px;
+}
+
+.shipping-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: var(--color-foreground);
+}
+
+.shipping-original {
+    color: var(--color-muted-foreground);
+    font-weight: 400;
+}
+
+.shipping-free {
+    color: var(--color-primary);
 }
 
 .cart-summary-card :deep(.text-neutral-900) {

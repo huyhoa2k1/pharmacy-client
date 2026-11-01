@@ -1,13 +1,9 @@
 <template>
   <div class="header-gradient">
-    <div
-      class="flex flex-col md:flex-row items-center justify-between py-2 px-2 w-full max-w-6xl mx-auto gap-4"
-    >
+    <div class="flex flex-col md:flex-row items-center justify-between py-2 px-2 w-full max-w-6xl mx-auto gap-4">
       <!-- Logo -->
-      <div
-        class="flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition"
-        @click="$router.push('/')"
-      >
+      <div class="flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition"
+        @click="$router.push('/')">
         <img class="w-10 h-10" :src="logoSrc" alt="Logo" />
         <span class="text-2xl md:text-3xl font-bold text-cyan-700 dark:text-cyan-300">Pharmacy</span>
       </div>
@@ -15,24 +11,12 @@
       <!-- Search -->
       <div class="w-full md:w-[400px]">
         <a-spin :spinning="searchLoading" :tip="t('common.loading')" size="large">
-          <a-auto-complete
-            v-model:value="searchValue"
-            :options="autocompleteOptions"
-            :allow-clear="true"
-            :loading="searchLoading"
-            :placeholder="t('header.searchPlaceholder')"
-            class="w-full"
-            @select="handleSearchSelect"
-            @search="handleSearch"
-          >
+          <a-auto-complete v-model:value="searchValue" :options="autocompleteOptions" :allow-clear="true"
+            :loading="searchLoading" :placeholder="t('header.searchPlaceholder')" class="w-full"
+            @select="handleSearchSelect" @search="handleSearch">
             <template #option="{ imageUrl, label, price }">
               <div class="flex items-center gap-3 py-2">
-                <img
-                  v-if="imageUrl"
-                  :src="imageUrl"
-                  :alt="label"
-                  class="w-12 h-12 object-cover rounded"
-                />
+                <img v-if="imageUrl" :src="imageUrl" :alt="label" class="w-12 h-12 object-cover rounded" />
                 <div class="flex-1">
                   <div class="font-semibold text-gray-800 dark:text-gray-100">{{ label }}</div>
                   <div class="text-sm text-emerald-700 dark:text-emerald-300 font-bold">
@@ -47,22 +31,28 @@
 
       <!-- Icons -->
       <div class="flex items-center justify-center gap-6">
+        <router-link to="/stores" class="flex items-center gap-2">
+          <div
+            class="icon-hover group relative flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md">
+            <i class="pi pi-map-marker text-lg"></i>
+            <span class="text-sm md:text-base font-semibold">{{ t('header.stores') }}</span>
+          </div>
+        </router-link>
+
         <router-link to="/cart" class="flex items-center gap-2">
           <div
-            class="icon-hover group relative flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md"
-          >
+            class="icon-hover group relative flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md">
             <a-badge :size="'small'" :count="cartStore.cartCount" class="animate-pulse">
-              <i class="pi pi-shopping-cart text-lg text-cyan-700 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-200"></i>
+              <i
+                class="pi pi-shopping-cart text-lg text-cyan-700 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-200"></i>
             </a-badge>
             <span class="text-sm md:text-base font-semibold">{{ t('header.cart') }}</span>
           </div>
         </router-link>
 
         <a-dropdown :placement="'bottom'" :arrow="{ pointAtCenter: true }">
-          <div
-            @click="openAuthDialog"
-            class="flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md"
-          >
+          <div @click="openAuthDialog"
+            class="flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md">
             <i class="pi pi-user text-lg"></i>
             <span class="text-sm md:text-base font-semibold">
               {{ userStore.isLogin ? userStore.username : t('header.login') }}
@@ -249,6 +239,7 @@ onBeforeUnmount(() => {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;

@@ -56,6 +56,7 @@
             <ul class="footer__links">
               <li><router-link to="/">{{ t('footer.home') }}</router-link></li>
               <li><router-link to="/best-sellers">{{ t('footer.bestSellers') }}</router-link></li>
+              <li><router-link to="/stores">{{ t('footer.stores') }}</router-link></li>
               <li><router-link to="/cart">{{ t('footer.cart') }}</router-link></li>
               <li><router-link to="/ca-nhan/thong-tin">{{ t('footer.myAccount') }}</router-link></li>
             </ul>
