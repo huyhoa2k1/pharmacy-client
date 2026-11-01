@@ -20,6 +20,8 @@ export interface ICreateOrderRequest {
     address: string
     fullname: string
     phone: string
+    latitude?: number | null
+    longitude?: number | null
   }
   orderItems: {
     productId: number
@@ -35,6 +37,9 @@ export interface IOrderResponse {
   isPaid: boolean
   orderCode: string
   userId: number
+  shippingFee?: number
+  distanceKm?: number | null
+  storeName?: string | null
   shippingAddress: {
     province: string
     district: string

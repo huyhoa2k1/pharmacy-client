@@ -1,4 +1,5 @@
 import { EPaymentMethod } from '@/api/models/order'
+import type { IShippingQuote } from '@/api/models/store'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -12,6 +13,8 @@ export interface AddressInfo {
   province: string
   ward: string
   address: string
+  latitude: number | null
+  longitude: number | null
 }
 
 export type PaymentMethod = 'cod' | 'bank'
@@ -33,7 +36,11 @@ export const useCheckoutStore = defineStore('checkout', () => {
     province: '',
     ward: '',
     address: '',
+    latitude: null,
+    longitude: null,
   })
+
+  const shippingQuote = ref<IShippingQuote | null>(null)
 
   const paymentMethod = ref<EPaymentMethod>(EPaymentMethod.CASH)
 
@@ -72,14 +79,17 @@ export const useCheckoutStore = defineStore('checkout', () => {
       province: '',
       ward: '',
       address: '',
+      latitude: null,
+      longitude: null,
     }
+    shippingQuote.value = null
     paymentMethod.value = EPaymentMethod.CASH
   }
 
   // Validate all required fields
   const isCheckoutValid = (): boolean => {
     const { fullName, phone } = customerInfo.value
-    const { province, ward, address } = addressInfo.value
+    const { province, ward, address, latitude, longitude } = addressInfo.value
 
     const isValidPhone = (phone: string): boolean => {
       const phoneRegex = /^(\+84|0)[0-9]{9,10}$/
@@ -91,13 +101,16 @@ export const useCheckoutStore = defineStore('checkout', () => {
       isValidPhone(phone) &&
       province !== '' &&
       ward !== '' &&
-      address?.trim().length >= 5
+      address?.trim().length >= 5 &&
+      latitude !== null &&
+      longitude !== null
     )
   }
 
   return {
     customerInfo,
     addressInfo,
+    shippingQuote,
     paymentMethod,
     setCustomerInfo,
     setAddressInfo,

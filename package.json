@@ -29,6 +29,7 @@
     "ant-design-vue": "^4.2.6",
     "axios": "^1.12.2",
     "jwt-decode": "^4.0.0",
+    "leaflet": "^1.9.4",
     "lodash": "^4.18.1",
     "pinia": "^3.0.1",
     "pinia-plugin-persistedstate": "^4.7.1",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@tsconfig/node22": "^22.0.1",
     "@types/jsdom": "^21.1.7",
+    "@types/leaflet": "^1.9.22",
     "@types/lodash": "^4.17.24",
     "@types/node": "^22.14.0",
     "@types/sockjs-client": "^1.5.4",

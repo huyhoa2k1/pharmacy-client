@@ -20,7 +20,7 @@
                     </a-menu-item>
                     <a-menu-item key="/admin/categories-management">
                         <router-link to="/admin/categories-management">{{ t('adminLayout.navCategories')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/brands-management">
                         <router-link to="/admin/brands-management">{{ t('adminLayout.navBrands') }}</router-link>
@@ -29,7 +29,7 @@
                 <a-menu-item key="/admin/orders-management">
                     <ShoppingCartOutlined />
                     <span><router-link to="/admin/orders-management">{{ t('adminLayout.navOrders')
-                            }}</router-link></span>
+                    }}</router-link></span>
                 </a-menu-item>
                 <a-sub-menu key="settings">
                     <template #title>
@@ -38,13 +38,18 @@
                     </template>
                     <a-menu-item key="/admin/general-settings">
                         <router-link to="/admin/general-settings">{{ t('adminLayout.navGeneralSettings')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/province-ward-management">
                         <router-link to="/admin/province-ward-management">{{ t('adminLayout.navProvinceWard')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                 </a-sub-menu>
+                <a-menu-item key="/admin/stores-management">
+                    <ShopOutlined />
+                    <span><router-link to="/admin/stores-management">{{ t('adminLayout.navStores')
+                    }}</router-link></span>
+                </a-menu-item>
             </a-menu>
         </a-layout-sider>
         <a-layout class="admin-main-layout">
@@ -123,7 +128,7 @@
                     </a-menu-item>
                     <a-menu-item key="/admin/categories-management">
                         <router-link to="/admin/categories-management">{{ t('adminLayout.navCategories')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/brands-management">
                         <router-link to="/admin/brands-management">{{ t('adminLayout.navBrands') }}</router-link>
@@ -132,7 +137,7 @@
                 <a-menu-item key="/admin/orders-management">
                     <ShoppingCartOutlined />
                     <span><router-link to="/admin/orders-management">{{ t('adminLayout.navOrders')
-                            }}</router-link></span>
+                    }}</router-link></span>
                 </a-menu-item>
                 <a-sub-menu key="settings">
                     <template #title>
@@ -141,13 +146,18 @@
                     </template>
                     <a-menu-item key="/admin/general-settings">
                         <router-link to="/admin/general-settings">{{ t('adminLayout.navGeneralSettings')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/province-ward-management">
                         <router-link to="/admin/province-ward-management">{{ t('adminLayout.navProvinceWard')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                 </a-sub-menu>
+                <a-menu-item key="/admin/stores-management">
+                    <ShopOutlined />
+                    <span><router-link to="/admin/stores-management">{{ t('adminLayout.navStores')
+                    }}</router-link></span>
+                </a-menu-item>
             </a-menu>
         </a-drawer>
     </a-layout>
@@ -168,6 +178,7 @@ import {
     MenuOutlined,
     MenuUnfoldOutlined,
     ShoppingCartOutlined,
+    ShopOutlined,
     UserOutlined,
     SettingOutlined,
 } from '@ant-design/icons-vue'
@@ -201,6 +212,10 @@ const pageDetails = computed<Record<string, { title: string; description: string
     'admin-orders-management': {
         title: t('adminLayout.ordersPageTitle'),
         description: t('adminLayout.ordersPageDescription'),
+    },
+    'admin-stores-management': {
+        title: t('adminLayout.storesPageTitle'),
+        description: t('adminLayout.storesPageDescription'),
     },
     'admin-general-settings': {
         title: t('adminLayout.generalSettingsPageTitle'),

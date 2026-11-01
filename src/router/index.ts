@@ -75,6 +75,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/stores',
+      name: 'stores',
+      component: () => import('@/views/Stores/StoresView.vue'),
+      meta: {
+        layout: DetailLayout,
+        titleKey: 'routeTitles.stores',
+      },
+    },
+    {
       path: '/ca-nhan',
       name: 'personal-info',
       component: () => import('@/views/Personal/index.vue'),
@@ -148,6 +157,16 @@ const router = createRouter({
       meta: {
         layout: AdminLayout,
         titleKey: 'adminLayout.ordersPageTitle',
+        roles: [],
+      },
+    },
+    {
+      path: '/admin/stores-management',
+      name: 'admin-stores-management',
+      component: () => import('@/views/Admin/StoreManagement/index.vue'),
+      meta: {
+        layout: AdminLayout,
+        titleKey: 'adminLayout.storesPageTitle',
         roles: [],
       },
     },

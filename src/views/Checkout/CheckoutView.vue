@@ -3,7 +3,10 @@
         <div :class="[cartItems.length === 0 ? 'cart-left-empty' : 'cart-left']">
             <div v-if="cartItems.length > 0" class="list-product">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 v-if="cartItems.length > 0" class="text-xl font-bold">{{ t('checkout.productsInOrder', { count: cartItems.length }) }}</h3>
+                    <h3 v-if="cartItems.length > 0" class="text-xl font-bold">{{ t('checkout.productsInOrder', {
+                        count:
+                            cartItems.length
+                    }) }}</h3>
                 </div>
                 <div class="space-y-0">
                     <!-- Cart items -->
@@ -23,14 +26,16 @@
                 <PaymentMethod />
             </div>
         </div>
-        <CartSummary v-if="cartItems.length > 0" :isSubmitting="isSubmitting" :items="cartItems"
+        <CartSummary v-if="cartItems.length > 0" :isSubmitting="isSubmitting" :items="cartItems" show-shipping
+            :shipping-fee="quote?.shippingFee ?? null" :shipping-loading="isQuoting" :shipping-note="shippingNote"
             @showDrawer="showDrawer" @submitOrder="handleSubmitOrder" />
     </div>
     <Drawer v-model:open="open" />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
+import { debounce } from 'lodash';
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n';
 import CheckoutItem from '@/components/Checkout/ProductCheckout/index.vue';
@@ -48,6 +53,7 @@ import { OrderService } from '@/api/services/order';
 import { EPaymentMethod } from '@/api/models/order';
 import { useRouter } from 'vue-router';
 import { PaymentService } from '@/api/services/payment';
+import { ShippingService } from '@/api/services/store';
 
 interface CartItem extends IGetProductResponse {
     checked?: boolean;
@@ -64,6 +70,67 @@ const cartStore = useCartStore();
 const router = useRouter();
 
 const cartItems = computed(() => cartStore.cart as CartItem[]);
+
+const quote = computed(() => checkoutStore.shippingQuote);
+const isQuoting = ref(false);
+const quoteError = ref('');
+let quoteRequestId = 0;
+
+const shippingNote = computed(() => {
+    if (quoteError.value) return quoteError.value;
+    if (!quote.value) return '';
+    const base = t('cartSummary.shippingFromStore', { store: quote.value.storeName, km: quote.value.distanceKm });
+    const covered = t('cartSummary.shippingStoreCovers');
+    const estimated = quote.value.estimated ? ` (${t('cartSummary.shippingEstimated')})` : '';
+    return `${base}${estimated}. ${covered}`;
+});
+
+// Server chọn cửa hàng gần nhất từ vị trí khách ghim trên bản đồ; client chỉ hiển thị báo giá
+const fetchQuote = debounce(async () => {
+    const { province, ward, address, latitude, longitude } = checkoutStore.addressInfo;
+    if (latitude === null || longitude === null || cartItems.value.length === 0) {
+        checkoutStore.shippingQuote = null;
+        quoteError.value = '';
+        isQuoting.value = false;
+        return;
+    }
+    const requestId = ++quoteRequestId;
+    isQuoting.value = true;
+    try {
+        const result = await ShippingService.quote({
+            latitude,
+            longitude,
+            provinceCode: province,
+            wardCode: ward,
+            address: address?.trim() ?? '',
+            items: cartItems.value.map(item => ({ productId: item.id, amount: item.cartQuantity })),
+        });
+        console.log(result);
+        if (requestId !== quoteRequestId) return;
+        checkoutStore.shippingQuote = result;
+        quoteError.value = '';
+    } catch {
+        if (requestId !== quoteRequestId) return;
+        checkoutStore.shippingQuote = null;
+        quoteError.value = t('checkout.shippingQuoteError');
+    } finally {
+        if (requestId === quoteRequestId) isQuoting.value = false;
+    }
+}, 800);
+
+watch(
+    () => [
+        checkoutStore.addressInfo.province,
+        checkoutStore.addressInfo.ward,
+        checkoutStore.addressInfo.latitude,
+        checkoutStore.addressInfo.longitude,
+        cartItems.value.map(item => `${item.id}:${item.cartQuantity}`).join(','),
+    ],
+    () => {
+        isQuoting.value = true;
+        fetchQuote();
+    },
+);
 
 // Calculate total for item
 const calculateItemTotal = (item: CartItem): number => {
@@ -116,6 +183,11 @@ const validateCheckout = (): boolean => {
         return false;
     }
 
+    if (checkoutStore.addressInfo.latitude === null || checkoutStore.addressInfo.longitude === null) {
+        message.error(t('checkout.locationRequired'));
+        return false;
+    }
+
     return true;
 };
 
@@ -137,6 +209,8 @@ const handleSubmitOrder = async () => {
                 district: '',
                 ward: checkoutStore.addressInfo.ward,
                 address: checkoutStore.addressInfo.address,
+                latitude: checkoutStore.addressInfo.latitude,
+                longitude: checkoutStore.addressInfo.longitude,
                 fullname: checkoutStore.customerInfo.fullName,
                 phone: checkoutStore.customerInfo.phone,
             },
