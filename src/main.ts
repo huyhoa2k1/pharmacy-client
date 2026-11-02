@@ -7,6 +7,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Antd from 'ant-design-vue'
 import PrimeVue from 'primevue/config'
 import CKEditor from '@ckeditor/ckeditor5-vue'
+import Particles from '@tsparticles/vue3'
+import { loadSlim } from '@tsparticles/slim'
 
 import App from './App.vue'
 import router from './router'
@@ -35,5 +37,10 @@ app.use(i18n)
 app.use(Antd)
 app.use(CKEditor)
 app.use(PrimeVue)
+app.use(Particles, {
+  init: async (engine) => {
+    await loadSlim(engine)
+  },
+})
 
 app.mount('#app')
