@@ -75,10 +75,6 @@ watch(locale, async () => {
 .breadcrumb-container {
     margin: 0 auto;
     padding: var(--space-md) var(--space-xl);
-    border: 1px solid var(--color-border);
-    border-bottom: 0;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    background: var(--color-card);
 }
 
 .breadcrumb-inner {

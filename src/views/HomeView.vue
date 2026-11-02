@@ -9,6 +9,9 @@ import { CategoryService } from '@/api/services/category'
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
 import Carousel from 'primevue/carousel'
 import { debounce } from 'lodash'
+import { getParticleOptions } from '@/config/particleEffects'
+
+const particleOptions = getParticleOptions()
 
 const router = useRouter()
 const { t } = useI18n()
@@ -203,6 +206,7 @@ onUnmounted(() => {
 
 <template>
   <main class="homepage">
+    <vue-particles v-if="particleOptions" id="homeParticles" class="particles" :options="particleOptions" />
     <section class="hero" :aria-label="t('home.heroAriaLabel')">
       <div class="hero__masthead"></div>
 
@@ -377,6 +381,16 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particles :deep(canvas) {
+  pointer-events: none;
+}
+
 .homepage {
   display: flex;
   flex-direction: column;
