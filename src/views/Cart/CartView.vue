@@ -1,11 +1,13 @@
 <template>
     <div :class="['cart-view', cartItems.length > 0 ? 'cart-no-empty' : 'cart-empty']">
-        <div :class="[cartItems.length > 0 ? 'cart-left' : 'cart-left-empty']">
+        <div :class="[cartItems.length > 0 ? 'cart-left' : 'cart-left-empty']" data-tour="cart-items">
             <div class="p-3">
                 <div class="flex justify-between items-center">
-                    <h3 v-if="cartItems.length > 0" class="text-2xl font-bold">{{ t('cart.title', { count: cartItems.length }) }}</h3>
-                    <a-popconfirm :title="t('cart.clearConfirmTitle')" :ok-text="t('cart.clearConfirmOk')" :cancel-text="t('cart.clearConfirmCancel')"
-                        @confirm="confirm" @cancel="cancel">
+                    <h3 v-if="cartItems.length > 0" class="text-2xl font-bold">{{ t('cart.title', {
+                        count:
+                        cartItems.length }) }}</h3>
+                    <a-popconfirm :title="t('cart.clearConfirmTitle')" :ok-text="t('cart.clearConfirmOk')"
+                        :cancel-text="t('cart.clearConfirmCancel')" @confirm="confirm" @cancel="cancel">
                         <button class="cart-clear-button" v-if="cartItems.length > 0">{{ t('cart.clearAll') }}</button>
                     </a-popconfirm>
                 </div>
@@ -22,9 +24,12 @@
                                     <p class="text-sm leading-4 text-neutral-900">{{ t('cart.productColumn') }}</p>
                                 </div>
                                 <div class="flex justify-center space-x-4">
-                                    <p class="w-[calc(160rem/16)] text-center text-sm text-neutral-900">{{ t('cart.priceColumn') }}</p>
-                                    <p class="w-[calc(117rem/16)] text-center text-sm text-neutral-900">{{ t('cart.quantityColumn') }}</p>
-                                    <p class="w-[calc(120rem/16)] text-end text-sm text-neutral-900">{{ t('cart.totalColumn') }}</p>
+                                    <p class="w-[calc(160rem/16)] text-center text-sm text-neutral-900">{{
+                                        t('cart.priceColumn') }}</p>
+                                    <p class="w-[calc(117rem/16)] text-center text-sm text-neutral-900">{{
+                                        t('cart.quantityColumn') }}</p>
+                                    <p class="w-[calc(120rem/16)] text-end text-sm text-neutral-900">{{
+                                        t('cart.totalColumn') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, nextTick } from 'vue';
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n';
 import CartItem from '@/components/Cart/Item/CartItem.vue';
@@ -60,6 +65,7 @@ import CartSummary from '@/components/Cart/CartSummary.vue';
 import { useCartStore } from '@/stores/cart';
 import type { IGetProductResponse } from '@/api/models/product';
 import Empty from '@/components/common/empty/index.vue';
+import { useTour } from '@/composable/useTour';
 
 interface CartViewItem extends IGetProductResponse {
     checked: boolean;
@@ -68,6 +74,7 @@ interface CartViewItem extends IGetProductResponse {
 }
 
 const { t } = useI18n();
+const { startTourIfFirstVisit } = useTour();
 const cartStore = useCartStore();
 const open = ref<boolean>(false);
 
@@ -134,6 +141,9 @@ onMounted(() => {
     // Load cart from store on component mount
     cartStore.loadCart();
     console.log('Loaded cart items:', cartItems.value);
+    if (cartItems.value.length > 0) {
+        nextTick(() => startTourIfFirstVisit('cart'));
+    }
 });
 </script>
 

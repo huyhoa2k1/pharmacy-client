@@ -30,6 +30,7 @@
     "@tsparticles/vue3": "^4.5.0",
     "ant-design-vue": "^4.2.6",
     "axios": "^1.12.2",
+    "driver.js": "^1.10.2",
     "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "lodash": "^4.18.1",

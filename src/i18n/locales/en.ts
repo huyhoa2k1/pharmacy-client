@@ -20,6 +20,59 @@ export default {
     myOrders: 'My Orders',
     logout: 'Sign out',
   },
+  tour: {
+    help: 'User guide',
+    buttons: { next: 'Next', prev: 'Back', done: 'Done' },
+    home: {
+      search: {
+        title: 'Search medicine',
+        desc: 'Type a medicine or product name to find it quickly; suggestions appear as you type.',
+      },
+      navbar: {
+        title: 'Product categories',
+        desc: 'Pick a category to browse all medicines and supplements in that group.',
+      },
+      categories: {
+        title: 'Shop by category',
+        desc: 'Quickly explore popular product groups right from the home page.',
+      },
+      flashSale: {
+        title: 'Flash Sale',
+        desc: 'Limited-time discounts; keep an eye on the countdown timer.',
+      },
+      bestSellers: { title: 'Best sellers', desc: 'The products most chosen by our customers.' },
+      cart: { title: 'Cart', desc: 'Review the items you added and proceed to checkout.' },
+      account: {
+        title: 'Account',
+        desc: 'Sign in to place orders, track them and manage your profile.',
+      },
+      language: { title: 'Language', desc: 'Switch between Vietnamese and English at any time.' },
+      chat: {
+        title: 'AI pharmacist',
+        desc: 'Click here to chat and get advice on products, uses and dosage.',
+      },
+    },
+    product: {
+      quantity: {
+        title: 'Choose quantity',
+        desc: 'Adjust how many you want to buy, up to the remaining stock.',
+      },
+      addToCart: { title: 'Add to cart', desc: 'Save the product to your cart and keep shopping.' },
+      buyNow: {
+        title: 'Buy now',
+        desc: 'Add the product to your cart and go straight to the cart page.',
+      },
+      cart: { title: 'Cart', desc: 'The number of items in your cart is shown here.' },
+    },
+    cart: {
+      items: {
+        title: 'Items in your cart',
+        desc: 'Select items to pay for, change quantities or remove products.',
+      },
+      promotion: { title: 'Promo code', desc: 'Choose a discount code to apply to your order.' },
+      checkout: { title: 'Checkout', desc: 'Check the total and continue to place your order.' },
+    },
+  },
   footer: {
     assuranceGenuineTitle: 'Genuine products',
     assuranceGenuineDesc: 'Strictly quality-verified',

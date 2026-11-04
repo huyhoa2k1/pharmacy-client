@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import type { IGetProductResponse } from '@/api/models/product'
@@ -12,9 +12,11 @@ import { debounce } from 'lodash'
 import { getParticleOptions } from '@/config/particleEffects'
 
 const particleOptions = getParticleOptions()
+import { useTour } from '@/composable/useTour'
 
 const router = useRouter()
 const { t } = useI18n()
+const { startTourIfFirstVisit } = useTour()
 const saleProducts = ref<IGetProductResponse[]>([])
 const bestSellers = ref<IGetProductResponse[]>([])
 const categories = ref<IGetCategoryResponse[]>([])
@@ -189,6 +191,14 @@ const animateSearchPlaceholder = () => {
   placeholderAnimationTimerId = setTimeout(animateSearchPlaceholder, delay)
 }
 
+// wait for async sections so their tour steps are not skipped
+watch([isLoadingProducts, isLoadingCategories], async ([products, categories]) => {
+  if (!products && !categories) {
+    await nextTick()
+    startTourIfFirstVisit('home')
+  }
+})
+
 onMounted(() => {
   getProducts()
   getCategories()
@@ -247,12 +257,14 @@ onUnmounted(() => {
       <div class="hero__services" :aria-label="t('home.servicesAriaLabel')">
         <a href="#recommendations">
           <i class="pi pi-comments" aria-hidden="true"></i>
-          <span><strong>{{ t('home.serviceConsultTitle') }}</strong><small>{{ t('home.serviceConsultDesc') }}</small></span>
+          <span><strong>{{ t('home.serviceConsultTitle') }}</strong><small>{{ t('home.serviceConsultDesc')
+          }}</small></span>
           <i class="pi pi-angle-right" aria-hidden="true"></i>
         </a>
         <a href="#categories">
           <i class="pi pi-map-marker" aria-hidden="true"></i>
-          <span><strong>{{ t('home.serviceLocateTitle') }}</strong><small>{{ t('home.serviceLocateDesc') }}</small></span>
+          <span><strong>{{ t('home.serviceLocateTitle') }}</strong><small>{{ t('home.serviceLocateDesc')
+          }}</small></span>
           <i class="pi pi-angle-right" aria-hidden="true"></i>
         </a>
       </div>
@@ -267,7 +279,7 @@ onUnmounted(() => {
       </Carousel>
     </section>
 
-    <section id="categories" class="homepage__section" aria-labelledby="categories-heading">
+    <section id="categories" data-tour="home-categories" class="homepage__section" aria-labelledby="categories-heading">
       <div class="section-heading">
         <div>
           <p class="section-heading__eyebrow">{{ t('home.categoriesEyebrow') }}</p>
@@ -297,7 +309,7 @@ onUnmounted(() => {
     </section>
 
     <section v-if="isLoadingProducts || productsError || saleProducts.length > 0" id="recommendations"
-      class="homepage__section" aria-labelledby="sale-heading">
+      data-tour="home-flash-sale" class="homepage__section" aria-labelledby="sale-heading">
       <div class="flash-sale">
         <img class="flash-sale__banner"
           src="https://prod-cdn.pharmacity.io/e-com/images/flashsale/20260805020324-0-Home_Flashsale_web.png?versionId=qcHQ6.0JKKgkZNotOyzH659ni7BfmvOf"
@@ -347,7 +359,7 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <section class="homepage__section" aria-labelledby="best-sellers-heading">
+    <section class="homepage__section" data-tour="home-best-sellers" aria-labelledby="best-sellers-heading">
       <div class="section-heading section-heading--with-action">
         <div>
           <p class="section-heading__eyebrow">{{ t('home.bestSellersEyebrow') }}</p>

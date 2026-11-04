@@ -9,7 +9,7 @@
       </div>
 
       <!-- Search -->
-      <div class="w-full md:w-[400px]">
+      <div class="w-full md:w-[400px]" data-tour="header-search">
         <a-spin :spinning="searchLoading" :tip="t('common.loading')" size="large">
           <a-auto-complete v-model:value="searchValue" :options="autocompleteOptions" :allow-clear="true"
             :loading="searchLoading" :placeholder="t('header.searchPlaceholder')" class="w-full"
@@ -40,8 +40,8 @@
         </router-link>
 
         <router-link to="/cart" class="flex items-center gap-2">
-          <div
-            class="icon-hover group relative flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md">
+          <div data-tour="header-cart"
+            class="icon-hover group relative flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 cursor-pointer transition hover:shadow-md">
             <a-badge :size="'small'" :count="cartStore.cartCount" class="animate-pulse">
               <i
                 class="pi pi-shopping-cart text-lg text-cyan-700 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-200"></i>
@@ -51,8 +51,8 @@
         </router-link>
 
         <a-dropdown :placement="'bottom'" :arrow="{ pointAtCenter: true }">
-          <div @click="openAuthDialog"
-            class="flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 dark:text-cyan-300 dark:hover:text-cyan-200 dark:hover:bg-cyan-950 cursor-pointer transition hover:shadow-md">
+          <div data-tour="header-account" @click="openAuthDialog"
+            class="flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 cursor-pointer transition hover:shadow-md">
             <i class="pi pi-user text-lg"></i>
             <span class="text-sm md:text-base font-semibold">
               {{ userStore.isLogin ? userStore.username : t('header.login') }}
@@ -81,9 +81,16 @@
             </a-menu>
           </template>
         </a-dropdown>
-
-        <LanguageSwitcher />
+        <div data-tour="header-language">
+          <LanguageSwitcher />
+        </div>
         <ThemeSwitcher />
+
+        <button v-if="currentTour" type="button"
+          class="flex items-center gap-2 px-2 py-1 rounded text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 cursor-pointer transition"
+          :aria-label="t('tour.help')" :title="t('tour.help')" @click="startTour(currentTour)">
+          <i class="pi pi-question-circle text-lg"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -94,8 +101,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useTour, getTourForRoute } from '@/composable/useTour'
 import AuthDialog from '@/components/Auth/AuthDialog.vue'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher/index.vue'
 import ThemeSwitcher from '@/components/common/ThemeSwitcher/index.vue'
@@ -108,6 +116,9 @@ import { debounce } from 'lodash'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
+const { startTour } = useTour()
+const currentTour = computed(() => getTourForRoute(route.name))
 const userStore = useUserStore()
 const cartStore = useCartStore()
 

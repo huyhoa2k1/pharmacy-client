@@ -9,7 +9,7 @@
       </div>
       <div class="product-right">
         <!-- Quantity Section -->
-        <div class="border-b border-[var(--color-border)] pb-6">
+        <div class="border-b border-[var(--color-border)] pb-6" data-tour="product-quantity">
           <p class="text-[var(--color-foreground)] font-semibold text-sm mb-3">{{ t('productDetail.quantity') }}</p>
           <div class="flex items-center gap-3 bg-[var(--color-muted)] w-fit p-2 rounded-lg">
             <button @click="decreaseQuantity"
@@ -32,12 +32,12 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-col gap-3 py-6 border-b border-[var(--color-border)]">
-          <a-button type="primary" size="large" @click="buyNow"
+          <a-button type="primary" size="large" data-tour="product-buy-now" @click="buyNow"
             class="product-buy-button w-full font-semibold text-base h-12 rounded-lg border-0">
             <i class="pi pi-bolt mr-2"></i>
             {{ t('productDetail.buyNow') }}
           </a-button>
-          <a-button size="large" @click="addToCart"
+          <a-button size="large" data-tour="product-add-to-cart" @click="addToCart"
             class="product-cart-button w-full font-semibold text-base h-12 rounded-lg border-2">
             <i class="pi pi-shopping-cart mr-2"></i>
             {{ t('productDetail.addToCart') }}
@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swiper from '@/components/Product/Swiper/Swiper.vue';
 import PageLoading from '@/components/common/page-loading/index.vue';
@@ -97,9 +97,11 @@ import { message } from 'ant-design-vue';
 import { useCartStore } from '@/stores/cart';
 import type { IGetProductResponse } from '@/api/models/product';
 import type { CartItem } from '@/utils/index.type';
+import { useTour } from '@/composable/useTour';
 
 const route = useRoute();
 const { t } = useI18n();
+const { startTourIfFirstVisit } = useTour();
 const cartStore = useCartStore();
 const data = ref<IGetProductResponse>({} as IGetProductResponse);
 const quantity = ref(1);
@@ -170,6 +172,14 @@ const buyNow = () => {
 onMounted(() => {
   cartStore.loadCart();
   getProductDetail();
+});
+
+// PageLoading hides the content while loading, so wait for it to render
+watch(loading, async (isLoading) => {
+  if (!isLoading && data.value.id) {
+    await nextTick();
+    startTourIfFirstVisit('product');
+  }
 });
 
 // Watch for route params changes to reload data when product ID changes

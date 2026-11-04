@@ -1,5 +1,5 @@
 <template>
-    <div class="navbar-container">
+    <div class="navbar-container" data-tour="navbar">
         <nav class="px-2 py-0 w-full">
             <div class="max-w-6xl mx-auto flex items-center justify-between h-14">
                 <ul class="flex space-x-8 h-full">
