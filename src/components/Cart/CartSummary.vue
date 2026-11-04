@@ -1,7 +1,7 @@
 <template>
     <div class="cart-right flex flex-col space-y-4">
         <div>
-            <div class="cart-summary-card promotion-card">
+            <div class="cart-summary-card promotion-card" data-tour="cart-promotion">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-2">
                         <i class="pi pi-receipt cart-summary-icon"></i>
@@ -9,7 +9,7 @@
                     </div>
                     <div>
                         <button @click="$emit('showDrawer')" class="promotion-button">{{ t('cartSummary.chooseCode')
-                        }}</button>
+                            }}</button>
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                             formattedTotal }}</p>
                     </div>
                 </div>
-                <a-button type="primary" class="w-full md:w-auto"
+                <a-button type="primary" class="w-full md:w-auto" data-tour="cart-checkout"
                     @click="isCartPage ? router.push('/check-out') : $emit('submitOrder')" :loading="isSubmitting">
                     <i v-if="!isSubmitting" class="pi pi-shopping-cart mr-2"></i>
                     {{ isSubmitting ? t('cartSummary.processing') : t('cartSummary.buyNow', { count: totalQuantity }) }}

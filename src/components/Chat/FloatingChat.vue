@@ -134,7 +134,7 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
     </section>
   </Transition>
 
-  <button class="chat-launcher fixed bottom-25 right-5 z-50 flex items-center justify-center"
+  <button data-tour="chat" class="chat-launcher fixed bottom-25 right-5 z-50 flex items-center justify-center"
     :aria-label="isOpen ? 'Đóng trợ lý AI' : 'Mở trợ lý AI'" :aria-expanded="isOpen" @click="isOpen = !isOpen">
     <CloseOutlined v-if="isOpen" />
     <CommentOutlined v-else />

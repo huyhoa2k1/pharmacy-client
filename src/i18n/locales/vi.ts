@@ -20,6 +20,65 @@ export default {
     myOrders: 'Đơn hàng của tôi',
     logout: 'Đăng xuất',
   },
+  tour: {
+    help: 'Hướng dẫn sử dụng',
+    buttons: { next: 'Tiếp', prev: 'Quay lại', done: 'Hoàn tất' },
+    home: {
+      search: {
+        title: 'Tìm kiếm thuốc',
+        desc: 'Nhập tên thuốc hoặc sản phẩm để tìm nhanh, kết quả gợi ý hiển thị ngay khi bạn gõ.',
+      },
+      navbar: {
+        title: 'Danh mục sản phẩm',
+        desc: 'Chọn nhóm sản phẩm để xem toàn bộ thuốc và thực phẩm chức năng trong nhóm đó.',
+      },
+      categories: {
+        title: 'Mua sắm theo danh mục',
+        desc: 'Khám phá nhanh các nhóm sản phẩm phổ biến ngay tại trang chủ.',
+      },
+      flashSale: {
+        title: 'Flash Sale',
+        desc: 'Các sản phẩm giảm giá trong thời gian giới hạn, hãy chú ý đồng hồ đếm ngược.',
+      },
+      bestSellers: {
+        title: 'Bán chạy nhất',
+        desc: 'Những sản phẩm được nhiều khách hàng lựa chọn nhất.',
+      },
+      cart: { title: 'Giỏ hàng', desc: 'Xem các sản phẩm đã thêm và tiến hành đặt hàng.' },
+      account: {
+        title: 'Tài khoản',
+        desc: 'Đăng nhập để đặt hàng, theo dõi đơn hàng và quản lý thông tin cá nhân.',
+      },
+      language: {
+        title: 'Ngôn ngữ',
+        desc: 'Chuyển đổi giữa tiếng Việt và tiếng Anh bất cứ lúc nào.',
+      },
+      chat: {
+        title: 'Dược sĩ AI',
+        desc: 'Bấm vào đây để trò chuyện và nhận tư vấn về sản phẩm, công dụng, cách dùng.',
+      },
+    },
+    product: {
+      quantity: {
+        title: 'Chọn số lượng',
+        desc: 'Điều chỉnh số lượng muốn mua, không vượt quá số lượng còn lại.',
+      },
+      addToCart: { title: 'Thêm vào giỏ', desc: 'Lưu sản phẩm vào giỏ hàng để tiếp tục mua sắm.' },
+      buyNow: {
+        title: 'Mua ngay',
+        desc: 'Thêm sản phẩm vào giỏ và chuyển thẳng đến trang giỏ hàng.',
+      },
+      cart: { title: 'Giỏ hàng', desc: 'Số lượng sản phẩm trong giỏ được hiển thị tại đây.' },
+    },
+    cart: {
+      items: {
+        title: 'Sản phẩm trong giỏ',
+        desc: 'Chọn sản phẩm cần thanh toán, thay đổi số lượng hoặc xóa sản phẩm.',
+      },
+      promotion: { title: 'Mã khuyến mãi', desc: 'Chọn mã giảm giá để áp dụng cho đơn hàng.' },
+      checkout: { title: 'Thanh toán', desc: 'Kiểm tra tổng tiền và tiếp tục đến bước đặt hàng.' },
+    },
+  },
   footer: {
     assuranceGenuineTitle: 'Sản phẩm chính hãng',
     assuranceGenuineDesc: 'Kiểm duyệt chất lượng kỹ lưỡng',
