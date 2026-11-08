@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { defineComponent, h } from 'vue'
 import { fetchServerSentEvents } from '@tanstack/ai-vue'
+import { useI18n } from 'vue-i18n'
 
 import { createChatHook, UIChat } from '@tanstack/ai-vue/ui'
 
@@ -17,6 +18,7 @@ defineOptions({
 const props = defineProps<{
   threadId: string
 }>()
+const { t } = useI18n()
 
 const chatOptions = {
   connection: fetchServerSentEvents(`${BASE_URL}/chat`, () => ({
@@ -57,7 +59,7 @@ const Layout = defineComponent({
                 {
                   class: 'ml-3 font-semibold text-slate-800 dark:text-slate-100',
                 },
-                'Trợ lý sức khỏe',
+                t('chat.assistantName'),
               ),
             ],
           ),

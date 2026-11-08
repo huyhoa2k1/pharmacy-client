@@ -17,11 +17,13 @@
         <div class="flex flex-wrap items-center gap-4 pb-4 border-b border-[var(--color-border)]">
             <div class="flex items-center gap-1">
                 <i class="pi pi-shopping-bag text-[var(--color-primary)] text-sm"></i>
-                <span class="text-xs text-[var(--color-foreground)]">Đã bán <span class="font-semibold">{{ product.sold }}</span></span>
+                <span class="text-xs text-[var(--color-foreground)]">Đã bán <span class="font-semibold">{{ product.sold
+                        }}</span></span>
             </div>
             <div class="flex items-center gap-1">
                 <i class="pi pi-comment text-[var(--color-primary)] text-sm"></i>
-                <span class="text-xs text-[var(--color-foreground)]"><span class="font-semibold">20</span> đánh giá</span>
+                <span class="text-xs text-[var(--color-foreground)]"><span class="font-semibold">20</span> đánh
+                    giá</span>
             </div>
             <div class="flex items-center gap-1">
                 <i class="pi pi-star-fill text-[var(--color-secondary)] text-sm"></i>
@@ -40,11 +42,13 @@
                 </span>
             </div>
             <div class="flex items-center gap-3">
-                <span class="bg-[var(--color-destructive)] text-[var(--color-on-destructive)] px-2 py-0.5 rounded-full text-xs font-bold">
+                <span
+                    class="bg-[var(--color-destructive)] text-[var(--color-on-destructive)] px-2 py-0.5 rounded-full text-xs font-bold">
                     -{{ product.discount }}%
                 </span>
                 <span class="text-[var(--color-muted-foreground)] text-xs">
-                    Tiết kiệm <span class="font-bold text-[var(--color-destructive)]">{{ formatPrice(discountAmount) }}đ</span>
+                    Tiết kiệm <span class="font-bold text-[var(--color-destructive)]">{{ formatPrice(discountAmount)
+                        }}đ</span>
                 </span>
             </div>
         </div>
@@ -75,7 +79,6 @@ const props = defineProps<{
         discount: number
         amount: number
         sold: number
-        sale: boolean
         brand: IGetBrandResponse,
         createdAt: string
         updatedAt: string

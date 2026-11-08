@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { CommentOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 import Chat from './Chat.vue'
 import { ChatService, type ChatConversation } from '@/api/services/chat'
 import { useUserStore } from '@/stores/user'
@@ -11,6 +12,7 @@ const conversations = ref<ChatConversation[]>([])
 const activeThreadId = ref('')
 const isLoadingConversations = ref(false)
 const conversationError = ref('')
+const { t } = useI18n()
 const storageKey = computed(() => `pharmacy_chat_thread_id_${userStore.userId}`)
 
 const selectConversation = (conversationId: string) => {
@@ -37,7 +39,7 @@ const loadConversations = async () => {
     selectConversation(selected.id)
   } catch (error) {
     console.error('Failed to load conversations:', error)
-    conversationError.value = 'Không tải được lịch sử trò chuyện.'
+    conversationError.value = t('chat.loadHistoryError')
   } finally {
     isLoadingConversations.value = false
   }
@@ -50,12 +52,12 @@ const createConversation = async () => {
     selectConversation(created.id)
   } catch (error) {
     console.error('Failed to create conversation:', error)
-    conversationError.value = 'Không thể tạo cuộc trò chuyện mới.'
+    conversationError.value = t('chat.createError')
   }
 }
 
 const deleteConversation = async () => {
-  if (!activeThreadId.value || !window.confirm('Xóa cuộc trò chuyện này?')) {
+  if (!activeThreadId.value || !window.confirm(t('chat.deleteConfirmation'))) {
     return
   }
 
@@ -73,7 +75,7 @@ const deleteConversation = async () => {
     }
   } catch (error) {
     console.error('Failed to delete conversation:', error)
-    conversationError.value = 'Không thể xóa cuộc trò chuyện.'
+    conversationError.value = t('chat.deleteError')
   }
 }
 
@@ -99,20 +101,21 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
   <Transition name="chat">
     <section v-if="isOpen"
       class="chat-panel fixed bottom-24 right-5 z-50 flex h-[min(640px,calc(100dvh-7rem))] w-[min(420px,calc(100vw-2rem))] flex-col overflow-hidden"
-      aria-label="Trợ lý chăm sóc sức khỏe">
+      :aria-label="t('chat.careAssistantLabel')">
       <div v-if="userStore.isLogin" class="conversation-bar flex shrink-0 items-center gap-2 px-4 py-3">
         <select :value="activeThreadId" :disabled="isLoadingConversations || conversations.length === 0"
-          class="conversation-select min-w-0 flex-1" aria-label="Chọn cuộc trò chuyện" @change="onConversationChange">
+          class="conversation-select min-w-0 flex-1" :aria-label="t('chat.selectConversation')"
+          @change="onConversationChange">
           <option v-for="conversation in conversations" :key="conversation.id" :value="conversation.id">
             {{ conversation.title }}
           </option>
         </select>
-        <button type="button" title="Cuộc trò chuyện mới" aria-label="Cuộc trò chuyện mới" class="chat-icon-button"
-          @click="createConversation">
+        <button type="button" :title="t('chat.newConversation')" :aria-label="t('chat.newConversation')"
+          class="chat-icon-button" @click="createConversation">
           <PlusOutlined />
         </button>
-        <button type="button" title="Xóa cuộc trò chuyện" aria-label="Xóa cuộc trò chuyện" :disabled="!activeThreadId"
-          class="chat-icon-button chat-icon-button--danger" @click="deleteConversation">
+        <button type="button" :title="t('chat.deleteConversation')" :aria-label="t('chat.deleteConversation')"
+          :disabled="!activeThreadId" class="chat-icon-button chat-icon-button--danger" @click="deleteConversation">
           <DeleteOutlined />
         </button>
       </div>
@@ -124,9 +127,9 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
         <div class="chat-sign-in__icon">
           <CommentOutlined />
         </div>
-        <h2>Trò chuyện cùng dược sĩ AI</h2>
-        <p>Đăng nhập để nhận tư vấn phù hợp và lưu lại các cuộc trò chuyện của bạn.</p>
-        <button type="button" class="chat-sign-in__button" @click="requestSignIn">Đăng nhập</button>
+        <h2>{{ t('chat.pharmacistAssistantTitle') }}</h2>
+        <p>{{ t('chat.signInDescription') }}</p>
+        <button type="button" class="chat-sign-in__button" @click="requestSignIn">{{ t('chat.signIn') }}</button>
       </div>
       <div v-else-if="activeThreadId" class="min-h-0 flex-1">
         <Chat :key="activeThreadId" :thread-id="activeThreadId" />
@@ -135,7 +138,8 @@ watch([isOpen, () => userStore.userId, () => userStore.isLogin], ([opened, , log
   </Transition>
 
   <button data-tour="chat" class="chat-launcher fixed bottom-25 right-5 z-50 flex items-center justify-center"
-    :aria-label="isOpen ? 'Đóng trợ lý AI' : 'Mở trợ lý AI'" :aria-expanded="isOpen" @click="isOpen = !isOpen">
+    :aria-label="isOpen ? t('chat.closeAssistant') : t('chat.openAssistant')" :aria-expanded="isOpen"
+    @click="isOpen = !isOpen">
     <CloseOutlined v-if="isOpen" />
     <CommentOutlined v-else />
   </button>

@@ -11,7 +11,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -20,15 +20,20 @@ import { useBreadcrumb } from '@/composable/useBreadcrumb'
 const route = useRoute()
 const { t, locale } = useI18n()
 const { getCategoryName } = useBreadcrumb()
-const breadcrumbs = ref([])
+type BreadcrumbItem = {
+    label: string
+    link: string | null
+}
+
+const breadcrumbs = ref<BreadcrumbItem[]>([])
 
 const buildBreadcrumbs = async () => {
     const isAdminRoute = route.path.startsWith('/admin/')
-    const base = route.matched
+    const base: BreadcrumbItem[] = route.matched
         .filter(r => (r.meta?.title || r.meta?.titleKey) && r.meta?.breadcrumb !== false)
         .map((r, index, arr) => {
             return {
-                label: r.meta.breadcrumb || (r.meta.titleKey ? t(r.meta.titleKey) : r.meta.title),
+                label: String(r.meta.breadcrumb || (r.meta.titleKey ? t(String(r.meta.titleKey)) : r.meta.title)),
                 link: index < arr.length - 1 ? r.path : null
             }
         })
@@ -50,7 +55,7 @@ const buildBreadcrumbs = async () => {
     }
 
     if (route.name === 'product-detail') {
-        const categoryName = await getCategoryName(route.params.categoryId)
+        const categoryName = await getCategoryName(Number(route.params.categoryId))
 
         base.splice(1, 0, {
             label: categoryName,
