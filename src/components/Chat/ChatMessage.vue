@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RobotOutlined, UserOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   message: {
@@ -10,22 +11,17 @@ const props = defineProps<{
 }>()
 
 const isUser = computed(() => props.message.role === 'user')
+const { t } = useI18n()
 </script>
 
 <template>
-  <article
-    class="chat-message flex w-full gap-2 px-4 py-2"
-    :class="isUser ? 'justify-end' : 'justify-start'"
-  >
+  <article class="chat-message flex w-full gap-2 px-4 py-2" :class="isUser ? 'justify-end' : 'justify-start'">
     <div v-if="!isUser" class="message-avatar message-avatar--assistant" aria-hidden="true">
       <RobotOutlined />
     </div>
     <div class="max-w-[82%]">
-      <div v-if="!isUser" class="message-sender">Trợ lý sức khỏe</div>
-      <div
-        class="message-bubble"
-        :class="isUser ? 'message-bubble--user' : 'message-bubble--assistant'"
-      >
+      <div v-if="!isUser" class="message-sender">{{ t('chat.assistantName') }}</div>
+      <div class="message-bubble" :class="isUser ? 'message-bubble--user' : 'message-bubble--assistant'">
         <div class="chat-message-content">
           <slot />
         </div>

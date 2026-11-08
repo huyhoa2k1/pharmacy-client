@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { SendOutlined } from '@ant-design/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   chat: {
@@ -17,6 +18,7 @@ const props = defineProps<{
 
 const input = ref('')
 const errorMessage = ref('')
+const { t } = useI18n()
 
 const isLoading = computed(() => props.chat.isLoading.value)
 const visibleError = computed(() => props.chat.error.value?.message || errorMessage.value)
@@ -35,7 +37,7 @@ async function submit() {
     await props.chat.sendMessage(message)
   } catch (error) {
     console.error('Failed to send message:', error)
-    errorMessage.value = 'Không thể gửi tin nhắn. Vui lòng thử lại.'
+    errorMessage.value = t('chat.sendError')
     input.value = message
   }
 }
@@ -55,26 +57,17 @@ function handleKeydown(event: KeyboardEvent) {
       {{ visibleError }}
     </p>
     <div class="composer-field flex items-end gap-2 p-2">
-      <textarea
-        v-model="input"
-        rows="1"
-        placeholder="Hỏi về sản phẩm, giá hoặc chính sách cửa hàng..."
+      <textarea v-model="input" rows="2" :placeholder="t('chat.inputPlaceholder')"
         class="composer-textarea max-h-32 min-h-10 flex-1 resize-none px-2 py-2 text-sm outline-none"
-        :disabled="isLoading"
-        @keydown="handleKeydown"
-      />
+        :disabled="isLoading" @keydown="handleKeydown" />
 
-      <button
-        type="submit"
-        :disabled="!input.trim() || isLoading"
-        class="send-button shrink-0"
-        :aria-label="isLoading ? 'Đang gửi tin nhắn' : 'Gửi tin nhắn'"
-      >
+      <button type="submit" :disabled="!input.trim() || isLoading" class="send-button shrink-0"
+        :aria-label="isLoading ? t('chat.sendingMessage') : t('chat.sendMessage')">
         <SendOutlined />
       </button>
     </div>
 
-    <p class="composer-hint mt-2 px-2 text-xs">Enter để gửi · Shift + Enter để xuống dòng</p>
+    <p class="composer-hint mt-2 px-2 text-xs">{{ t('chat.inputHint') }}</p>
   </form>
 </template>
 
@@ -140,6 +133,7 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .composer-field,
   .send-button {
     transition: none;
