@@ -1,9 +1,21 @@
 import axiosInstance from '@/helpers/https'
 import type { IGetCategoryResponse } from '../models/category'
+import type { IPageResponse } from '../models/product'
+import type { IPagerRequest } from '../models/pager'
+import { fetchAllPages } from './pager'
+
+export interface ICategoryQueryRequest {
+  pager?: IPagerRequest
+}
 
 export class CategoryService {
+  public static readonly getCategoriesPage: (
+    request: ICategoryQueryRequest,
+  ) => Promise<IPageResponse<IGetCategoryResponse>> = async (request) =>
+    axiosInstance.post('/categories/getAllCategories', request).then((res) => res.data)
+
   public static readonly getAllCategories: () => Promise<IGetCategoryResponse[]> = async () =>
-    axiosInstance.get<IGetCategoryResponse[]>('/categories').then((res) => res.data)
+    fetchAllPages(CategoryService.getCategoriesPage, {})
 
   public static readonly getCategoryById: (id: number) => Promise<IGetCategoryResponse> = async (
     id,

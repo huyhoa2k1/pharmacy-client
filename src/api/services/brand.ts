@@ -1,15 +1,25 @@
 import axiosInstance from '@/helpers/https'
 import type { IGetBrandResponse } from '../models/brand'
+import type { IPageResponse } from '../models/product'
+import type { IPagerRequest } from '../models/pager'
+import { fetchAllPages } from './pager'
+
+export interface IBrandQueryRequest {
+  categoryId?: number
+  pager?: IPagerRequest
+}
 
 export class BrandService {
+  public static readonly getBrandsPage: (
+    request: IBrandQueryRequest,
+  ) => Promise<IPageResponse<IGetBrandResponse>> = async (request) =>
+    axiosInstance.post('/brands/getAllBrands', request).then((res) => res.data)
+
   public static readonly getAllBrands: () => Promise<IGetBrandResponse[]> = async () =>
-    axiosInstance.get<IGetBrandResponse[]>('/brands').then((res) => res.data)
+    fetchAllPages(BrandService.getBrandsPage, {})
 
   public static readonly getBrandsByCategory: (categoryId: number) => Promise<IGetBrandResponse[]> =
-    async (categoryId) =>
-      axiosInstance
-        .get<IGetBrandResponse[]>(`/brands/category/${categoryId}`)
-        .then((res) => res.data)
+    async (categoryId) => fetchAllPages(BrandService.getBrandsPage, { categoryId })
 
   public static readonly createBrand: (
     name: string,
