@@ -5,23 +5,61 @@ import type {
   ICreateProductRequest,
   ISetProductSaleRequest,
 } from '../models/product'
+import type { IPagerFilter, IPagerRequest } from '../models/pager'
+import { fetchAllPages } from './pager'
+
+export interface IProductQueryRequest {
+  categoryId?: number
+  onSale?: boolean
+  minSold?: number
+  pager?: IPagerRequest
+}
 
 export class ProductService {
+  public static readonly getProductsPage: (
+    request: IProductQueryRequest,
+  ) => Promise<IPageResponse<IGetProductResponse>> = async (request) =>
+    axiosInstance
+      .post<IPageResponse<IGetProductResponse>>('/products/getAllProducts', request)
+      .then((res) => res.data)
+
   public static readonly getAllProducts: () => Promise<IGetProductResponse[]> = async () =>
-    axiosInstance.get<IGetProductResponse[]>('/products').then((res) => res.data)
+    fetchAllPages(ProductService.getProductsPage, {})
 
   public static readonly getProductsOnSale: () => Promise<IGetProductResponse[]> = async () =>
-    axiosInstance.get<IGetProductResponse[]>('/products/sale').then((res) => res.data)
+    fetchAllPages(ProductService.getProductsPage, { onSale: true })
 
   public static readonly getProductsByCategory: (
     categoryId: number,
     params?: Record<string, unknown>,
-  ) => Promise<IPageResponse<IGetProductResponse>> = async (categoryId, params) =>
-    axiosInstance
-      .get<IPageResponse<IGetProductResponse>>(`/products/by-category/${categoryId}`, {
-        params,
+  ) => Promise<IPageResponse<IGetProductResponse>> = async (categoryId, params = {}) => {
+    const filters: IPagerFilter[] = []
+    const brandIds = params.brandIds as number[] | undefined
+    if (brandIds?.length) filters.push({ key: 'brandId', op: 'IN', value: brandIds })
+    const minPrice = params.minPrice as number | undefined
+    const maxPrice = params.maxPrice as number | undefined
+    if (minPrice != null || maxPrice != null) {
+      filters.push({
+        key: 'price',
+        op: 'BETWEEN',
+        value: [minPrice ?? 0, maxPrice ?? 1_000_000_000],
       })
-      .then((res) => res.data)
+    }
+    return ProductService.getProductsPage({
+      categoryId,
+      pager: {
+        pageNo: (params.page as number | undefined) ?? 0,
+        pageSize: (params.size as number | undefined) ?? 12,
+        sort: [
+          {
+            field: 'price',
+            direction: String(params.sortDirection).toLowerCase() === 'desc' ? 'DESC' : 'ASC',
+          },
+        ],
+        filters,
+      },
+    })
+  }
 
   public static readonly getProductById: (id: number) => Promise<IGetProductResponse> = async (
     id,
@@ -36,11 +74,10 @@ export class ProductService {
   public static readonly getBestSellingProducts: (
     minSold?: number,
   ) => Promise<IGetProductResponse[]> = async (minSold = 5) =>
-    axiosInstance
-      .get<IGetProductResponse[]>(`/products/best-sellers`, {
-        params: { minSold },
-      })
-      .then((res) => res.data)
+    fetchAllPages(ProductService.getProductsPage, {
+      minSold,
+      pager: { sort: [{ field: 'sold', direction: 'DESC' }] },
+    })
 
   public static readonly uploadProductImages: (formData: FormData) => Promise<string[]> = async (
     formData,
