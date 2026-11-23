@@ -3,6 +3,7 @@ import router from '@/router'
 import { message } from 'ant-design-vue'
 import { getActivePinia } from 'pinia'
 import { useUserStore } from '@/stores/user'
+import { AuthService } from '@/api/services/auth'
 
 const IP = 'localhost'
 const PORT = '8000'
@@ -82,30 +83,35 @@ axiosInstance.interceptors.response.use(
       }
       originalRequest._retry = true
       isRefreshing = true
-      const refreshToken = localStorage.getItem('refreshToken')
+      const staleToken = localStorage.getItem('token')
       const userStore = getCurrentUserStore()
-      if (!refreshToken) {
+      if (!staleToken) {
+        isRefreshing = false
+        processQueue(error, null)
         userStore?.logout()
         router.push({ name: 'Login' })
         return Promise.reject(error)
       }
 
       try {
-        const response = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken })
-        const newAccessToken = response.data.accessToken
-        const newRefreshToken = response.data.refreshToken
+        const { accessToken: newAccessToken } = await AuthService.refresh()
 
+        // Logout or a new login while refreshing changes the stored token; don't resurrect the old session.
+        if (localStorage.getItem('token') !== staleToken) {
+          throw new Error('Session changed during refresh')
+        }
         localStorage.setItem('token', newAccessToken)
-        localStorage.setItem('refreshToken', newRefreshToken)
 
-        axiosInstance.defaults.headers['Authorization'] = 'Bearer ' + newAccessToken
         processQueue(null, newAccessToken)
+        originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken
         return axiosInstance(originalRequest)
       } catch (err) {
         processQueue(err, null)
-        getCurrentUserStore()?.logout()
-        message.error('Session expired. Please log in again.')
-        router.push({ name: 'Login' })
+        if (localStorage.getItem('token') === staleToken) {
+          getCurrentUserStore()?.logout()
+          message.error('Session expired. Please log in again.')
+          router.push({ name: 'Login' })
+        }
         return Promise.reject(err)
       } finally {
         isRefreshing = false

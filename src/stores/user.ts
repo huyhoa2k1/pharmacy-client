@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { AuthService } from '@/api/services/auth'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -25,10 +26,9 @@ export const useUserStore = defineStore('user', {
     },
     restoreSession() {
       const token = localStorage.getItem('token')
-      const refreshToken = localStorage.getItem('refreshToken')
       const savedUser = localStorage.getItem('pharmacy_user')
 
-      if (!token || !refreshToken || !savedUser) {
+      if (!token || !savedUser) {
         this.logout()
         return
       }
@@ -57,8 +57,16 @@ export const useUserStore = defineStore('user', {
       this.isLogin = false
 
       localStorage.removeItem('token')
+      // Legacy key from when the refresh token was kept in localStorage.
       localStorage.removeItem('refreshToken')
       localStorage.removeItem('pharmacy_user')
+    },
+    async signOut() {
+      const token = localStorage.getItem('token')
+      await AuthService.logout()
+      if (localStorage.getItem('token') === token) {
+        this.logout()
+      }
     },
   },
 })

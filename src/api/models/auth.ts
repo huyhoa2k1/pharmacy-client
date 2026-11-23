@@ -5,7 +5,6 @@ export interface ILoginRequest {
 
 export interface ILoginResponse {
   accessToken: string
-  refreshToken: string
   user: {
     id: number
     username: string
