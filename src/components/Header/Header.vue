@@ -113,6 +113,7 @@ import { ProductService } from '@/api/services/product'
 import { getCloudinaryImageUrl } from '@/utils/cloudinary'
 import { LOGO_PUBLIC_ID } from '@/config/assetConfig'
 import { debounce } from 'lodash'
+import { message } from 'ant-design-vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -170,8 +171,12 @@ const openAuthDialog = () => {
 
 const handleChatSignIn = () => openAuthDialog()
 
-const handleLogout = () => {
-  userStore.logout()
+const handleLogout = async () => {
+  try {
+    await userStore.signOut()
+  } catch {
+    message.error(t('header.logoutFailed'))
+  }
 }
 
 onMounted(() => {

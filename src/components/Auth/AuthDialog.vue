@@ -10,15 +10,11 @@
 
             <!-- Tabs Toggle -->
             <div class="grid grid-cols-2 gap-3 mb-6">
-                <button
-                    :class="['auth-tab', { 'auth-tab-active': isLogin }]"
-                    @click="isLogin = true">
+                <button :class="['auth-tab', { 'auth-tab-active': isLogin }]" @click="isLogin = true">
                     <i class="pi pi-sign-in mr-2"></i>
                     {{ t('auth.loginTab') }}
                 </button>
-                <button
-                    :class="['auth-tab', { 'auth-tab-active': !isLogin }]"
-                    @click="isLogin = false">
+                <button :class="['auth-tab', { 'auth-tab-active': !isLogin }]" @click="isLogin = false">
                     <i class="pi pi-user-plus mr-2"></i>
                     {{ t('auth.registerTab') }}
                 </button>
@@ -30,20 +26,20 @@
                     <label class="auth-label">
                         {{ t('auth.phoneLabel') }} <span class="auth-required">*</span>
                     </label>
-                    <a-input v-model:value="loginForm.phone" :placeholder="t('auth.phonePlaceholder')" size="large" allow-clear
-                        :status="loginErrors.phone ? 'error' : ''" />
+                    <a-input v-model:value="loginForm.phone" :placeholder="t('auth.phonePlaceholder')" size="large"
+                        allow-clear :status="loginErrors.phone ? 'error' : ''" />
                     <span v-if="loginErrors.phone" class="auth-error">{{ loginErrors.phone
-                        }}</span>
+                    }}</span>
                 </div>
 
                 <div class="mb-6">
                     <label class="auth-label">
                         {{ t('auth.passwordLabel') }} <span class="auth-required">*</span>
                     </label>
-                    <a-input-password v-model:value="loginForm.password" :placeholder="t('auth.passwordPlaceholder')" size="large"
-                        :status="loginErrors.password ? 'error' : ''" />
+                    <a-input-password v-model:value="loginForm.password" :placeholder="t('auth.passwordPlaceholder')"
+                        size="large" :status="loginErrors.password ? 'error' : ''" />
                     <span v-if="loginErrors.password" class="auth-error">{{ loginErrors.password
-                        }}</span>
+                    }}</span>
                 </div>
 
                 <a-button type="primary" block size="large" html-type="submit" :loading="isLoginSubmitting"
@@ -67,15 +63,15 @@
                     <a-input v-model:value="registerForm.phone" :placeholder="t('auth.phonePlaceholder')" size="large"
                         allow-clear :status="registerErrors.phone ? 'error' : ''" />
                     <span v-if="registerErrors.phone" class="auth-error">{{ registerErrors.phone
-                        }}</span>
+                    }}</span>
                 </div>
 
                 <div class="mb-6">
                     <label class="auth-label">
                         {{ t('auth.passwordLabel') }} <span class="auth-required">*</span>
                     </label>
-                    <a-input-password v-model:value="registerForm.password" :placeholder="t('auth.passwordPlaceholder')" size="large"
-                        :status="registerErrors.password ? 'error' : ''" />
+                    <a-input-password v-model:value="registerForm.password" :placeholder="t('auth.passwordPlaceholder')"
+                        size="large" :status="registerErrors.password ? 'error' : ''" />
                     <span v-if="registerErrors.password" class="auth-error">{{
                         registerErrors.password }}</span>
                 </div>
@@ -209,7 +205,6 @@ const handleLogin = async () => {
         userStore.setUser(data.user);
 
         localStorage.setItem('token', data.accessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
         localStorage.setItem('pharmacy_user', JSON.stringify({
             id: data.user.id,
             username: data.user.username,
@@ -444,6 +439,7 @@ defineExpose({
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .auth-modal :deep(.ant-modal-close),
     .auth-tab,
     :deep(.ant-input),

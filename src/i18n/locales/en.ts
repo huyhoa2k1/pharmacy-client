@@ -40,6 +40,7 @@ export default {
     myInfo: 'My Profile',
     myOrders: 'My Orders',
     logout: 'Sign out',
+    logoutFailed: 'Unable to sign out. Please try again.',
   },
   tour: {
     help: 'User guide',

@@ -40,6 +40,7 @@ export default {
     myInfo: 'Thông tin cá nhân',
     myOrders: 'Đơn hàng của tôi',
     logout: 'Đăng xuất',
+    logoutFailed: 'Không thể đăng xuất. Vui lòng thử lại.',
   },
   tour: {
     help: 'Hướng dẫn sử dụng',

@@ -20,7 +20,7 @@
                     </a-menu-item>
                     <a-menu-item key="/admin/categories-management">
                         <router-link to="/admin/categories-management">{{ t('adminLayout.navCategories')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/brands-management">
                         <router-link to="/admin/brands-management">{{ t('adminLayout.navBrands') }}</router-link>
@@ -29,7 +29,7 @@
                 <a-menu-item key="/admin/orders-management">
                     <ShoppingCartOutlined />
                     <span><router-link to="/admin/orders-management">{{ t('adminLayout.navOrders')
-                            }}</router-link></span>
+                    }}</router-link></span>
                 </a-menu-item>
                 <a-sub-menu key="settings">
                     <template #title>
@@ -38,17 +38,17 @@
                     </template>
                     <a-menu-item key="/admin/general-settings">
                         <router-link to="/admin/general-settings">{{ t('adminLayout.navGeneralSettings')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/province-ward-management">
                         <router-link to="/admin/province-ward-management">{{ t('adminLayout.navProvinceWard')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                 </a-sub-menu>
                 <a-menu-item key="/admin/stores-management">
                     <ShopOutlined />
                     <span><router-link to="/admin/stores-management">{{ t('adminLayout.navStores')
-                            }}</router-link></span>
+                    }}</router-link></span>
                 </a-menu-item>
             </a-menu>
         </a-layout-sider>
@@ -93,7 +93,7 @@
 
                                 </a-menu-item>
                                 <a-menu-divider />
-                                <a-menu-item>
+                                <a-menu-item @click="handleLogout">
                                     <span>{{ t('adminLayout.logout') }}</span>
                                 </a-menu-item>
                             </a-menu>
@@ -128,7 +128,7 @@
                     </a-menu-item>
                     <a-menu-item key="/admin/categories-management">
                         <router-link to="/admin/categories-management">{{ t('adminLayout.navCategories')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/brands-management">
                         <router-link to="/admin/brands-management">{{ t('adminLayout.navBrands') }}</router-link>
@@ -137,7 +137,7 @@
                 <a-menu-item key="/admin/orders-management">
                     <ShoppingCartOutlined />
                     <span><router-link to="/admin/orders-management">{{ t('adminLayout.navOrders')
-                            }}</router-link></span>
+                    }}</router-link></span>
                 </a-menu-item>
                 <a-sub-menu key="settings">
                     <template #title>
@@ -146,17 +146,17 @@
                     </template>
                     <a-menu-item key="/admin/general-settings">
                         <router-link to="/admin/general-settings">{{ t('adminLayout.navGeneralSettings')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                     <a-menu-item key="/admin/province-ward-management">
                         <router-link to="/admin/province-ward-management">{{ t('adminLayout.navProvinceWard')
-                            }}</router-link>
+                        }}</router-link>
                     </a-menu-item>
                 </a-sub-menu>
                 <a-menu-item key="/admin/stores-management">
                     <ShopOutlined />
                     <span><router-link to="/admin/stores-management">{{ t('adminLayout.navStores')
-                            }}</router-link></span>
+                    }}</router-link></span>
                 </a-menu-item>
             </a-menu>
         </a-drawer>
@@ -169,8 +169,9 @@ import Breadcrumb from '@/components/common/breadcrumb/index.vue'
 import NotificationPopover from '@/components/Notification/NotificationPopover.vue'
 import { useUserStore } from '@/stores/user'
 import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { message } from 'ant-design-vue'
 import {
     AppstoreOutlined,
     DownOutlined,
@@ -184,8 +185,17 @@ import {
 } from '@ant-design/icons-vue'
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 const userStore = useUserStore()
+const handleLogout = async () => {
+    try {
+        await userStore.signOut()
+        await router.push('/')
+    } catch {
+        message.error(t('header.logoutFailed'))
+    }
+}
 const collapsed = ref<boolean>(false)
 const mobileMenuOpen = ref(false)
 const selectedKeys = ref<string[]>([route.path])
